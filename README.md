@@ -1,71 +1,16 @@
-# testwise README
+# TestWise
 
-This is the README for your extension "testwise". After writing up a brief description, we recommend including the following sections.
+### Description:
+> VS Code extension that enhances Test-Driven Development with Github Copilot via repeated sampling
 
-## Features
+### Use Case:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+> **Developer:** Writes test[s] for desired component and asks Copilot to generate component that does <X> and passes test[s] <Y>.
 
-For example if there is an image subfolder under your extension project workspace:
+> **Extension:** Generates the component -> runs the test[s] -> if a test fails,  re-generate component until success or a max number of samples has been reached
 
-\!\[feature X\]\(images/feature-x.png\)
+### Why it might be valuable:
+> OpenAI’s paper here on evaluating Codex (Copilot is powered by Codex) describes that, “repeated sampling from the model is a surprisingly effective strategy for producing working solutions to difficult prompts.” The model solves 28.8% of the HumanEval evaluation problem set with 1 sample per problem, and 70.2% of the problems with 100 samples per problem
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+### Potential:
+> If the extension could feed Copilot the tests that the component failed and copilot could use the failed tests as context to remake the component better, it would be much more effective than thoughtless repeated sampling.
