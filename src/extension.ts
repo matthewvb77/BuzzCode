@@ -24,8 +24,17 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.askQuestion", () => {
-			vscode.window.showInformationMessage("How was your day?", "Good", "Bad");
+		vscode.commands.registerCommand("testwise.askQuestion", async () => {
+			const answer = await vscode.window.showInformationMessage(
+				"How was your day?",
+				"Good",
+				"Bad"
+			);
+			if (answer === "Bad") {
+				vscode.window.showInformationMessage("Sorry to hear that");
+			} else {
+				console.log({ answer });
+			}
 		})
 	);
 }
