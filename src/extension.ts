@@ -64,6 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
 					max_tokens: 10,
 				});
 				// configuring openai -------------------------------------------------- test
+				console.log(answer); //.data.choices[0].text)
 				vscode.window.showInformationMessage(
 					`${modelName} has answered: ${answer}`
 				);
