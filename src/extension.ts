@@ -2,6 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
+import { Configuration, OpenAIApi } from "openai";
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -17,7 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
 		() => {
 			// The code you place here will be executed every time your command is executed
 			// Display a message box to the user
-			vscode.window.showInformationMessage("Hello World from TestWise!");
+			vscode.window.showInformationMessage(
+				"Hello World from TestWise! -- TESTING"
+			);
 		}
 	);
 
@@ -37,7 +41,44 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		})
 	);
+
+	// function that pushes a new command where you can query openai api
+	context.subscriptions.push(
+		vscode.commands.registerCommand("testwise.askOpenAI", async () => {
+			const input = await vscode.window.showInputBox({
+				prompt: "Ask code-davinci-003 a question",
+				placeHolder: "put question here",
+			});
+
+			if (input) {
+				// configuring openai -------------------------------------------------- test
+				const configuration = new Configuration({
+					apiKey: process.env.OPENAI_API_KEY,
+				});
+				const openai = new OpenAIApi(configuration);
+				const modelName = "text-davinci-003";
+				const answer = await openai.createCompletion({
+					model: modelName,
+					prompt: input,
+					temperature: 0.2,
+					max_tokens: 10,
+				});
+				// configuring openai -------------------------------------------------- test
+				console.log(answer); //.data.choices[0].text)
+				vscode.window.showInformationMessage(
+					`${modelName} has answered: ${answer}`
+				);
+			}
+		})
+	);
 }
+
+function generatePrompt(input: string) {
+	// very inefficient, just for testing
+	return `Answer this: ${input}`;
+}
+
+async function configureOpenAI() {}
 
 // This method is called when your extension is deactivated
 export function deactivate() {}

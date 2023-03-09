@@ -22,6 +22,11 @@
 				"command": "testwise.askQuestion",
 				"category": "TestWise",
 				"title": "Ask Question"
+			},
+			{
+				"command": "testwise.askOpenAI",
+				"category": "TestWise",
+				"title": "Ask OpenAI"
 			}
 		]
 	},
