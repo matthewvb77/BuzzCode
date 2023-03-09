@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-
+import * as dotenv from "dotenv";
 import { Configuration, OpenAIApi } from "openai";
 
 // This method is called when your extension is activated
@@ -52,22 +52,29 @@ export function activate(context: vscode.ExtensionContext) {
 
 			if (input) {
 				// configuring openai -------------------------------------------------- test
+				dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
+				console.log(process.env.OPENAI_API_KEY);
+
 				const configuration = new Configuration({
 					apiKey: process.env.OPENAI_API_KEY,
 				});
 				const openai = new OpenAIApi(configuration);
 				const modelName = "text-davinci-003";
-				const answer = await openai.createCompletion({
+				const response = await openai.createCompletion({
 					model: modelName,
 					prompt: input,
 					temperature: 0.2,
 					max_tokens: 10,
 				});
 				// configuring openai -------------------------------------------------- test
-				console.log(answer); //.data.choices[0].text)
-				vscode.window.showInformationMessage(
-					`${modelName} has answered: ${answer}`
-				);
+				if (response && response.status === 200) {
+					console.log(response); //.data.choices[0].text)
+					vscode.window.showInformationMessage(
+						`${modelName} has answered: ${response.data.choices[0].text}`
+					);
+				} else {
+					console.log(`error: ${response.statusText}`);
+				}
 			}
 		})
 	);
