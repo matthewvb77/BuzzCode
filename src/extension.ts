@@ -53,7 +53,6 @@ export function activate(context: vscode.ExtensionContext) {
 			if (input) {
 				// configuring openai -------------------------------------------------- test
 				dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
-				console.log(process.env.OPENAI_API_KEY);
 
 				const configuration = new Configuration({
 					apiKey: process.env.OPENAI_API_KEY,
