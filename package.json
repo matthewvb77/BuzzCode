@@ -19,14 +19,9 @@
 				"title": "Hello World"
 			},
 			{
-				"command": "testwise.askQuestion",
+				"command": "testwise.codeForMe",
 				"category": "TestWise",
-				"title": "Ask Question"
-			},
-			{
-				"command": "testwise.askOpenAI",
-				"category": "TestWise",
-				"title": "Ask OpenAI"
+				"title": "Code For Me"
 			}
 		]
 	},

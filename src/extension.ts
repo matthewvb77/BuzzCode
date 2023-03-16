@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import * as dotenv from "dotenv";
 import { Configuration, OpenAIApi } from "openai";
+import { generateFunctionFromTests } from "./copilotIntegration";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -27,64 +28,35 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.askQuestion", async () => {
-			const answer = await vscode.window.showInformationMessage(
-				"How was your day?",
-				"Good",
-				"Bad"
-			);
-			if (answer === "Bad") {
-				vscode.window.showInformationMessage("Sorry to hear that");
-			} else {
-				console.log({ answer });
-			}
-		})
-	);
-
 	// function that pushes a new command where you can query openai api
 	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.askOpenAI", async () => {
-			const input = await vscode.window.showInputBox({
-				prompt: "Ask code-davinci-003 a question",
-				placeHolder: "put question here",
-			});
-
-			if (input) {
-				// configuring openai -------------------------------------------------- test
-				dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
-
-				const configuration = new Configuration({
-					apiKey: process.env.OPENAI_API_KEY,
-				});
-				const openai = new OpenAIApi(configuration);
-				const modelName = "text-davinci-003";
-				const response = await openai.createCompletion({
-					model: modelName,
-					prompt: input,
-					temperature: 0.2,
-					max_tokens: 10,
-				});
-				// configuring openai -------------------------------------------------- test
-				if (response && response.status === 200) {
-					console.log(response); //.data.choices[0].text)
-					vscode.window.showInformationMessage(
-						`answer: ${response.data.choices[0].text}`
-					);
-				} else {
-					console.log(`error: ${response.statusText}`);
-				}
+		vscode.commands.registerCommand("testwise.CodeForMe", async () => {
+			// Get user's active vscode window
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage("No active text editor found.");
+				return;
 			}
+
+			// Get function from test suite
+			const testSuites = editor.document.getText();
+			const generatedFunction = await generateFunctionFromTests(testSuites);
+
+			if (!generatedFunction) {
+				vscode.window.showErrorMessage(
+					"Failed to generate a function from the test suites."
+				);
+				return;
+			}
+
+			// auto-inject the function		TODO: review, maybe do this with a changelist
+			editor.edit((editBuilder) => {
+				const position = editor.selection.active;
+				editBuilder.insert(position, generatedFunction);
+			});
 		})
 	);
 }
-
-function generatePrompt(input: string) {
-	// very inefficient, just for testing
-	return `Answer this: ${input}`;
-}
-
-async function configureOpenAI() {}
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
