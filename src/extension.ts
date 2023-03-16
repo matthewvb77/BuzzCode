@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if (response && response.status === 200) {
 					console.log(response); //.data.choices[0].text)
 					vscode.window.showInformationMessage(
-						`${modelName} has answered: ${response.data.choices[0].text}`
+						`answer: ${response.data.choices[0].text}`
 					);
 				} else {
 					console.log(`error: ${response.statusText}`);
