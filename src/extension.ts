@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// function that pushes a new command where you can query openai api
 	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.CodeForMe", async () => {
+		vscode.commands.registerCommand("testwise.codeForMe", async () => {
 			// Get user's active vscode window
 			const editor = vscode.window.activeTextEditor;
 			if (!editor) {
@@ -51,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 			editor.edit((editBuilder) => {
 				const position = editor.selection.active;
 				editBuilder.insert(position, generatedFunction);
+				// editBuilder.insert(position, "\n\n --------- DONE! -------");
 			});
 		})
 	);

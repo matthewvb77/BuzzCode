@@ -2,19 +2,18 @@ import * as vscode from "vscode";
 import * as dotenv from "dotenv";
 import { Configuration, OpenAIApi } from "openai";
 
-// --------------------- temp config ----------------------------------
-dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
-const configuration = new Configuration({
-	apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-const modelName = "text-davinci-003";
-const temperature = 0.2;
-const maxTokens = 10;
-// ------------------- temp config (end) ---------------------------------
-
 async function fetchFunctionFromOpenAI(input: string): Promise<string | null> {
 	try {
+		// --------------------- temp config ----------------------------------
+		dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
+		const configuration = new Configuration({
+			apiKey: process.env.OPENAI_API_KEY,
+		});
+		const openai = new OpenAIApi(configuration);
+		const modelName = "text-davinci-003";
+		const temperature = 0.2;
+		const maxTokens = 1000;
+		// ------------------- temp config (end) ---------------------------------
 		if (input) {
 			dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" }); // TODO: remove when 'settings' is implemented
 
@@ -44,7 +43,17 @@ async function fetchFunctionFromOpenAI(input: string): Promise<string | null> {
 export async function generateFunctionFromTests(
 	testCode: string
 ): Promise<string | null> {
-	if (!process.env.apiKey) {
+	// --------------------- temp config ----------------------------------
+	dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
+	const configuration = new Configuration({
+		apiKey: process.env.OPENAI_API_KEY,
+	});
+	const openai = new OpenAIApi(configuration);
+	const modelName = "text-davinci-003";
+	const temperature = 0.2;
+	const maxTokens = 1000;
+	// ------------------- temp config (end) ---------------------------------
+	if (!process.env.OPENAI_API_KEY) {
 		vscode.window.showErrorMessage(
 			"Please set the API key in TestWise settings."
 		);
