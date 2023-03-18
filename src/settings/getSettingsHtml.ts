@@ -32,7 +32,6 @@ export function getSettingsHtml(
             </form>
 
             <script>
-                console.log('settings page loaded -----------------------TEST');
                 function updateSliderValue(sliderId, displayId) {
                     const slider = document.getElementById(sliderId);
                     const display = document.getElementById(displayId);
@@ -43,16 +42,19 @@ export function getSettingsHtml(
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {
-                    document.getElementById('maxTokens').addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
-                    document.getElementById('temperature').addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                    const maxTokensSlider = document.getElementById('maxTokens');
+                    const temperatureSlider = document.getElementById('temperature');
+          
+                    if (maxTokensSlider && temperatureSlider) {
+                      maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
+                      temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                    }
                 });
 
                 document.getElementById("saveSettings").addEventListener("click", () => {
                     const apiKey = document.getElementById('apiKey').value;
                     const maxTokens = document.getElementById('maxTokens').value;
                     const temperature = document.getElementById('temperature').value;
-
-                    console.log({ apiKey, maxTokens, temperature });
 
                     const settings = { apiKey, maxTokens, temperature };
                     const vscode = acquireVsCodeApi();
