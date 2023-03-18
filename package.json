@@ -22,6 +22,11 @@
 				"command": "testwise.codeForMe",
 				"category": "TestWise",
 				"title": "Code For Me"
+			},
+			{
+				"command": "testwise.settings",
+				"category": "TestWise",
+				"title": "Settings"
 			}
 		]
 	},
