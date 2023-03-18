@@ -44,7 +44,7 @@
 				},
 				"testwise.temperature": {
 					"type": "number",
-					"default": 0.5,
+					"default": 0.2,
 					"description": "Temperature value for the generated code"
 				}
 			}
