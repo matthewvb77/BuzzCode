@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const config = vscode.workspace.getConfiguration("testwise");
 			const apiKey = config.get<string>("apiKey") || "";
 			const maxTokens = config.get<number>("maxTokens") || 100;
-			const temperature = config.get<number>("temperature") || 0.5;
+			const temperature = config.get<number>("temperature") || 0.2;
 
 			const panel = vscode.window.createWebviewPanel(
 				"testwiseSettings",

@@ -28,7 +28,27 @@
 				"category": "TestWise",
 				"title": "Settings"
 			}
-		]
+		],
+		"configuration": {
+			"title": "TestWise",
+			"properties": {
+				"testwise.apiKey": {
+					"type": "string",
+					"default": "",
+					"description": "GitHub Copilot API key"
+				},
+				"testwise.maxTokens": {
+					"type": "number",
+					"default": 100,
+					"description": "Maximum number of tokens for the generated code"
+				},
+				"testwise.temperature": {
+					"type": "number",
+					"default": 0.5,
+					"description": "Temperature value for the generated code"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
