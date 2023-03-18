@@ -59,6 +59,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("testwise.settings", () => {
+			const config = vscode.workspace.getConfiguration("testwise");
+			const apiKey = config.get<string>("apiKey") || "";
+			const maxTokens = config.get<number>("maxTokens") || 100;
+			const temperature = config.get<number>("temperature") || 0.5;
+
 			const panel = vscode.window.createWebviewPanel(
 				"testwiseSettings",
 				"TestWise Settings",
@@ -66,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 				{ enableScripts: true }
 			);
 
-			panel.webview.html = getSettingsHtml();
+			panel.webview.html = getSettingsHtml(apiKey, maxTokens, temperature);
 
 			panel.webview.onDidReceiveMessage(
 				async (settings) => {
