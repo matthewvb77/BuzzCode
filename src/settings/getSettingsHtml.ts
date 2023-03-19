@@ -10,8 +10,66 @@ export function getSettingsHtml(
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            /* Add your custom styles here */
-          </style>
+            body {
+                background-color: #1e1e1e;
+                color: #c8c8c8;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                margin: 20px;
+            }
+            label {
+                font-size: 14px;
+            }
+            input[type="text"], input[type="range"] {
+                background-color: #3c3c3c;
+                border: 1px solid #3c3c3c;
+                color: #c8c8c8;
+                font-size: 14px;
+                padding: 4px 8px;
+                margin: 4px 0;
+                border-radius: 3px;
+            }
+            #apiKey {
+                width: 20%;
+            }
+            input[type="range"] {
+                -webkit-appearance: none;
+                width: 20%;
+                padding: 0;
+                margin: 8px 0;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 16px;
+                height: 16px;
+                background-color: #569cd6;
+                cursor: pointer;
+                border-radius: 50%;
+            }
+            input[type="range"]::-moz-range-thumb {
+                width: 16px;
+                height: 16px;
+                background-color: #569cd6;
+                cursor: pointer;
+                border-radius: 50%;
+            }
+            button {
+                background-color: #569cd6;
+                border: none;
+                color: white;
+                padding: 6px 12px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
+                margin: 8px 0;
+                cursor: pointer;
+                border-radius: 3px;
+            }
+            button:hover {
+                background-color: #4080b6;
+            }
+        </style>
         </head>
         <body>
             <form id="settingsForm">
