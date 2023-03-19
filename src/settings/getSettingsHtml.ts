@@ -11,7 +11,7 @@ export function getSettingsHtml(
 	const temperatureStep = 0.1;
 	const temperaturePrecision = 1;
 
-	const apiKeyRegExp = new RegExp("/^[a-zA-Z0-9]{32}$/");
+	const apiKeyRegExp = /^$|^sk-[a-zA-Z0-9]+$/;
 
 	return `
       <!DOCTYPE html>
