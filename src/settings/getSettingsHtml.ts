@@ -11,6 +11,8 @@ export function getSettingsHtml(
 	const temperatureStep = 0.1;
 	const temperaturePrecision = 1;
 
+	const apiKeyRegExp = new RegExp("/^[a-zA-Z0-9]{32}$/");
+
 	return `
       <!DOCTYPE html>
       <html lang="en">
@@ -170,36 +172,30 @@ export function getSettingsHtml(
                     }
                 }
 
-                document.addEventListener('DOMContentLoaded', () => {
-                    const maxTokensSlider = document.getElementById('maxTokens');
-                    const temperatureSlider = document.getElementById('temperature');
-          
-                    if (maxTokensSlider && temperatureSlider) {
-                      maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
-                      temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
-                    }
-                });
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const maxTokensSlider = document.getElementById('maxTokens');
+                        const temperatureSlider = document.getElementById('temperature');
+            
+                        if (maxTokensSlider && temperatureSlider) {
+                        maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
+                        temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                        }
+                    });
 
-                // TODO: Complete the validation logic
-                // function isValidApiKey(apiKey: string) {
-                //     // Update the regular expression to match the expected apiKey format
-                // //     const apiKeyRegex = /^[a-zA-Z0-9]+$/;
-                // //     return apiKeyRegex.test(apiKey);
-                //     return true;
-                // }
-
+                // TODO: Finish validation logic
                 document.getElementById("saveSettings").addEventListener("click", () => {
+                    const vscode = acquireVsCodeApi();
                     const apiKey = document.getElementById('apiKey').value;
-                    // TODO: Complete the validation logic
-                    // if (!isValidApiKey(apiKey)) {
-                    //     alert('Invalid API Key');
-                    //     return;
-                    // }
+                    if (!${apiKeyRegExp}.test(apiKey)) {
+						vscode.window.showInformationMessage("Error saving TestWise settings.");
+                        return;
+                    }
+
                     const maxTokens = document.getElementById('maxTokens').value;
                     const temperature = document.getElementById('temperature').value;
 
                     const settings = { apiKey, maxTokens, temperature };
-                    const vscode = acquireVsCodeApi();
+                    
                     vscode.postMessage(settings);
                 });
             </script>
