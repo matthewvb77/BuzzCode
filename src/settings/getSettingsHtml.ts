@@ -3,89 +3,160 @@ export function getSettingsHtml(
 	maxTokens: number,
 	temperature: number
 ) {
+	// slider configuration
+	const maxTokensMax = 1000;
+	const maxTokensMin = 1;
+	const temperatureMax = 1;
+	const temperatureMin = 0;
+	const temperatureStep = 0.1;
+	const temperaturePrecision = 1;
+
 	return `
       <!DOCTYPE html>
       <html lang="en">
         <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
             body {
                 background-color: #1e1e1e;
                 color: #c8c8c8;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                font-family: 'Roboto', sans-serif;
                 margin: 20px;
-            }
-            label {
-                font-size: 14px;
-            }
-            input[type="text"], input[type="range"] {
+                font-size: 18px;
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 40px);
+              }
+              label {
+                font-size: 18px;
+                font-weight: 700;
+              }
+              input[type="text"], input[type="range"] {
                 background-color: #3c3c3c;
                 border: 1px solid #3c3c3c;
                 color: #c8c8c8;
-                font-size: 14px;
-                padding: 4px 8px;
-                margin: 4px 0;
-                border-radius: 3px;
-            }
-            #apiKey {
-                width: 20%;
-            }
-            input[type="range"] {
-                -webkit-appearance: none;
-                width: 20%;
-                padding: 0;
+                font-size: 18px;
+                padding: 8px 12px;
                 margin: 8px 0;
-            }
-            input[type="range"]::-webkit-slider-thumb {
+                border-radius: 4px;
+                outline: none;
+              }
+              #apiKey {
+                width: 40%;
+              }
+              input[type="range"] {
+                -webkit-appearance: none;
+                width: 25%;
+                padding: 0;
+                margin: 12px 0;
+              }
+              input[type="range"]::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: 16px;
-                height: 16px;
+                width: 24px;
+                height: 24px;
                 background-color: #569cd6;
                 cursor: pointer;
                 border-radius: 50%;
-            }
-            input[type="range"]::-moz-range-thumb {
-                width: 16px;
-                height: 16px;
+              }
+              input[type="range"]::-moz-range-thumb {
+                width: 24px;
+                height: 24px;
                 background-color: #569cd6;
                 cursor: pointer;
                 border-radius: 50%;
+              }
+            .value-container-parent {
             }
-            button {
+            .value-container-child-title {
+                display: inline-block;
+            }
+            .value-container-child-value {
+                display: inline-block;
+                background-color: #3c3c3c;
+                padding: 4px 8px;
+            }
+              .input-container {
+                position: relative;
+              }
+              .range-min,
+              .range-max {
+                font-size: 14px;
+              }
+              .range-min {
+                
+              }
+              .range-max {
+                
+              }
+              .setting-container {
+                padding: 4px;
+              }
+              .setting {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              }
+              button {
                 background-color: #569cd6;
                 border: none;
                 color: white;
-                padding: 6px 12px;
+                padding: 12px 24px;
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
-                font-size: 14px;
-                margin: 8px 0;
+                font-size: 18px;
+                margin: 12px 0;
                 cursor: pointer;
-                border-radius: 3px;
-            }
-            button:hover {
+                border-radius: 4px;
+                align-self: flex-end;
+              }
+              button:hover {
                 background-color: #4080b6;
-            }
-        </style>
+              }
+            </style>
         </head>
         <body>
             <form id="settingsForm">
-                <label for="apiKey">API Key:</label>
-                <input type="text" id="apiKey" name="apiKey" value="${apiKey}">
+
+                <div class="setting-container">
+                    <label for="apiKey">API Key:</label>
+                    <div class="input-container">
+                        <input type="text" id="apiKey" name="apiKey" value="${apiKey}">
+                    </div>
+                </div>
                 <br>
-                <label for="maxTokens">Max Tokens:</label>
-                <input type="range" id="maxTokens" name="maxTokens" min="1" max="1000" value="${maxTokens}">
-                <span id="maxTokensValue">${maxTokens}</span>
+
+                <div class="setting-container">
+                    <div class="value-container-parent">
+                        <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
+                        <span class="value-container-child-value" id="maxTokensValue">${maxTokens}</span>
+                    </div>
+                    <div class="input-container">
+                        <span class="range-min">${maxTokensMin}</span>
+                        <input type="range" id="maxTokens" name="maxTokens" min="${maxTokensMin}" max="${maxTokensMax}" value="${maxTokens}">
+                        <span class="range-max">${maxTokensMax}</span>
+                    </div>
+                </div>
                 <br>
-                <label for="temperature">Temperature:</label>
-                <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="${temperature}">
-                <span id="temperatureValue">${Number(temperature).toFixed(
-									1
-								)}</span>
+
+                <div class="setting-container">
+                    <div class="value-container-parent">
+                        <label class="value-container-child-title" for="temperature">Temperature:</label>
+                        <span class="value-container-child-value" id="temperatureValue">${Number(
+													temperature
+												).toFixed(temperaturePrecision)}</span>
+                    </div>
+                    <div class="input-container">
+                        <span class="range-min">${temperatureMin}</span>
+                        <input type="range" id="temperature" name="temperature" min="${temperatureMin}" max="${temperatureMax}" step="${temperatureStep}" value="${temperature}">
+                        <span class="range-max">${temperatureMax}</span>
+                    </div>
+                </div>
                 <br>
+                
                 <button type="button" id="saveSettings">Save</button>
             </form>
 
