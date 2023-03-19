@@ -180,8 +180,21 @@ export function getSettingsHtml(
                     }
                 });
 
+                // TODO: Complete the validation logic
+                // function isValidApiKey(apiKey: string) {
+                //     // Update the regular expression to match the expected apiKey format
+                // //     const apiKeyRegex = /^[a-zA-Z0-9]+$/;
+                // //     return apiKeyRegex.test(apiKey);
+                //     return true;
+                // }
+
                 document.getElementById("saveSettings").addEventListener("click", () => {
                     const apiKey = document.getElementById('apiKey').value;
+                    // TODO: Complete the validation logic
+                    // if (!isValidApiKey(apiKey)) {
+                    //     alert('Invalid API Key');
+                    //     return;
+                    // }
                     const maxTokens = document.getElementById('maxTokens').value;
                     const temperature = document.getElementById('temperature').value;
 
