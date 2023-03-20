@@ -177,7 +177,7 @@ export function getSettingsHtml(
                 </div>
                 <br>
                 
-                <button type="button" id="saveSettings">Save</button>
+                <button type="submit" id="saveSettings">Save</button>
             </form>
 
             <script>
@@ -191,6 +191,7 @@ export function getSettingsHtml(
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {
+                    const form = document.getElementById('settingsForm');
                     const modelSelect = document.getElementById('model');
                     const maxTokensSlider = document.getElementById('maxTokens');
                     const temperatureSlider = document.getElementById('temperature');
@@ -200,29 +201,33 @@ export function getSettingsHtml(
                         modelSelect.value = "${model}";
                     }
 
+                    // update the slider values
                     if (maxTokensSlider && temperatureSlider) {
                     maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
                     temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
                     }
+
+                    // add event listener for save button
+                    form.addEventListener('submit', (event) => {
+                      event.preventDefault();
+                      const vscode = acquireVsCodeApi();
+                      let error = '';
+                      const apiKey = document.getElementById('apiKey').value;
+              
+                      if (!${apiKeyRegExp}.test(apiKey)) {
+                          error = 'invalidApiKey';
+                      }
+              
+                      const model = document.getElementById('model').value;
+                      const maxTokens = document.getElementById('maxTokens').value;
+                      const temperature = document.getElementById('temperature').value;
+              
+                      const settings = { apiKey, model, maxTokens, temperature, error };
+              
+                      vscode.postMessage(settings);
+                    });
                 });
 
-                // TODO: Fix save button not working after attempting to save an invalid API key
-                document.getElementById("saveSettings").addEventListener("click", () => {
-                    const vscode = acquireVsCodeApi();
-                    let error = "";
-                    const apiKey = document.getElementById('apiKey').value;
-                    if (!${apiKeyRegExp}.test(apiKey)) {
-                        error = "invalidApiKey";
-                    }
-
-                    const model = document.getElementById('model').value;
-                    const maxTokens = document.getElementById('maxTokens').value;
-                    const temperature = document.getElementById('temperature').value;
-
-                    const settings = { apiKey, model, maxTokens, temperature, error };
-                    
-                    vscode.postMessage(settings);
-                });
             </script>
         </body>
       </html>
