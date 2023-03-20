@@ -62,6 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const apiKey = config.get<string>("apiKey") || "";
 			const maxTokens = config.get<number>("maxTokens") || 100;
 			const temperature = config.get<number>("temperature") || 0.2;
+			const model = config.get<string>("model") || "text-davinci-003";
 
 			const panel = vscode.window.createWebviewPanel(
 				"testwiseSettings",
@@ -75,53 +76,45 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.onDidReceiveMessage(
 				async (settings) => {
 					try {
+						await Promise.all([
+							vscode.workspace
+								.getConfiguration("testwise")
+								.update(
+									"maxTokens",
+									settings.maxTokens,
+									vscode.ConfigurationTarget.Global
+								),
+							vscode.workspace
+								.getConfiguration("testwise")
+								.update(
+									"temperature",
+									settings.temperature,
+									vscode.ConfigurationTarget.Global
+								),
+							vscode.workspace
+								.getConfiguration("testwise")
+								.update(
+									"model",
+									settings.model,
+									vscode.ConfigurationTarget.Global
+								),
+						]);
+
 						switch (settings.error) {
 							case "invalidApiKey":
-								await Promise.all([
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"maxTokens",
-											settings.maxTokens,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"temperature",
-											settings.temperature,
-											vscode.ConfigurationTarget.Global
-										),
-								]);
 								vscode.window.showErrorMessage(
 									"Invalid API key, please try again."
 								);
 								break;
 
 							case "":
-								await Promise.all([
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"apiKey",
-											settings.apiKey,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"maxTokens",
-											settings.maxTokens,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"temperature",
-											settings.temperature,
-											vscode.ConfigurationTarget.Global
-										),
-								]);
+								await vscode.workspace
+									.getConfiguration("testwise")
+									.update(
+										"apiKey",
+										settings.apiKey,
+										vscode.ConfigurationTarget.Global
+									);
 								vscode.window.showInformationMessage(
 									"TestWise settings saved."
 								);

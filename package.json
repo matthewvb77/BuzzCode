@@ -46,6 +46,11 @@
 					"type": "number",
 					"default": 0.2,
 					"description": "Temperature value for the generated code"
+				},
+				"testwise.model": {
+					"type": "string",
+					"default": "text-davinci-003",
+					"description": "Name of the OpenAI Model to use"
 				}
 			}
 		}
