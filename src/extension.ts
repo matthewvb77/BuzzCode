@@ -97,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
 								vscode.window.showErrorMessage(
 									"Invalid API key, please try again."
 								);
-								return;
+								break;
 
 							case "":
 								await Promise.all([
