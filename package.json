@@ -37,6 +37,11 @@
 					"default": "",
 					"description": "GitHub Copilot API key"
 				},
+				"testwise.model": {
+					"type": "string",
+					"default": "text-davinci-003",
+					"description": "Name of the OpenAI Model to use"
+				},
 				"testwise.maxTokens": {
 					"type": "number",
 					"default": 100,
@@ -46,11 +51,6 @@
 					"type": "number",
 					"default": 0.2,
 					"description": "Temperature value for the generated code"
-				},
-				"testwise.model": {
-					"type": "string",
-					"default": "text-davinci-003",
-					"description": "Name of the OpenAI Model to use"
 				}
 			}
 		}

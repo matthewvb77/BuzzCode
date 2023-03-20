@@ -1,5 +1,6 @@
 export function getSettingsHtml(
 	apiKey: string,
+	model: string,
 	maxTokens: number,
 	temperature: number
 ) {
@@ -131,6 +132,22 @@ export function getSettingsHtml(
                 </div>
                 <br>
 
+                // temp barrier ---------------------------------------------------------------------------------------------------------------------------
+
+                <div class="setting-container">
+                      <label for="model">Model:</label>
+                  <div class="input-container">
+                      <select id="model" name="model">
+                          <option value="text-davinci-003">text-davinci-003</option>
+                          <option value="code-davinci-003">code-davinci-003</option>
+                          <option value="text-davinci-005">text-davinci-005</option>
+                      </select>
+                  </div>
+                </div>
+                <br>
+            
+                // temp barrier ---------------------------------------------------------------------------------------------------------------------------
+
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
@@ -173,16 +190,22 @@ export function getSettingsHtml(
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {
+                    const modelSelect = document.getElementById('model');
                     const maxTokensSlider = document.getElementById('maxTokens');
                     const temperatureSlider = document.getElementById('temperature');
-        
+                    
+                    // select the model that was saved
+                    if (modelSelect) {
+                        modelSelect.value = "${model}";
+                    }
+
                     if (maxTokensSlider && temperatureSlider) {
                     maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
                     temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
                     }
                 });
 
-                // TODO: Finish validation logic
+                // TODO: Fix save button not working after attempting to save an invalid API key
                 document.getElementById("saveSettings").addEventListener("click", () => {
                     const vscode = acquireVsCodeApi();
                     let error = "";
@@ -191,10 +214,11 @@ export function getSettingsHtml(
                         error = "invalidApiKey";
                     }
 
+                    const model = document.getElementById('model').value;
                     const maxTokens = document.getElementById('maxTokens').value;
                     const temperature = document.getElementById('temperature').value;
 
-                    const settings = { apiKey, maxTokens, temperature, error };
+                    const settings = { apiKey, model, maxTokens, temperature, error };
                     
                     vscode.postMessage(settings);
                 });

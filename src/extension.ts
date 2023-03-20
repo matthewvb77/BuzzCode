@@ -71,7 +71,12 @@ export function activate(context: vscode.ExtensionContext) {
 				{ enableScripts: true }
 			);
 
-			panel.webview.html = getSettingsHtml(apiKey, maxTokens, temperature);
+			panel.webview.html = getSettingsHtml(
+				apiKey,
+				model,
+				maxTokens,
+				temperature
+			);
 
 			panel.webview.onDidReceiveMessage(
 				async (settings) => {
@@ -80,26 +85,24 @@ export function activate(context: vscode.ExtensionContext) {
 							vscode.workspace
 								.getConfiguration("testwise")
 								.update(
-									"maxTokens",
-									settings.maxTokens,
-									vscode.ConfigurationTarget.Global
-								),
-							vscode.workspace
-								.getConfiguration("testwise")
-								.update(
-									"temperature",
-									settings.temperature,
-									vscode.ConfigurationTarget.Global
-								),
-							vscode.workspace
-								.getConfiguration("testwise")
-								.update(
 									"model",
 									settings.model,
 									vscode.ConfigurationTarget.Global
 								),
+							vscode.workspace
+								.getConfiguration("testwise")
+								.update(
+									"maxTokens",
+									settings.maxTokens,
+									vscode.ConfigurationTarget.Global
+								),
+							vscode.workspace.getConfiguration("testwise").update(
+								"temperature",
+								settings.temperature, // TODO: remove debug statement
+								vscode.ConfigurationTarget.Global
+							),
 						]);
-
+						console.log("settings", settings);
 						switch (settings.error) {
 							case "invalidApiKey":
 								vscode.window.showErrorMessage(

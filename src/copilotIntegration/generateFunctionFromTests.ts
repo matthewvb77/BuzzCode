@@ -11,7 +11,9 @@ export async function generateFunctionFromTests(
 		apiKey: apiKey,
 	});
 	const openai = new OpenAIApi(configuration);
-	const modelName = "text-davinci-003"; // TODO: add this to settings
+	const model: string =
+		vscode.workspace.getConfiguration("testwise").get("model") ||
+		"text-davinci-003";
 	const temperature: number =
 		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
 	const maxTokens: number =
@@ -29,7 +31,7 @@ export async function generateFunctionFromTests(
 	/* -------------- Query OpenAI ------------------ */
 	try {
 		const response = await openai.createCompletion({
-			model: modelName,
+			model: model,
 			prompt: prompt,
 			temperature: temperature,
 			max_tokens: maxTokens,
