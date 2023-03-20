@@ -35,7 +35,7 @@ export function getSettingsHtml(
                 font-size: 18px;
                 font-weight: 700;
               }
-              input[type="text"], input[type="range"] {
+              input[type="text"], input[type="range"], select {
                 background-color: #3c3c3c;
                 border: 1px solid #3c3c3c;
                 color: #c8c8c8;
@@ -132,8 +132,6 @@ export function getSettingsHtml(
                 </div>
                 <br>
 
-                // temp barrier ---------------------------------------------------------------------------------------------------------------------------
-
                 <div class="setting-container">
                       <label for="model">Model:</label>
                   <div class="input-container">
@@ -146,8 +144,6 @@ export function getSettingsHtml(
                 </div>
                 <br>
             
-                // temp barrier ---------------------------------------------------------------------------------------------------------------------------
-
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
