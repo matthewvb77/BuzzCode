@@ -76,31 +76,64 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.onDidReceiveMessage(
 				async (settings) => {
 					try {
-						await Promise.all([
-							vscode.workspace
-								.getConfiguration("testwise")
-								.update(
-									"apiKey",
-									settings.apiKey,
-									vscode.ConfigurationTarget.Global
-								),
-							vscode.workspace
-								.getConfiguration("testwise")
-								.update(
-									"maxTokens",
-									settings.maxTokens,
-									vscode.ConfigurationTarget.Global
-								),
-							vscode.workspace
-								.getConfiguration("testwise")
-								.update(
-									"temperature",
-									settings.temperature,
-									vscode.ConfigurationTarget.Global
-								),
-						]);
-						vscode.window.showInformationMessage("TestWise settings saved.");
-						panel.dispose();
+						switch (settings.error) {
+							case "invalidApiKey":
+								await Promise.all([
+									vscode.workspace
+										.getConfiguration("testwise")
+										.update(
+											"maxTokens",
+											settings.maxTokens,
+											vscode.ConfigurationTarget.Global
+										),
+									vscode.workspace
+										.getConfiguration("testwise")
+										.update(
+											"temperature",
+											settings.temperature,
+											vscode.ConfigurationTarget.Global
+										),
+								]);
+								vscode.window.showErrorMessage(
+									"Invalid API key, please try again."
+								);
+								return;
+
+							case "":
+								await Promise.all([
+									vscode.workspace
+										.getConfiguration("testwise")
+										.update(
+											"apiKey",
+											settings.apiKey,
+											vscode.ConfigurationTarget.Global
+										),
+									vscode.workspace
+										.getConfiguration("testwise")
+										.update(
+											"maxTokens",
+											settings.maxTokens,
+											vscode.ConfigurationTarget.Global
+										),
+									vscode.workspace
+										.getConfiguration("testwise")
+										.update(
+											"temperature",
+											settings.temperature,
+											vscode.ConfigurationTarget.Global
+										),
+								]);
+								vscode.window.showInformationMessage(
+									"TestWise settings saved."
+								);
+								panel.dispose();
+								return;
+
+							default:
+								throw new Error(
+									"Invalid error message received: " + settings.error
+								);
+						}
 					} catch (error) {
 						vscode.window.showErrorMessage("Error saving TestWise settings.");
 						console.error("Error updating settings:", error);

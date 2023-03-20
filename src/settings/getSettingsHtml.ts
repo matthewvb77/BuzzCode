@@ -11,7 +11,7 @@ export function getSettingsHtml(
 	const temperatureStep = 0.1;
 	const temperaturePrecision = 1;
 
-	const apiKeyRegExp = /^$|^sk-[a-zA-Z0-9]+$/;
+	const apiKeyRegExp = new RegExp("^$|^sk-[a-zA-Z0-9]+$");
 
 	return `
       <!DOCTYPE html>
@@ -185,16 +185,16 @@ export function getSettingsHtml(
                 // TODO: Finish validation logic
                 document.getElementById("saveSettings").addEventListener("click", () => {
                     const vscode = acquireVsCodeApi();
+                    let error = "";
                     const apiKey = document.getElementById('apiKey').value;
                     if (!${apiKeyRegExp}.test(apiKey)) {
-						vscode.window.showInformationMessage("Error saving TestWise settings.");
-                        return;
+                        error = "invalidApiKey";
                     }
 
                     const maxTokens = document.getElementById('maxTokens').value;
                     const temperature = document.getElementById('temperature').value;
 
-                    const settings = { apiKey, maxTokens, temperature };
+                    const settings = { apiKey, maxTokens, temperature, error };
                     
                     vscode.postMessage(settings);
                 });
