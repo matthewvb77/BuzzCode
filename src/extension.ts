@@ -48,11 +48,10 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
-			// TODO: spit the function into the cursor, do this differently for ux
+			// TODO: spits the function into the cursor, do this differently for ux
 			editor.edit((editBuilder) => {
 				const position = editor.selection.active;
 				editBuilder.insert(position, generatedFunction);
-				// editBuilder.insert(position, "\n\n --------- DONE! -------");
 			});
 		})
 	);

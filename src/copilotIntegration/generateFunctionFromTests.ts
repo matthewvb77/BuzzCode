@@ -4,7 +4,7 @@ import { Configuration, OpenAIApi } from "openai";
 export async function generateFunctionFromTests(
 	testCode: string
 ): Promise<string | null> {
-	// --------------------- temp config ----------------------------------
+	/* ----------------- Configuration --------------- */
 	const apiKey: string =
 		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
 	const configuration = new Configuration({
@@ -12,12 +12,10 @@ export async function generateFunctionFromTests(
 	});
 	const openai = new OpenAIApi(configuration);
 	const modelName = "text-davinci-003"; // TODO: add this to settings
-	const temperature = vscode.workspace
-		.getConfiguration("testwise")
-		.get("temperature");
-	const maxTokens = vscode.workspace
-		.getConfiguration("testwise")
-		.get("maxTokens");
+	const temperature: number =
+		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
+	const maxTokens: number =
+		vscode.workspace.getConfiguration("testwise").get("maxTokens") || 100;
 
 	if (apiKey === "") {
 		vscode.window.showErrorMessage(
@@ -37,8 +35,8 @@ export async function generateFunctionFromTests(
 			max_tokens: maxTokens,
 		});
 
-		if (response && response.status === 200) {
-			return response.data.choices[0].text!; // TODO: ! is not safe
+		if (response && response.status === 200 && response.data.choices[0].text) {
+			return response.data.choices[0].text;
 		} else {
 			console.log(`error: ${response.statusText}`);
 			return null;
@@ -50,6 +48,5 @@ export async function generateFunctionFromTests(
 }
 
 function generatePrompt(input: string) {
-	// TODO: replace with proper prompting file
 	return `Generate a function that passes the following test suite:\n\n${input}\n\nFunction:`;
 }

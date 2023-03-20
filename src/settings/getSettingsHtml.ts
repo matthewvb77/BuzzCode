@@ -172,15 +172,15 @@ export function getSettingsHtml(
                     }
                 }
 
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const maxTokensSlider = document.getElementById('maxTokens');
-                        const temperatureSlider = document.getElementById('temperature');
-            
-                        if (maxTokensSlider && temperatureSlider) {
-                        maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
-                        temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
-                        }
-                    });
+                document.addEventListener('DOMContentLoaded', () => {
+                    const maxTokensSlider = document.getElementById('maxTokens');
+                    const temperatureSlider = document.getElementById('temperature');
+        
+                    if (maxTokensSlider && temperatureSlider) {
+                    maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
+                    temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                    }
+                });
 
                 // TODO: Finish validation logic
                 document.getElementById("saveSettings").addEventListener("click", () => {
