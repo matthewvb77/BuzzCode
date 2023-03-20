@@ -136,9 +136,14 @@ export function getSettingsHtml(
                       <label for="model">Model:</label>
                   <div class="input-container">
                       <select id="model" name="model">
-                          <option value="text-davinci-003">text-davinci-003</option>
-                          <option value="code-davinci-003">code-davinci-003</option>
-                          <option value="text-davinci-005">text-davinci-005</option>
+                          <optgroup label="ChatGPT">
+                            <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+                          </optgroup>
+                          <optgroup label="Codex">
+                            <option value="code-davinci-002">code-davinci-002</option>
+                            <option value="code-cushman-001">code-cushman-001</option>
+                          </optgroup>
                       </select>
                   </div>
                 </div>
