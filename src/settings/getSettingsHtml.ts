@@ -127,7 +127,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <label for="apiKey">API Key:</label>
                     <div class="input-container">
-                        <input type="text" id="apiKey" name="apiKey" value="${apiKey}">
+                        <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                     </div>
                 </div>
                 <br>

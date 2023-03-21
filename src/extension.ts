@@ -123,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 									vscode.window.showInformationMessage(
 										"TestWise settings saved."
 									);
-									panel.dispose();
+									// panel.dispose();
 								}
 							} catch (error) {
 								vscode.window.showErrorMessage(
