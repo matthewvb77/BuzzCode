@@ -92,11 +92,9 @@ export function getSettingsHtml(
                 height: 3px;
                 background-color: #5a5a5a;
               }
-              .value-container-parent {
-              }
-              .value-container-child-title {
-                  display: inline-block;
-              }
+              // .value-container-parent .value-container-child-title {
+              //     display: inline-block;
+              // }
               .value-container-child-value {
                   display: inline-block;
                   background-color: #3c3c3c;
@@ -120,6 +118,35 @@ export function getSettingsHtml(
                 font-size: 16px;
                 color: #888;
                 font-weight: bold;
+              }
+              .tooltip {
+                position: relative;
+                display: inline-block;
+                cursor: pointer;
+                text-decoration: none;
+                color: inherit;
+              }
+              
+              .tooltip > .tooltiptext {
+                visibility: hidden;
+                width: 250px;
+                background-color: #555;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%; /* Position the tooltip below the text */
+                left: 50%;
+                margin-left: -125px; /* Use half of the width to center the tooltip */
+                opacity: 0;
+                transition: opacity 0.3s;
+              }
+              
+              .tooltip:hover > .tooltiptext {
+                visibility: visible;
+                opacity: 1;
               }
               button {
                 background-color: #569cd6;
@@ -145,15 +172,21 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                     <label for="apiKey">API Key:</label>
+                    <span class="tooltip">
+                        <span class="tooltiptext">You can get your API key from <a href="https://openai.com/" target="_blank">OpenAI</a></span>
+                    </span>
                     <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
 
                 <div class="setting-container">
                     <label for="model">Model:</label>
+                    <span class="tooltip">
+                        <span class="tooltiptext">You can specify which model TestWise uses. Codex has been deprecated by OpenAI</span>
+                    </span>
                     <select id="model" name="model">
-                          <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
-                          <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+                        <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
                     </select>
                 </div>
                 <br>
@@ -161,6 +194,9 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
+                        <span class="tooltip">
+                            <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
+                        </span>
                         <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
                     </div>
                     <span class="range-min">${maxTokensMin}</span>
@@ -172,6 +208,9 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="temperature">Temperature:</label>
+                            <span class="tooltip">
+                                <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes.</span>
+                            </span>
                         <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
 													temperature
 												).toFixed(temperaturePrecision)}</span>
