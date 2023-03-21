@@ -58,8 +58,10 @@ export function getSettingsHtml(
               }
               input[type="range"] {
                 -webkit-appearance: none;
+                padding: 0;
                 width: 25%;
                 margin: 12px 0px;
+                margin-top: 20px;
               }
               input[type="range"]::-webkit-slider-thumb {
                 -webkit-appearance: none;
@@ -69,6 +71,7 @@ export function getSettingsHtml(
                 background-color: #569cd6;
                 cursor: pointer;
                 border-radius: 50%;
+                margin-top: -10.5px;
               }
               input[type="range"]::-moz-range-thumb {
                 width: 24px;
@@ -77,28 +80,28 @@ export function getSettingsHtml(
                 cursor: pointer;
                 border-radius: 50%;
               }
-            .value-container-parent {
-            }
-            .value-container-child-title {
-                display: inline-block;
-            }
-            .value-container-child-value {
-                display: inline-block;
-                background-color: #3c3c3c;
-                padding: 4px 8px;
-            }
-              .input-container {
-                position: relative;
+              input[type="range"]::-webkit-slider-runnable-track {
+                height: 5px;
+                background-color: #5a5a5a;
+              }
+              input[type="range"]::-moz-range-track {
+                height: 3px;
+                background-color: #5a5a5a;
+              }
+              .value-container-parent {
+              }
+              .value-container-child-title {
+                  display: inline-block;
+              }
+              .value-container-child-value {
+                  display: inline-block;
+                  background-color: #3c3c3c;
+                  padding: 4px 8px;
               }
               .range-min,
               .range-max {
                 font-size: 14px;
-              }
-              .range-min {
-                
-              }
-              .range-max {
-                
+                padding: 6px;
               }
               .setting-container {
                 padding: 4px;
@@ -132,20 +135,16 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                     <label for="apiKey">API Key:</label>
-                    <div class="input-container">
-                        <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-                    </div>
+                    <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
 
                 <div class="setting-container">
-                      <label for="model">Model:</label>
-                  <div class="input-container">
-                      <select id="model" name="model">
-                            <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
-                            <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
-                      </select>
-                  </div>
+                    <label for="model">Model:</label>
+                    <select id="model" name="model">
+                          <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
+                          <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+                    </select>
                 </div>
                 <br>
             
@@ -154,11 +153,9 @@ export function getSettingsHtml(
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
                         <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
                     </div>
-                    <div class="input-container">
-                        <span class="range-min">${maxTokensMin}</span>
-                        <input type="range" id="maxTokens" name="maxTokens" min="${maxTokensMin}" max="${maxTokensMax}" value="${maxTokens}">
-                        <span class="range-max">${maxTokensMax}</span>
-                    </div>
+                    <span class="range-min">${maxTokensMin}</span>
+                    <input type="range" id="maxTokens" name="maxTokens" min="${maxTokensMin}" max="${maxTokensMax}" value="${maxTokens}">
+                    <span class="range-max">${maxTokensMax}</span>
                 </div>
                 <br>
 
