@@ -35,6 +35,9 @@ export function getSettingsHtml(
                 font-size: 18px;
                 font-weight: 700;
               }
+              select:focus {
+                outline: none;
+              }
               input[type="text"], input[type="range"], select {
                 background-color: #3c3c3c;
                 border: 1px solid #3c3c3c;
