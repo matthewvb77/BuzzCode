@@ -40,8 +40,16 @@ export function getSettingsHtml(
                 border: 1px solid #3c3c3c;
                 color: #c8c8c8;
                 font-size: 18px;
-                padding: 8px 12px;
+                padding: 6px 12px;
                 margin: 8px 0;
+                border-radius: 4px;
+                outline: none;
+              }
+              span[contenteditable="true"] {
+                background-color: #3c3c3c;
+                border: 1px solid #3c3c3c;
+                color: #c8c8c8;
+                font-size: 18px;
                 border-radius: 4px;
                 outline: none;
               }
@@ -51,8 +59,7 @@ export function getSettingsHtml(
               input[type="range"] {
                 -webkit-appearance: none;
                 width: 25%;
-                padding: 0;
-                margin: 12px 0;
+                margin: 12px 0px;
               }
               input[type="range"]::-webkit-slider-thumb {
                 -webkit-appearance: none;
@@ -109,9 +116,8 @@ export function getSettingsHtml(
                 padding: 12px 24px;
                 text-align: center;
                 text-decoration: none;
-                display: inline-block;
                 font-size: 18px;
-                margin: 12px 0;
+                margin: 12px 0px;
                 cursor: pointer;
                 border-radius: 4px;
                 align-self: flex-end;
@@ -146,7 +152,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
-                        <span class="value-container-child-value" id="maxTokensValue">${maxTokens}</span>
+                        <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
                     </div>
                     <div class="input-container">
                         <span class="range-min">${maxTokensMin}</span>
@@ -159,7 +165,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <label class="value-container-child-title" for="temperature">Temperature:</label>
-                        <span class="value-container-child-value" id="temperatureValue">${Number(
+                        <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
 													temperature
 												).toFixed(temperaturePrecision)}</span>
                     </div>
@@ -186,15 +192,47 @@ export function getSettingsHtml(
                     }
                 }
 
+                function updateSliderValueFromInput(sliderId, displayId) {
+                    const slider = document.getElementById(sliderId);
+                    const display = document.getElementById(displayId);
+
+                    if (slider && display) {
+                        slider.value = display.innerText;
+                    }
+                }
+
+                function handleEditableValueInput(event, sliderId, displayId) {
+                    const slider = document.getElementById(sliderId);
+                    const value = parseFloat(event.target.innerText);
+
+                    if (isNaN(value)) {
+                      event.target.innerText = slider.value;
+                    } else {
+                      slider.value = value;
+                      updateSliderValue(sliderId, displayId);
+                    }
+                }
+
                 function initializeEventListeners() {
                   const form = document.getElementById('settingsForm');
                   const modelSelect = document.getElementById('model');
                   const maxTokensSlider = document.getElementById('maxTokens');
                   const temperatureSlider = document.getElementById('temperature');
-                    
+                  const maxTokensValue = document.getElementById('maxTokensValue');
+                  const temperatureValue = document.getElementById('temperatureValue');
+
+                  // update the slider values and handle editable value container
+                  if (maxTokensSlider && temperatureSlider && maxTokensValue && temperatureValue) {
+                    maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
+                    temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                
+                    maxTokensValue.addEventListener('blur', (event) => handleEditableValueInput(event, 'maxTokens', 'maxTokensValue'));
+                    temperatureValue.addEventListener('blur', (event) => handleEditableValueInput(event, 'temperature', 'temperatureValue'));
+                  }
+ 
                   // select the model that was saved
                   if (modelSelect) {
-                    modelSelect.value = "${model}";
+                      modelSelect.value = "${model}";
                   }
       
                   // update the slider values
@@ -211,7 +249,6 @@ export function getSettingsHtml(
                 }
 
                 function handleSubmit(event) {
-                    console.log('handling a Submit!!!!!!!!!!!!!!!!!!!!!!!');                  
                     event.preventDefault();
                     let error = '';
                     const apiKey = document.getElementById('apiKey').value;
@@ -222,8 +259,8 @@ export function getSettingsHtml(
                     }
             
                     const model = document.getElementById('model').value;
-                    const maxTokens = document.getElementById('maxTokens').value;
-                    const temperature = document.getElementById('temperature').value;
+                    const maxTokens = document.getElementById('maxTokensValue').innerText;
+                    const temperature = document.getElementById('temperatureValue').innerText;
             
                     const settings = { apiKey, model, maxTokens, temperature, error };
                     
