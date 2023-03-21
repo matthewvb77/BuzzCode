@@ -73,6 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
 					retainContextWhenHidden: true,
 					localResourceRoots: [
 						vscode.Uri.joinPath(context.extensionUri, "src", "assets"),
+						vscode.Uri.joinPath(context.extensionUri, "src", "settings"),
 					],
 				}
 			);
@@ -83,15 +84,33 @@ export function activate(context: vscode.ExtensionContext) {
 				"assets",
 				"tooltip.png"
 			);
-			const tooltipPNG = panel.webview.asWebviewUri(tooltipPath);
+			const tooltipUri = panel.webview.asWebviewUri(tooltipPath);
+
+			const scriptPath = vscode.Uri.joinPath(
+				context.extensionUri,
+				"src",
+				"settings",
+				"scripts.ts"
+			);
+			const scriptUri = panel.webview.asWebviewUri(scriptPath);
+
+			const stylePath = vscode.Uri.joinPath(
+				context.extensionUri,
+				"src",
+				"settings",
+				"styles.css"
+			);
+			const styleUri = panel.webview.asWebviewUri(stylePath);
 
 			panel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
 				maxTokens,
 				temperature,
-				tooltipPNG,
-				panel.webview.cspSource
+				panel.webview.cspSource,
+				tooltipUri,
+				scriptUri,
+				styleUri
 			);
 
 			panel.webview.onDidReceiveMessage(
