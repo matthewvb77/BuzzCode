@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const apiKey = config.get<string>("apiKey") || "";
 			const maxTokens = config.get<number>("maxTokens") || 100;
 			const temperature = config.get<number>("temperature") || 0.2;
-			const model = config.get<string>("model") || "text-davinci-003";
+			const model = config.get<string>("model") || "gpt-3.5-turbo";
 
 			const panel = vscode.window.createWebviewPanel(
 				"testwiseSettings",

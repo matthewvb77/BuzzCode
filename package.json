@@ -39,7 +39,7 @@
 				},
 				"testwise.model": {
 					"type": "string",
-					"default": "text-davinci-003",
+					"default": "gpt-3.5-turbo",
 					"description": "Name of the OpenAI Model to use"
 				},
 				"testwise.maxTokens": {
