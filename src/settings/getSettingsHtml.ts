@@ -181,6 +181,8 @@ export function getSettingsHtml(
             </form>
 
             <script>
+                const vscode = acquireVsCodeApi();
+            
                 function updateSliderValue(sliderId, displayId) {
                     const slider = document.getElementById(sliderId);
                     const display = document.getElementById(displayId);
@@ -190,45 +192,51 @@ export function getSettingsHtml(
                     }
                 }
 
-                document.addEventListener('DOMContentLoaded', () => {
-                    const form = document.getElementById('settingsForm');
-                    const modelSelect = document.getElementById('model');
-                    const maxTokensSlider = document.getElementById('maxTokens');
-                    const temperatureSlider = document.getElementById('temperature');
+                function initializeEventListeners() {
+                  const form = document.getElementById('settingsForm');
+                  const modelSelect = document.getElementById('model');
+                  const maxTokensSlider = document.getElementById('maxTokens');
+                  const temperatureSlider = document.getElementById('temperature');
                     
-                    // select the model that was saved
-                    if (modelSelect) {
-                        modelSelect.value = "${model}";
-                    }
-
-                    // update the slider values
-                    if (maxTokensSlider && temperatureSlider) {
+                  // select the model that was saved
+                  if (modelSelect) {
+                    modelSelect.value = "${model}";
+                  }
+      
+                  // update the slider values
+                  if (maxTokensSlider && temperatureSlider) {
                     maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
                     temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
+                  }
+      
+                  // Remove any existing event listeners
+                  form.removeEventListener('submit', handleSubmit);
+      
+                  // Add the event listener for the save button
+                  form.addEventListener('submit', handleSubmit);
+                }
+
+                function handleSubmit(event) {
+                    console.log('handling a Submit!!!!!!!!!!!!!!!!!!!!!!!');                  
+                    event.preventDefault();
+                    let error = '';
+                    const apiKey = document.getElementById('apiKey').value;
+
+                    const apiKeyRegExpObj = new RegExp(\`${apiKeyRegExp}\`);
+                    if (!apiKeyRegExpObj.test(apiKey)) {
+                      error = 'invalidApiKey';
                     }
+            
+                    const model = document.getElementById('model').value;
+                    const maxTokens = document.getElementById('maxTokens').value;
+                    const temperature = document.getElementById('temperature').value;
+            
+                    const settings = { apiKey, model, maxTokens, temperature, error };
+                    
+                    vscode.postMessage({ command: 'saveSettings', ...settings });
+                }
 
-                    // add event listener for save button
-                    form.addEventListener('submit', (event) => {
-                      event.preventDefault();
-                      let error = '';
-                      const apiKey = document.getElementById('apiKey').value;
-
-                      // validate the api key
-                      const apiKeyRegExpObj = new RegExp(\`${apiKeyRegExp}\`);
-                      if (!apiKeyRegExpObj.test(apiKey)) {
-                          error = 'invalidApiKey';
-                      }
-              
-                      const model = document.getElementById('model').value;
-                      const maxTokens = document.getElementById('maxTokens').value;
-                      const temperature = document.getElementById('temperature').value;
-              
-                      const settings = { apiKey, model, maxTokens, temperature, error };
-                      
-                      const vscode = acquireVsCodeApi();
-                      vscode.postMessage({ command: 'saveSettings', ...settings });
-                    });
-                });
+                document.addEventListener('DOMContentLoaded', initializeEventListeners);
 
             </script>
         </body>
