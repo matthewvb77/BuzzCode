@@ -65,6 +65,7 @@ export function getSettingsHtml(
                 width: 25%;
                 margin: 12px 0px;
                 margin-top: 20px;
+                margin-bottom: 0px;
               }
               input[type="range"]::-webkit-slider-thumb {
                 -webkit-appearance: none;
@@ -115,6 +116,11 @@ export function getSettingsHtml(
                 flex-direction: column;
                 justify-content: center;
               }
+              .note {
+                font-size: 16px;
+                color: #888;
+                font-weight: bold;
+              }
               button {
                 background-color: #569cd6;
                 border: none;
@@ -124,6 +130,7 @@ export function getSettingsHtml(
                 text-decoration: none;
                 font-size: 18px;
                 margin: 12px 0px;
+                // margin-top: 30px;
                 cursor: pointer;
                 border-radius: 4px;
                 align-self: flex-end;
@@ -175,6 +182,9 @@ export function getSettingsHtml(
                         <span class="range-max">${temperatureMax}</span>
                     </div>
                 </div>
+                <br>
+
+                <span class="note">&lt; hover for details &gt;</span>
                 <br>
                 
                 <button type="submit" id="saveSettings">Save</button>
