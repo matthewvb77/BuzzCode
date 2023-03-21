@@ -122,31 +122,25 @@ export function getSettingsHtml(
               .tooltip {
                 position: relative;
                 display: inline-block;
-                cursor: pointer;
-                text-decoration: none;
-                color: inherit;
+                border-bottom: 1px dotted black;
               }
               
-              .tooltip > .tooltiptext {
+              .tooltip .tooltiptext {
                 visibility: hidden;
-                width: 250px;
-                background-color: #555;
+                width: 120px;
+                background-color: black;
                 color: #fff;
                 text-align: center;
+                padding: 5px 0;
                 border-radius: 6px;
-                padding: 5px;
+              
+                /* Position the tooltip text - see examples below! */
                 position: absolute;
                 z-index: 1;
-                bottom: 125%; /* Position the tooltip below the text */
-                left: 50%;
-                margin-left: -125px; /* Use half of the width to center the tooltip */
-                opacity: 0;
-                transition: opacity 0.3s;
               }
               
-              .tooltip:hover > .tooltiptext {
+              .tooltip:hover .tooltiptext {
                 visibility: visible;
-                opacity: 1;
               }
               button {
                 background-color: #569cd6;
@@ -171,19 +165,19 @@ export function getSettingsHtml(
             <form id="settingsForm">
 
                 <div class="setting-container">
+                  <div class="tooltip">
                     <label for="apiKey">API Key:</label>
-                    <span class="tooltip">
-                        <span class="tooltiptext">You can get your API key from <a href="https://openai.com/" target="_blank">OpenAI</a></span>
-                    </span>
+                    <span class="tooltiptext">You can get your API key from <a href="https://openai.com/" target="_blank">OpenAI</a></span>
+                  </div>
                     <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
 
                 <div class="setting-container">
-                    <label for="model">Model:</label>
-                    <span class="tooltip">
-                        <span class="tooltiptext">You can specify which model TestWise uses. Codex has been deprecated by OpenAI</span>
-                    </span>
+                    <div class="tooltip">
+                      <label for="model">Model:</label>
+                      <span class="tooltiptext">You can specify which model TestWise uses. Codex has been deprecated by OpenAI</span>
+                    </div>
                     <select id="model" name="model">
                         <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
                         <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
@@ -193,10 +187,10 @@ export function getSettingsHtml(
             
                 <div class="setting-container">
                     <div class="value-container-parent">
-                        <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
-                        <span class="tooltip">
-                            <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
-                        </span>
+                        <div class="tooltip">
+                          <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
+                          <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
+                        </div>
                         <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
                     </div>
                     <span class="range-min">${maxTokensMin}</span>
@@ -207,10 +201,10 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                     <div class="value-container-parent">
-                        <label class="value-container-child-title" for="temperature">Temperature:</label>
-                            <span class="tooltip">
-                                <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes.</span>
-                            </span>
+                        <div class="tooltip">
+                          <label class="value-container-child-title" for="temperature">Temperature:</label>
+                          <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes.</span>
+                        </div>
                         <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
 													temperature
 												).toFixed(temperaturePrecision)}</span>
@@ -223,9 +217,6 @@ export function getSettingsHtml(
                 </div>
                 <br>
 
-                <span class="note">&lt; hover for details &gt;</span>
-                <br>
-                
                 <button type="submit" id="saveSettings">Save</button>
             </form>
 
