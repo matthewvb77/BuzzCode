@@ -96,19 +96,20 @@ export function activate(context: vscode.ExtensionContext) {
 									settings.maxTokens,
 									vscode.ConfigurationTarget.Global
 								),
-							vscode.workspace.getConfiguration("testwise").update(
-								"temperature",
-								settings.temperature, // TODO: remove debug statement
-								vscode.ConfigurationTarget.Global
-							),
+							vscode.workspace
+								.getConfiguration("testwise")
+								.update(
+									"temperature",
+									settings.temperature,
+									vscode.ConfigurationTarget.Global
+								),
 						]);
-						console.log("settings", settings);
 						switch (settings.error) {
 							case "invalidApiKey":
 								vscode.window.showErrorMessage(
 									"Invalid API key, please try again."
 								);
-								break;
+								return;
 
 							case "":
 								await vscode.workspace
