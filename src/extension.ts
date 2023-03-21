@@ -80,6 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			panel.webview.onDidReceiveMessage(
 				async (message) => {
+					console.log("Received message from webview:", message);
 					switch (message.command) {
 						case "saveSettings":
 							try {
@@ -87,44 +88,43 @@ export function activate(context: vscode.ExtensionContext) {
 									vscode.window.showErrorMessage(
 										"Invalid API key, please try again."
 									);
-									return;
+								} else {
+									await Promise.all([
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"apiKey",
+												message.apiKey,
+												vscode.ConfigurationTarget.Global
+											),
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"model",
+												message.model,
+												vscode.ConfigurationTarget.Global
+											),
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"maxTokens",
+												message.maxTokens,
+												vscode.ConfigurationTarget.Global
+											),
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"temperature",
+												message.temperature,
+												vscode.ConfigurationTarget.Global
+											),
+									]);
+
+									vscode.window.showInformationMessage(
+										"TestWise settings saved."
+									);
+									panel.dispose();
 								}
-
-								await Promise.all([
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"apiKey",
-											message.apiKey,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"model",
-											message.model,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"maxTokens",
-											message.maxTokens,
-											vscode.ConfigurationTarget.Global
-										),
-									vscode.workspace
-										.getConfiguration("testwise")
-										.update(
-											"temperature",
-											message.temperature,
-											vscode.ConfigurationTarget.Global
-										),
-								]);
-
-								vscode.window.showInformationMessage(
-									"TestWise settings saved."
-								);
-								panel.dispose();
 							} catch (error) {
 								vscode.window.showErrorMessage(
 									"Error saving TestWise settings."

@@ -210,12 +210,11 @@ export function getSettingsHtml(
                     // add event listener for save button
                     form.addEventListener('submit', (event) => {
                       event.preventDefault();
-                      const vscode = acquireVsCodeApi();
                       let error = '';
                       const apiKey = document.getElementById('apiKey').value;
 
                       // validate the api key
-                      const apiKeyRegExpObj = new RegExp('${apiKeyRegExp}');
+                      const apiKeyRegExpObj = new RegExp(\`${apiKeyRegExp}\`);
                       if (!apiKeyRegExpObj.test(apiKey)) {
                           error = 'invalidApiKey';
                       }
@@ -225,7 +224,8 @@ export function getSettingsHtml(
                       const temperature = document.getElementById('temperature').value;
               
                       const settings = { apiKey, model, maxTokens, temperature, error };
-              
+                      
+                      const vscode = acquireVsCodeApi();
                       vscode.postMessage({ command: 'saveSettings', ...settings });
                     });
                 });
