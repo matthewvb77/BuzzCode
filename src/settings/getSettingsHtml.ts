@@ -240,12 +240,28 @@ export function getSettingsHtml(
                     maxTokensSlider.addEventListener('input', () => updateSliderValue('maxTokens', 'maxTokensValue'));
                     temperatureSlider.addEventListener('input', () => updateSliderValue('temperature', 'temperatureValue'));
                   }
+
+                  // Prevent non-numeric input
+                  maxTokensValue.addEventListener('keydown', (event) => handleNumericInput(event));
+                  temperatureValue.addEventListener('keydown', (event) => handleNumericInput(event));
       
                   // Remove any existing event listeners
                   form.removeEventListener('submit', handleSubmit);
       
                   // Add the event listener for the save button
                   form.addEventListener('submit', handleSubmit);
+                }
+
+                function handleNumericInput(event) {
+                    // Allow backspace, delete, tab, escape, enter, and period
+                    if ([8, 9, 27, 13, 46, 190].includes(event.keyCode)) {
+                        return;
+                    }
+                
+                    // Ensure that it's a number and stop the keypress if not
+                    if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                        event.preventDefault();
+                    }
                 }
 
                 function handleSubmit(event) {
