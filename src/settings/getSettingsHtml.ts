@@ -42,9 +42,10 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                     <div class="tooltip">
-                      <label for="model">Model:</label>
+                      <img src="${tooltipPNG}" alt="Tooltip Icon"/>
                       <span class="tooltiptext">You can specify which model TestWise uses. Codex has been deprecated by OpenAI</span>
                     </div>
+                    <label for="model">Model:</label>
                     <select id="model" name="model">
                         <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
                         <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
@@ -55,9 +56,10 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <div class="tooltip">
-                          <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
-                          <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
+                        <img src="${tooltipPNG}" alt="Tooltip Icon"/>
+                        <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
                         </div>
+                        <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
                         <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
                     </div>
                     <span class="range-min">${maxTokensMin}</span>
@@ -69,9 +71,10 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="value-container-parent">
                         <div class="tooltip">
-                          <label class="value-container-child-title" for="temperature">Temperature:</label>
+                          <img src="${tooltipPNG}" alt="Tooltip Icon"/>
                           <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes.</span>
                         </div>
+                        <label class="value-container-child-title" for="temperature">Temperature:</label>
                         <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
 													temperature
 												).toFixed(temperaturePrecision)}</span>

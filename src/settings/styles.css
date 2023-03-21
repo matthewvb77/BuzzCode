@@ -98,8 +98,9 @@ input[type="range"]::-moz-range-track {
 .tooltip {
 	position: relative;
 	display: inline-block;
+	vertical-align: middle;
+	margin-right: 3px;
 }
-
 .tooltip .tooltiptext {
 	visibility: hidden;
 	width: 250px;
