@@ -1,9 +1,13 @@
+import { Uri } from "vscode";
+
 export function getSettingsHtml(
 	apiKey: string,
 	model: string,
 	maxTokens: number,
-	temperature: number
-) {
+	temperature: number,
+	tooltipPNG: Uri,
+	cspSource: string
+): string {
 	// slider configuration
 	const maxTokensMax = 1000;
 	const maxTokensMin = 1;
@@ -20,6 +24,8 @@ export function getSettingsHtml(
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource};">
+
             <style>
             body {
                 background-color: #1e1e1e;
@@ -122,25 +128,35 @@ export function getSettingsHtml(
               .tooltip {
                 position: relative;
                 display: inline-block;
-                border-bottom: 1px dotted black;
               }
               
               .tooltip .tooltiptext {
                 visibility: hidden;
-                width: 120px;
-                background-color: black;
-                color: #fff;
+                width: 250px;
+                background-color: #3c3c3c;
+                color: #c8c8c8;
                 text-align: center;
-                padding: 5px 0;
                 border-radius: 6px;
-              
-                /* Position the tooltip text - see examples below! */
+                padding: 5px;
                 position: absolute;
                 z-index: 1;
+                font-size: 14px;
+                border: 1px solid #569cd6;
               }
               
               .tooltip:hover .tooltiptext {
                 visibility: visible;
+              }
+
+              .tooltip .tooltiptext::after {
+                content: " ";
+                position: absolute;
+                top: 100%; /* At the bottom of the tooltip */
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: black transparent transparent transparent;
               }
               button {
                 background-color: #569cd6;
@@ -166,10 +182,11 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                   <div class="tooltip">
-                    <label for="apiKey">API Key:</label>
-                    <span class="tooltiptext">You can get your API key from <a href="https://openai.com/" target="_blank">OpenAI</a></span>
+                    <img src="${tooltipPNG}" alt="Tooltip Icon"/>
+                    <span class="tooltiptext">You can get your API key from <a href="https://platform.openai.com/account/api-keys" >OpenAI</a></span>
                   </div>
-                    <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                  <label for="apiKey">API Key:</label>
+                  <input type="text" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
 

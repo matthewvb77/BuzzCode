@@ -68,14 +68,30 @@ export function activate(context: vscode.ExtensionContext) {
 				"testwiseSettings",
 				"TestWise Settings",
 				vscode.ViewColumn.One,
-				{ enableScripts: true, retainContextWhenHidden: true }
+				{
+					enableScripts: true,
+					retainContextWhenHidden: true,
+					localResourceRoots: [
+						vscode.Uri.joinPath(context.extensionUri, "src", "assets"),
+					],
+				}
 			);
+
+			const tooltipPath = vscode.Uri.joinPath(
+				context.extensionUri,
+				"src",
+				"assets",
+				"tooltip.png"
+			);
+			const tooltipPNG = panel.webview.asWebviewUri(tooltipPath);
 
 			panel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
 				maxTokens,
-				temperature
+				temperature,
+				tooltipPNG,
+				panel.webview.cspSource
 			);
 
 			panel.webview.onDidReceiveMessage(
