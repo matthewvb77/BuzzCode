@@ -1,4 +1,12 @@
 import { Uri } from "vscode";
+import {
+	maxTokensMax,
+	maxTokensMin,
+	temperatureMin,
+	temperatureMax,
+	temperaturePrecision,
+	temperatureStep,
+} from "./configuration";
 
 export function getSettingsHtml(
 	apiKey: string,
@@ -10,14 +18,6 @@ export function getSettingsHtml(
 	scriptUri: Uri,
 	styleUri: Uri
 ): string {
-	// slider configuration
-	const maxTokensMax = 1000;
-	const maxTokensMin = 1;
-	const temperatureMax = 1;
-	const temperatureMin = 0;
-	const temperatureStep = 0.1;
-	const temperaturePrecision = 1;
-
 	return `
       <!DOCTYPE html>
       <html lang="en">
@@ -90,7 +90,9 @@ export function getSettingsHtml(
                 <button type="submit" id="saveSettings">Save</button>
             </form>
 
-            <script src="${scriptUri}"></script>
+            <script src="${scriptUri}">
+              window.model = "${model}";
+            </script>
         </body>
       </html>
     `;
