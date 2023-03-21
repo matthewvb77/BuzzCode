@@ -48,7 +48,9 @@ export function getSettingsHtml(
                     <label for="model">Model:</label>
                     <select id="model" name="model">
                         <option value="gpt-4" disabled="true">GPT-4 - Not yet supported</option>
-                        <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+                        <option value="gpt-3.5-turbo" ${
+													model === "gpt-3.5-turbo" ? "selected" : ""
+												}>GPT-3.5-Turbo</option>
                     </select>
                 </div>
                 <br>
@@ -90,9 +92,7 @@ export function getSettingsHtml(
                 <button type="submit" id="saveSettings">Save</button>
             </form>
 
-            <script src="${scriptUri}">
-              window.model = "${model}";
-            </script>
+            <script src="${scriptUri}"></script>
         </body>
       </html>
     `;

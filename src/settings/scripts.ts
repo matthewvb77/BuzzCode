@@ -78,11 +78,6 @@ import { vscode, apiKeyRegExp } from "./configuration";
 			);
 		}
 
-		// select the model that was saved
-		if (modelSelect) {
-			modelSelect.value = window.model;
-		}
-
 		// update the slider values
 		if (maxTokensSlider && temperatureSlider) {
 			maxTokensSlider.addEventListener("input", () =>
