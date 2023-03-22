@@ -1,6 +1,17 @@
-import { vscode, apiKeyRegExp } from "./configuration";
+import { apiKeyRegExp } from "./configuration";
 
 (function () {
+	let vscodeApi: any;
+
+	window.addEventListener("message", (event) => {
+		const message = event.data; // The json data that the extension sent
+		if (message.command === "vsCodeApi") {
+			vscodeApi = message.data;
+		}
+	});
+
+	window.postMessage({ command: "getVsCodeApi" }, "*");
+
 	function updateSliderValue(sliderId: string, displayId: string) {
 		const slider = document.getElementById(sliderId) as HTMLInputElement;
 		const display = document.getElementById(displayId) as HTMLInputElement;
@@ -10,14 +21,14 @@ import { vscode, apiKeyRegExp } from "./configuration";
 		}
 	}
 
-	function updateSliderValueFromInput(sliderId: string, displayId: string) {
-		const slider = document.getElementById(sliderId) as HTMLInputElement;
-		const display = document.getElementById(displayId) as HTMLInputElement;
+	// function updateSliderValueFromInput(sliderId: string, displayId: string) {
+	// 	const slider = document.getElementById(sliderId) as HTMLInputElement;
+	// 	const display = document.getElementById(displayId) as HTMLInputElement;
 
-		if (slider && display) {
-			slider.value = display.innerText;
-		}
-	}
+	// 	if (slider && display) {
+	// 		slider.value = display.innerText;
+	// 	}
+	// }
 
 	function handleEditableValueInput(
 		event: FocusEvent,
@@ -121,24 +132,24 @@ import { vscode, apiKeyRegExp } from "./configuration";
 	function handleSubmit(event: Event) {
 		event.preventDefault();
 
-		const apiKeyElement = document.getElementById("apiKey") as HTMLInputElement; // Cast to HTMLInputElement
+		const apiKeyElement = document.getElementById("apiKey") as HTMLInputElement;
 		if (!apiKeyElement) {
 			return; // Bail if apiKeyElement is null
 		}
 
 		const apiKey = apiKeyElement.value;
 
-		const modelElement = document.getElementById("model") as HTMLSelectElement; // Cast to HTMLSelectElement
+		const modelElement = document.getElementById("model") as HTMLSelectElement;
 		const model = modelElement ? modelElement.value : "";
 
 		const maxTokensElement = document.getElementById(
 			"maxTokensValue"
-		) as HTMLElement; // Cast to HTMLElement
+		) as HTMLInputElement;
 		const maxTokens = parseFloat(maxTokensElement.innerText);
 
 		const temperatureElement = document.getElementById(
 			"temperatureValue"
-		) as HTMLElement; // Cast to HTMLElement
+		) as HTMLInputElement;
 		const temperature = parseFloat(temperatureElement.innerText);
 
 		const apiKeyRegExpObj = new RegExp(apiKeyRegExp);
@@ -146,7 +157,7 @@ import { vscode, apiKeyRegExp } from "./configuration";
 
 		const settings = { apiKey, model, maxTokens, temperature, error };
 
-		vscode.postMessage({ command: "saveSettings", ...settings });
+		vscodeApi.postMessage({ command: "saveSettings", ...settings });
 	}
 
 	document.addEventListener("DOMContentLoaded", initializeEventListeners);

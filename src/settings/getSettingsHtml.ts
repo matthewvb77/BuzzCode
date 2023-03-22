@@ -18,13 +18,21 @@ export function getSettingsHtml(
 	scriptUri: Uri,
 	styleUri: Uri
 ): string {
+	function generateNonce() {
+		const array = new Uint8Array(32);
+		window.crypto.getRandomValues(array);
+		return btoa(String.fromCharCode.apply(null, Array.from(array)));
+	}
+
+	const nonce = generateNonce();
+
 	return `
       <!DOCTYPE html>
       <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; script-src ${cspSource}; style-src ${cspSource};">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; script-src ${cspSource} 'nonce-${nonce}'; style-src ${cspSource};">
             <link rel="stylesheet" type="text/css" href="${styleUri}">
         </head>
         <body>
@@ -91,8 +99,19 @@ export function getSettingsHtml(
 
                 <button type="submit" id="saveSettings">Save</button>
             </form>
-
             <script src="${scriptUri}"></script>
+
+            <script nonce="${nonce}">
+              const vscode = acquireVsCodeApi();
+
+              window.addEventListener('message', event => {
+                const message = event.data; // The json data that the extension sent
+                if (message.command === 'getVsCodeApi') {
+                  window.postMessage({ command: 'vsCodeApi', data: vscode }, '*');
+                }
+              });
+            </script>
+
         </body>
       </html>
     `;

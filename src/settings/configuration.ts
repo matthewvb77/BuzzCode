@@ -1,5 +1,3 @@
-export const vscode = acquireVsCodeApi();
-
 // api key validation
 export const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
 
