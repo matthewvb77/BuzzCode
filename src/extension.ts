@@ -90,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
 				context.extensionUri,
 				"src",
 				"settings",
-				"scripts.ts"
+				"scripts.js"
 			);
 			const scriptUri = panel.webview.asWebviewUri(scriptPath);
 
