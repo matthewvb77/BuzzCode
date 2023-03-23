@@ -21,14 +21,14 @@ import { apiKeyRegExp } from "./configuration";
 		}
 	}
 
-	// function updateSliderValueFromInput(sliderId: string, displayId: string) {
-	// 	const slider = document.getElementById(sliderId) as HTMLInputElement;
-	// 	const display = document.getElementById(displayId) as HTMLInputElement;
+	function updateSliderValueFromInput(sliderId: string, displayId: string) {
+		const slider = document.getElementById(sliderId) as HTMLInputElement;
+		const display = document.getElementById(displayId) as HTMLInputElement;
 
-	// 	if (slider && display) {
-	// 		slider.value = display.innerText;
-	// 	}
-	// }
+		if (slider && display) {
+			slider.value = display.innerText;
+		}
+	}
 
 	function handleEditableValueInput(
 		event: FocusEvent,
