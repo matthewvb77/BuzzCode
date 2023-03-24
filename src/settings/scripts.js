@@ -1,22 +1,6 @@
 (function () {
 	const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
 
-	// window.addEventListener("message", (event) => {
-	// 	const message = event.data; // The JSON data that the extension sent
-	// 	if (message.command === "vsCodeApi") {
-	// 		// wrong command? ???
-	// 		if (!vscodeApi) {
-	// 			vscodeApi = message.data;
-	// 		}
-	// 	} else {
-	// 		console.log("Unknown command: " + message.command);
-	// 	}
-	// });
-
-	// if (!vscodeApi) {
-	// 	window.postMessage({ command: "getVsCodeApi" }, "*");
-	// }
-
 	function updateSliderValue(sliderId, displayId) {
 		const slider = document.getElementById(sliderId);
 		const display = document.getElementById(displayId);
@@ -72,16 +56,6 @@
 			);
 		}
 
-		// update the slider values
-		if (maxTokensSlider && temperatureSlider) {
-			maxTokensSlider.addEventListener("input", () =>
-				updateSliderValue("maxTokens", "maxTokensValue")
-			);
-			temperatureSlider.addEventListener("input", () =>
-				updateSliderValue("temperature", "temperatureValue")
-			);
-		}
-
 		// Prevent non-numeric input
 		maxTokensValue.addEventListener("keydown", (event) =>
 			handleNumericInput(event)
@@ -90,10 +64,7 @@
 			handleNumericInput(event)
 		);
 
-		// Remove any existing event listeners
 		form.removeEventListener("submit", handleSubmit);
-
-		// Add the event listener for the save button
 		form.addEventListener("submit", handleSubmit);
 	}
 
