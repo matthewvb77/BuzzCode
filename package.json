@@ -22,8 +22,38 @@
 				"command": "testwise.codeForMe",
 				"category": "TestWise",
 				"title": "Code For Me"
+			},
+			{
+				"command": "testwise.settings",
+				"category": "TestWise",
+				"title": "Settings"
 			}
-		]
+		],
+		"configuration": {
+			"title": "TestWise",
+			"properties": {
+				"testwise.apiKey": {
+					"type": "string",
+					"default": "",
+					"description": "GitHub Copilot API key"
+				},
+				"testwise.model": {
+					"type": "string",
+					"default": "gpt-3.5-turbo",
+					"description": "Name of the OpenAI Model to use"
+				},
+				"testwise.maxTokens": {
+					"type": "number",
+					"default": 100,
+					"description": "Maximum number of tokens for the generated code"
+				},
+				"testwise.temperature": {
+					"type": "number",
+					"default": 0.2,
+					"description": "Temperature value for the generated code"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",

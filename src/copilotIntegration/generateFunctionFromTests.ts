@@ -1,59 +1,25 @@
 import * as vscode from "vscode";
-import * as dotenv from "dotenv";
 import { Configuration, OpenAIApi } from "openai";
-
-async function fetchFunctionFromOpenAI(input: string): Promise<string | null> {
-	try {
-		// --------------------- temp config ----------------------------------
-		dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
-		const configuration = new Configuration({
-			apiKey: process.env.OPENAI_API_KEY,
-		});
-		const openai = new OpenAIApi(configuration);
-		const modelName = "text-davinci-003";
-		const temperature = 0.2;
-		const maxTokens = 1000;
-		// ------------------- temp config (end) ---------------------------------
-		if (input) {
-			dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" }); // TODO: remove when 'settings' is implemented
-
-			const response = await openai.createCompletion({
-				model: modelName,
-				prompt: input,
-				temperature: temperature,
-				max_tokens: maxTokens,
-			});
-
-			if (response && response.status === 200) {
-				console.log(response); // TODO: remove (debugging)
-				return response.data.choices[0].text!; // TODO: ! is not safe
-			} else {
-				console.log(`error: ${response.statusText}`);
-				return null;
-			}
-		} else {
-			return null;
-		}
-	} catch (error) {
-		console.error(`Error fetching function from response:`, error);
-		return null;
-	}
-}
 
 export async function generateFunctionFromTests(
 	testCode: string
 ): Promise<string | null> {
-	// --------------------- temp config ----------------------------------
-	dotenv.config({ path: "C:\\Users\\vbmat\\Projects\\testwise\\.env" });
+	/* ----------------- Configuration --------------- */
+	const apiKey: string =
+		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
 	const configuration = new Configuration({
-		apiKey: process.env.OPENAI_API_KEY,
+		apiKey: apiKey,
 	});
 	const openai = new OpenAIApi(configuration);
-	const modelName = "text-davinci-003";
-	const temperature = 0.2;
-	const maxTokens = 1000;
-	// ------------------- temp config (end) ---------------------------------
-	if (!process.env.OPENAI_API_KEY) {
+	const model: string =
+		vscode.workspace.getConfiguration("testwise").get("model") ||
+		"text-davinci-003";
+	const temperature: number =
+		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
+	const maxTokens: number =
+		vscode.workspace.getConfiguration("testwise").get("maxTokens") || 100;
+
+	if (apiKey === "") {
 		vscode.window.showErrorMessage(
 			"Please set the API key in TestWise settings."
 		);
@@ -62,11 +28,27 @@ export async function generateFunctionFromTests(
 
 	const prompt = generatePrompt(testCode);
 
-	const generatedFunction = await fetchFunctionFromOpenAI(prompt);
-	return generatedFunction;
+	/* -------------- Query OpenAI ------------------ */
+	try {
+		const response = await openai.createCompletion({
+			model: model,
+			prompt: prompt,
+			temperature: temperature,
+			max_tokens: maxTokens,
+		});
+
+		if (response && response.status === 200 && response.data.choices[0].text) {
+			return response.data.choices[0].text;
+		} else {
+			console.log(`error: ${response.statusText}`);
+			return null;
+		}
+	} catch (error) {
+		console.error(`Error fetching function from response:`, error);
+		return null;
+	}
 }
 
 function generatePrompt(input: string) {
-	// TODO: replace with proper prompting file
 	return `Generate a function that passes the following test suite:\n\n${input}\n\nFunction:`;
 }
