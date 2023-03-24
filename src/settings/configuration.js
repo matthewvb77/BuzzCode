@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.temperaturePrecision = exports.temperatureStep = exports.temperatureMin = exports.temperatureMax = exports.maxTokensMin = exports.maxTokensMax = exports.apiKeyRegExp = void 0;
 // api key validation
 exports.apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";

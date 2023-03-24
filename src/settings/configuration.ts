@@ -1,6 +1,3 @@
-// api key validation
-export const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
-
 // slider configuration
 export const maxTokensMax = 1000;
 export const maxTokensMin = 1;

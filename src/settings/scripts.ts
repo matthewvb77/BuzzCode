@@ -1,12 +1,17 @@
-import { apiKeyRegExp } from "./configuration";
-
 (function () {
 	let vscodeApi: any;
 
+	const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
+
 	window.addEventListener("message", (event) => {
-		const message = event.data; // The json data that the extension sent
-		if (message.command === "vsCodeApi") {
+		const message = event.data; // The JSON data that the extension sent
+		if (message.command === "getVsCodeApi") {
 			vscodeApi = message.data;
+		} else if (message.command === "getNonce") {
+			const array = new Uint8Array(32);
+			window.crypto.getRandomValues(array);
+			const nonce = btoa(String.fromCharCode.apply(null, Array.from(array)));
+			window.postMessage({ command: "nonce", data: nonce }, "*");
 		}
 	});
 

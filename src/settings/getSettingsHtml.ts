@@ -16,16 +16,9 @@ export function getSettingsHtml(
 	cspSource: string,
 	tooltipPNG: Uri,
 	scriptUri: Uri,
-	styleUri: Uri
+	styleUri: Uri,
+	nonce: string
 ): string {
-	function generateNonce() {
-		const array = new Uint8Array(32);
-		window.crypto.getRandomValues(array);
-		return btoa(String.fromCharCode.apply(null, Array.from(array)));
-	}
-
-	const nonce = generateNonce();
-
 	return `
       <!DOCTYPE html>
       <html lang="en">
@@ -105,9 +98,11 @@ export function getSettingsHtml(
               const vscode = acquireVsCodeApi();
 
               window.addEventListener('message', event => {
-                const message = event.data; // The json data that the extension sent
+                const message = event.data; // The JSON data that the extension sent
                 if (message.command === 'getVsCodeApi') {
                   window.postMessage({ command: 'vsCodeApi', data: vscode }, '*');
+                } else {
+                  console.log('Unknown message received from extension:', message);
                 }
               });
             </script>

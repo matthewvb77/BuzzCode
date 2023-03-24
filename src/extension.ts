@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import * as crypto from "crypto";
 import { generateFunctionFromTests } from "./copilotIntegration/generateFunctionFromTests";
 import { getSettingsHtml } from "./settings/getSettingsHtml";
 
@@ -102,6 +103,13 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			const styleUri = panel.webview.asWebviewUri(stylePath);
 
+			function generateNonce(): string {
+				const nonceBuffer = new Uint8Array(16);
+				crypto.randomFillSync(nonceBuffer);
+				return Buffer.from(nonceBuffer.buffer).toString("base64");
+			}
+			const nonce = generateNonce();
+
 			panel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
@@ -110,7 +118,8 @@ export function activate(context: vscode.ExtensionContext) {
 				panel.webview.cspSource,
 				tooltipUri,
 				scriptUri,
-				styleUri
+				styleUri,
+				nonce
 			);
 
 			panel.webview.onDidReceiveMessage(
