@@ -92,21 +92,10 @@ export function getSettingsHtml(
 
                 <button type="submit" id="saveSettings">Save</button>
             </form>
-            <script src="${scriptUri}"></script>
-
             <script nonce="${nonce}">
-              const vscode = acquireVsCodeApi();
-
-              window.addEventListener('message', event => {
-                const message = event.data; // The JSON data that the extension sent
-                if (message.command === 'getVsCodeApi') {
-                  window.postMessage({ command: 'vsCodeApi', data: vscode }, '*');
-                } else {
-                  console.log('Unknown message received from extension:', message);
-                }
-              });
+                var vscode = acquireVsCodeApi();
             </script>
-
+            <script src="${scriptUri}"></script>
         </body>
       </html>
     `;

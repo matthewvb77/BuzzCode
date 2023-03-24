@@ -1,21 +1,21 @@
 (function () {
-	let vscodeApi;
 	const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
-	const submitButton = document.getElementById("saveSettings");
 
-	window.addEventListener("message", (event) => {
-		const message = event.data; // The JSON data that the extension sent
-		if (message.command === "getVsCodeApi") {
-			vscodeApi = message.data;
-			if (submitButton) {
-				submitButton.disabled = false;
-			}
-		} else {
-			console.log("Unknown message received: ", message);
-		}
-	});
+	// window.addEventListener("message", (event) => {
+	// 	const message = event.data; // The JSON data that the extension sent
+	// 	if (message.command === "vsCodeApi") {
+	// 		// wrong command? ???
+	// 		if (!vscodeApi) {
+	// 			vscodeApi = message.data;
+	// 		}
+	// 	} else {
+	// 		console.log("Unknown command: " + message.command);
+	// 	}
+	// });
 
-	window.postMessage({ command: "getVsCodeApi" }, "*");
+	// if (!vscodeApi) {
+	// 	window.postMessage({ command: "getVsCodeApi" }, "*");
+	// }
 
 	function updateSliderValue(sliderId, displayId) {
 		const slider = document.getElementById(sliderId);
@@ -23,15 +23,6 @@
 
 		if (slider && display) {
 			display.innerText = slider.value;
-		}
-	}
-
-	function updateSliderValueFromInput(sliderId, displayId) {
-		const slider = document.getElementById(sliderId);
-		const display = document.getElementById(displayId);
-
-		if (slider && display) {
-			slider.value = display.innerText;
 		}
 	}
 
@@ -58,10 +49,6 @@
 		const temperatureSlider = document.getElementById("temperature");
 		const maxTokensValue = document.getElementById("maxTokensValue");
 		const temperatureValue = document.getElementById("temperatureValue");
-
-		if (submitButton) {
-			submitButton.disabled = true;
-		}
 
 		// update the slider values and handle editable value container
 		if (
@@ -149,7 +136,7 @@
 
 		const settings = { apiKey, model, maxTokens, temperature, error };
 
-		vscodeApi.postMessage({ command: "saveSettings", ...settings });
+		vscode.postMessage({ command: "saveSettings", ...settings });
 	}
 
 	document.addEventListener("DOMContentLoaded", initializeEventListeners);
