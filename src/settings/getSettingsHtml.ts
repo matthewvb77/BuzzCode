@@ -44,7 +44,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="tooltip">
                       <img src="${tooltipPNG}" alt="Tooltip Icon"/>
-                      <span class="tooltiptext">You can specify which model TestWise uses. Codex has been deprecated by OpenAI</span>
+                      <span class="tooltiptext">Which OpenAI model TestWise uses</span>
                     </div>
                     <label for="model">Model:</label>
                     <select id="model" name="model">
@@ -60,7 +60,7 @@ export function getSettingsHtml(
                     <div class="value-container-parent">
                         <div class="tooltip">
                         <img src="${tooltipPNG}" alt="Tooltip Icon"/>
-                        <span class="tooltiptext">You can specify the maximum number of tokens that TestWise will generate. One token is 3-4 characters. </span>
+                        <span class="tooltiptext">Maximum number of tokens in OpenAI query (includes prompt and response). One token is 3-4 characters</span>
                         </div>
                         <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
                         <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
@@ -75,7 +75,7 @@ export function getSettingsHtml(
                     <div class="value-container-parent">
                         <div class="tooltip">
                           <img src="${tooltipPNG}" alt="Tooltip Icon"/>
-                          <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes.</span>
+                          <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes</span>
                         </div>
                         <label class="value-container-child-title" for="temperature">Temperature:</label>
                         <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
