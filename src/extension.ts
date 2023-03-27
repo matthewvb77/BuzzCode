@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import * as crypto from "crypto";
 import { generateFunctionFromTests } from "./copilotIntegration/generateFunctionFromTests";
 import { getSettingsHtml } from "./settings/getSettingsHtml";
+import { SidebarDataProvider } from "./sidebarDataProvider";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -28,33 +29,55 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
+	const sidebarDataProvider = new SidebarDataProvider();
+	const sidebar = vscode.window.createTreeView("testwiseSidebar", {
+		treeDataProvider: sidebarDataProvider,
+	});
+	context.subscriptions.push(sidebar);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("testwise.showInputBox", async () => {
+			const prompt = await vscode.window.showInputBox({
+				prompt: "Enter a prompt to generate code",
+				placeHolder: "e.g. Create a function that reverses a string",
+			});
+
+			if (prompt) {
+				vscode.commands.executeCommand("testwise.codeForMe", prompt);
+			}
+		})
+	);
+
 	// function that pushes a new command where you can query openai api
 	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.codeForMe", async () => {
-			// Get user's active vscode window
-			const editor = vscode.window.activeTextEditor;
-			if (!editor) {
-				vscode.window.showErrorMessage("No active text editor found.");
-				return;
+		vscode.commands.registerCommand(
+			"testwise.codeForMe",
+			async (prompt: string) => {
+				// Get user's active vscode window
+				const editor = vscode.window.activeTextEditor;
+				if (!editor) {
+					vscode.window.showErrorMessage("No active text editor found.");
+					return;
+				}
+
+				// Get function from test suite
+				const testSuites = editor.document.getText();
+				const generatedFunction = await generateFunctionFromTests(testSuites);
+
+				if (!generatedFunction) {
+					vscode.window.showErrorMessage(
+						"Failed to generate a function from the test suites."
+					);
+					return;
+				}
+
+				// TODO: spits the function into the cursor, do this differently for ux
+				editor.edit((editBuilder) => {
+					const position = editor.selection.active;
+					editBuilder.insert(position, generatedFunction);
+				});
 			}
-
-			// Get function from test suite
-			const testSuites = editor.document.getText();
-			const generatedFunction = await generateFunctionFromTests(testSuites);
-
-			if (!generatedFunction) {
-				vscode.window.showErrorMessage(
-					"Failed to generate a function from the test suites."
-				);
-				return;
-			}
-
-			// TODO: spits the function into the cursor, do this differently for ux
-			editor.edit((editBuilder) => {
-				const position = editor.selection.active;
-				editBuilder.insert(position, generatedFunction);
-			});
-		})
+		)
 	);
 
 	context.subscriptions.push(

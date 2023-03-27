@@ -27,6 +27,11 @@
 				"command": "testwise.settings",
 				"category": "TestWise",
 				"title": "Settings"
+			},
+			{
+				"command": "testwise.showInputBox",
+				"category": "TestWise",
+				"title": "Show Input Box"
 			}
 		],
 		"configuration": {
@@ -53,6 +58,14 @@
 					"description": "Temperature value for the generated code"
 				}
 			}
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "testwiseSidebar",
+					"name": "TestWise"
+				}
+			]
 		}
 	},
 	"scripts": {
