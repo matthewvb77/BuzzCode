@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView: testwise"
+		"onView:testwise"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
