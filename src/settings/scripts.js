@@ -58,19 +58,24 @@
 
 		// Prevent non-numeric input
 		maxTokensValue.addEventListener("keydown", (event) =>
-			handleNumericInput(event)
+			handleNumericInput(event, "maxTokens", "maxTokensValue")
 		);
 		temperatureValue.addEventListener("keydown", (event) =>
-			handleNumericInput(event)
+			handleNumericInput(event, "temperature", "temperatureValue")
 		);
 
 		form.removeEventListener("submit", handleSubmit);
 		form.addEventListener("submit", handleSubmit);
 	}
 
-	function handleNumericInput(event) {
-		// Allow backspace, delete, tab, escape, enter, and period
-		if ([8, 9, 27, 13, 46, 190].includes(event.keyCode)) {
+	function handleNumericInput(event, sliderId, displayId) {
+		// Allow backspace, delete, tab, escape, enter, period, left arrow, and right arrow
+		if ([8, 9, 27, 13, 46, 190, 37, 39].includes(event.keyCode)) {
+			// Update the slider value when the enter key is pressed
+			if (event.keyCode === 13) {
+				event.preventDefault();
+				handleEditableValueInput(event, sliderId, displayId);
+			}
 			return;
 		}
 
