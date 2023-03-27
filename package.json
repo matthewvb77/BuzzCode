@@ -40,7 +40,7 @@
 			{
 				"id": "testwise",
 				"title": "TestWise",
-				"icon": "resources/icons/testwise-icon.svg"
+				"icon": "resources/testwise-icon.png"
 			}
 		],
 		"views": {

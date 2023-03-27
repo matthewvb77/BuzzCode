@@ -96,7 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 					enableScripts: true,
 					retainContextWhenHidden: true,
 					localResourceRoots: [
-						vscode.Uri.joinPath(context.extensionUri, "src", "assets"),
+						vscode.Uri.joinPath(context.extensionUri, "src", "resources"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "settings"),
 					],
 				}
@@ -105,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const tooltipPath = vscode.Uri.joinPath(
 				context.extensionUri,
 				"src",
-				"assets",
+				"resources",
 				"tooltip.png"
 			);
 			const tooltipUri = panel.webview.asWebviewUri(tooltipPath);
