@@ -19,8 +19,12 @@ export class SidebarDataProvider
 		return element;
 	}
 
-	getChildren(element?: vscode.TreeItem): Thenable<vscode.TreeItem[]> {
-		return Promise.resolve([]);
+	getChildren(element?: ChatboxTreeItem): Thenable<ChatboxTreeItem[]> {
+		if (element) {
+			return Promise.resolve([]);
+		}
+		const chatbox = this.createChatbox();
+		return Promise.resolve([chatbox]);
 	}
 
 	private createChatbox(): vscode.TreeItem {

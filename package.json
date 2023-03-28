@@ -48,12 +48,8 @@
 			"testwise": [
 				{
 					"id": "testwise-sidebar",
-					"name": ""
-				},
-				{
-					"id": "testwise-chatbox",
-					"name": "TestWise Chatbox",
-					"when": "view == testwise-sidebar"
+					"name": "",
+					"icon": "resources/testwise_icon.png"
 				}
 			]
 		},
