@@ -6,6 +6,8 @@ import { generateFunctionFromTests } from "./copilotIntegration/generateFunction
 import { getSettingsHtml } from "./settings/getSettingsHtml";
 import { SidebarDataProvider } from "./sidebarDataProvider";
 
+let settingsPanel: vscode.WebviewPanel | undefined;
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -82,13 +84,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("testwise.settings", () => {
+			if (settingsPanel) {
+				settingsPanel.reveal();
+				return;
+			}
+
 			const config = vscode.workspace.getConfiguration("testwise");
 			const apiKey = config.get<string>("apiKey") || "";
 			const maxTokens = config.get<number>("maxTokens") || 100;
 			const temperature = config.get<number>("temperature") || 0.2;
 			const model = config.get<string>("model") || "gpt-3.5-turbo";
 
-			const panel = vscode.window.createWebviewPanel(
+			settingsPanel = vscode.window.createWebviewPanel(
 				"testwiseSettings",
 				"TestWise Settings",
 				vscode.ViewColumn.One,
@@ -108,7 +115,7 @@ export function activate(context: vscode.ExtensionContext) {
 				"resources",
 				"tooltip.png"
 			);
-			const tooltipUri = panel.webview.asWebviewUri(tooltipPath);
+			const tooltipUri = settingsPanel.webview.asWebviewUri(tooltipPath);
 
 			const scriptPath = vscode.Uri.joinPath(
 				context.extensionUri,
@@ -116,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 				"settings",
 				"scripts.js"
 			);
-			const scriptUri = panel.webview.asWebviewUri(scriptPath);
+			const scriptUri = settingsPanel.webview.asWebviewUri(scriptPath);
 
 			const stylePath = vscode.Uri.joinPath(
 				context.extensionUri,
@@ -124,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
 				"settings",
 				"styles.css"
 			);
-			const styleUri = panel.webview.asWebviewUri(stylePath);
+			const styleUri = settingsPanel.webview.asWebviewUri(stylePath);
 
 			function generateNonce(): string {
 				const nonceBuffer = new Uint8Array(16);
@@ -133,19 +140,19 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			const nonce = generateNonce();
 
-			panel.webview.html = getSettingsHtml(
+			settingsPanel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
 				maxTokens,
 				temperature,
-				panel.webview.cspSource,
+				settingsPanel.webview.cspSource,
 				tooltipUri,
 				scriptUri,
 				styleUri,
 				nonce
 			);
 
-			panel.webview.onDidReceiveMessage(
+			settingsPanel.webview.onDidReceiveMessage(
 				async (message) => {
 					console.log("Received message from webview:", message);
 					switch (message.command) {
@@ -186,11 +193,9 @@ export function activate(context: vscode.ExtensionContext) {
 												vscode.ConfigurationTarget.Global
 											),
 									]);
-
 									vscode.window.showInformationMessage(
 										"TestWise settings saved."
 									);
-									// panel.dispose();
 								}
 							} catch (error) {
 								vscode.window.showErrorMessage(
@@ -202,6 +207,14 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 				},
 				undefined,
+				context.subscriptions
+			);
+
+			settingsPanel.onDidDispose(
+				() => {
+					settingsPanel = undefined;
+				},
+				null,
 				context.subscriptions
 			);
 		})
