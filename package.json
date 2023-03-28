@@ -29,10 +29,7 @@
 				"command": "testwise.settings",
 				"category": "TestWise",
 				"title": "Settings",
-				"icon": {
-					"light": "src/resources/settings-light.svg",
-					"dark": "src/resources/settings-dark.svg"
-				}
+				"icon": "$(settings-gear)"
 			},
 			{
 				"command": "testwise.showInputBox",
