@@ -41,7 +41,7 @@
 				{
 					"id": "testwise",
 					"title": "TestWise",
-					"icon": "resources/testwise-icon.png"
+					"icon": "src/resources/sidebar-icon.svg"
 				}
 			]
 		},
