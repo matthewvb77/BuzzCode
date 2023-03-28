@@ -49,7 +49,16 @@
 			"testwise": [
 				{
 					"id": "testwise-sidebar",
-					"name": "Sidebar"
+					"name": ""
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "testwise.settings",
+					"when": "view == testwise-sidebar",
+					"group": "navigation"
 				}
 			]
 		},
