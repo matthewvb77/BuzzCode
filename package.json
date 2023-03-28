@@ -28,7 +28,11 @@
 			{
 				"command": "testwise.settings",
 				"category": "TestWise",
-				"title": "Settings"
+				"title": "Settings",
+				"icon": {
+					"light": "src/resources/settings-light.svg",
+					"dark": "src/resources/settings-dark.svg"
+				}
 			},
 			{
 				"command": "testwise.showInputBox",
