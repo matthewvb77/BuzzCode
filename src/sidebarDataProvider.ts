@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { ChatboxTreeItem } from "./chatboxTreeItem";
 
 export class SidebarDataProvider
 	implements vscode.TreeDataProvider<vscode.TreeItem>
@@ -19,19 +20,12 @@ export class SidebarDataProvider
 	}
 
 	getChildren(element?: vscode.TreeItem): Thenable<vscode.TreeItem[]> {
-		return Promise.resolve([this.createForm()]);
+		return Promise.resolve([]);
 	}
 
-	private createForm(): vscode.TreeItem {
-		const formItem = new vscode.TreeItem(
-			"Enter a prompt and press 'Generate Code'",
-			vscode.TreeItemCollapsibleState.None
-		);
-		formItem.tooltip = "Click here to generate code from a prompt";
-		formItem.command = {
-			command: "testwise.showInputBox",
-			title: "Generate Code",
-		};
-		return formItem;
+	private createChatbox(): vscode.TreeItem {
+		const chatboxItem = new ChatboxTreeItem("TestWise Chatbox");
+		chatboxItem.tooltip = "Enter your prompt here to generate code";
+		return chatboxItem;
 	}
 }

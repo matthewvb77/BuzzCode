@@ -9,9 +9,7 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [
-		"onView:testwise"
-	],
+	"activationEvents": [],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
@@ -51,6 +49,11 @@
 				{
 					"id": "testwise-sidebar",
 					"name": ""
+				},
+				{
+					"id": "testwise-chatbox",
+					"name": "TestWise Chatbox",
+					"when": "view == testwise-sidebar"
 				}
 			]
 		},
