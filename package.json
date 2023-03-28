@@ -26,9 +26,42 @@
 			{
 				"command": "testwise.settings",
 				"category": "TestWise",
-				"title": "Settings"
+				"title": "Settings",
+				"icon": "$(settings-gear)"
+			},
+			{
+				"command": "testwise.showInputBox",
+				"category": "TestWise",
+				"title": "Show Input Box"
 			}
 		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "testwise",
+					"title": "TestWise",
+					"icon": "src/resources/sidebar-icon.svg"
+				}
+			]
+		},
+		"views": {
+			"testwise": [
+				{
+					"id": "testwise-sidebar",
+					"name": "",
+					"icon": "resources/testwise_icon.png"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "testwise.settings",
+					"when": "view == testwise-sidebar",
+					"group": "navigation"
+				}
+			]
+		},
 		"configuration": {
 			"title": "TestWise",
 			"properties": {
