@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 
 	const sidebarDataProvider = new SidebarDataProvider();
-	const sidebar = vscode.window.createTreeView("testwiseSidebar", {
+	const sidebar = vscode.window.createTreeView("testwise-sidebar", {
 		treeDataProvider: sidebarDataProvider,
 	});
 	context.subscriptions.push(sidebar);

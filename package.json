@@ -36,18 +36,20 @@
 				"title": "Show Input Box"
 			}
 		],
-		"viewContainers": [
-			{
-				"id": "testwise",
-				"title": "TestWise",
-				"icon": "resources/testwise-icon.png"
-			}
-		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "testwise",
+					"title": "TestWise",
+					"icon": "resources/testwise-icon.png"
+				}
+			]
+		},
 		"views": {
 			"testwise": [
 				{
 					"id": "testwise-sidebar",
-					"name": "TestWise Sidebar"
+					"name": "Sidebar"
 				}
 			]
 		},
