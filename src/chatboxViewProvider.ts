@@ -1,30 +1,27 @@
 import * as vscode from "vscode";
 
-export class ChatboxViewProvider implements vscode.WebviewViewProvider {
-	private _view?: vscode.WebviewView;
+export class ChatboxViewProvider {
+	private _view?: vscode.Webview;
 	private _context: vscode.ExtensionContext;
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
-		context: vscode.ExtensionContext
+		context: vscode.ExtensionContext,
+		private webview?: vscode.Webview
 	) {
 		this._context = context;
 	}
 
-	public resolveWebviewView(
-		webviewView: vscode.WebviewView,
-		context: vscode.WebviewViewResolveContext,
-		_token: vscode.CancellationToken
-	) {
-		this._view = webviewView;
+	public resolveWebviewView(webview: vscode.Webview) {
+		this._view = webview;
 
-		webviewView.webview.options = {
+		webview.options = {
 			enableScripts: true,
 			localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "src")],
 		};
 
 		// Set the HTML for the chatbox here
-		webviewView.webview.html = `
+		webview.html = `
             <!DOCTYPE html>
             <html lang="en">
               <head>
@@ -46,7 +43,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
             </html>
         `;
 
-		webviewView.webview.onDidReceiveMessage(
+		webview.onDidReceiveMessage(
 			async (message) => {
 				switch (message.command) {
 					case "submitPrompt":

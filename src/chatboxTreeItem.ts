@@ -10,3 +10,14 @@ export class ChatboxTreeItem extends vscode.TreeItem {
 
 	// You can add methods and properties specific to the chatbox item here
 }
+
+export class StartChatButtonTreeItem extends vscode.TreeItem {
+	constructor(label: string) {
+		super(label, vscode.TreeItemCollapsibleState.None);
+		this.contextValue = "startChatButtonTreeItem";
+		this.command = {
+			command: "testwise.openChatbox",
+			title: "Start Chat",
+		};
+	}
+}

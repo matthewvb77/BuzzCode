@@ -45,10 +45,23 @@ export function activate(context: vscode.ExtensionContext) {
 		context
 	);
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(
-			"testwise-chatbox",
-			chatboxProvider
-		)
+		vscode.commands.registerCommand("testwise.openChatbox", () => {
+			const panel = vscode.window.createWebviewPanel(
+				"testwise-chatbox",
+				"TestWise Chatbox",
+				vscode.ViewColumn.Active,
+				{
+					enableScripts: true,
+				}
+			);
+
+			const chatboxProvider = new ChatboxViewProvider(
+				context.extensionUri,
+				context,
+				panel.webview
+			);
+			chatboxProvider.resolveWebviewView(panel.webview);
+		})
 	);
 
 	// chatbox panel end -------------------------------------------------------------------------------------------------------------

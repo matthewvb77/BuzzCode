@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ChatboxTreeItem } from "./chatboxTreeItem";
+import { ChatboxTreeItem, StartChatButtonTreeItem } from "./chatboxTreeItem";
 
 export class SidebarDataProvider
 	implements vscode.TreeDataProvider<vscode.TreeItem>
@@ -23,8 +23,8 @@ export class SidebarDataProvider
 		if (element) {
 			return Promise.resolve([]);
 		}
-		const chatbox = this.createChatbox();
-		return Promise.resolve([chatbox]);
+		const startChatButton = new StartChatButtonTreeItem("Start Chat");
+		return Promise.resolve([startChatButton]);
 	}
 
 	private createChatbox(): vscode.TreeItem {
