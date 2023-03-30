@@ -149,13 +149,6 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			const styleUri = settingsPanel.webview.asWebviewUri(stylePath);
 
-			function generateNonce(): string {
-				const nonceBuffer = new Uint8Array(16);
-				crypto.randomFillSync(nonceBuffer);
-				return Buffer.from(nonceBuffer.buffer).toString("base64");
-			}
-			const nonce = generateNonce();
-
 			settingsPanel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
@@ -164,8 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
 				settingsPanel.webview.cspSource,
 				tooltipUri,
 				scriptUri,
-				styleUri,
-				nonce
+				styleUri
 			);
 
 			settingsPanel.webview.onDidReceiveMessage(

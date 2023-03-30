@@ -7,6 +7,7 @@ import {
 	temperaturePrecision,
 	temperatureStep,
 } from "./configuration";
+import { getNonce } from "../getNonce";
 
 export function getSettingsHtml(
 	apiKey: string,
@@ -16,9 +17,9 @@ export function getSettingsHtml(
 	cspSource: string,
 	tooltipPNG: Uri,
 	scriptUri: Uri,
-	styleUri: Uri,
-	nonce: string
+	styleUri: Uri
 ): string {
+	const nonce = getNonce();
 	return `
       <!DOCTYPE html>
       <html lang="en">
