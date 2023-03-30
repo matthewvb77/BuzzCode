@@ -38,18 +38,20 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "testwise",
+					"id": "testwise-sidebar-view",
 					"title": "TestWise",
-					"icon": "src/resources/sidebar-icon.svg"
+					"icon": "resources/sidebar-icon.svg"
 				}
 			]
 		},
 		"views": {
-			"testwise": [
+			"testwise-sidebar-view": [
 				{
+					"type": "webview",
 					"id": "testwise-sidebar",
-					"name": "",
-					"icon": "resources/testwise_icon.png"
+					"name": "TestWise",
+					"icon": "resources/testwise_icon.png",
+					"contextualTitle": "TestWise"
 				}
 			]
 		},
