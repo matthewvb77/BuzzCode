@@ -6,10 +6,7 @@ export async function queryChatGPT(prompt: string): Promise<string | null> {
 	const apiKey: string =
 		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
 
-	const dotenv = require("dotenv");
-	dotenv.config();
 	const configuration = new Configuration({
-		organization: process.env.OPENAI_ORG,
 		apiKey: apiKey,
 	});
 	const openai = new OpenAIApi(configuration);
@@ -30,15 +27,19 @@ export async function queryChatGPT(prompt: string): Promise<string | null> {
 
 	/* -------------- Query OpenAI ------------------ */
 	try {
-		const response = await openai.createCompletion({
+		const response = await openai.createChatCompletion({
 			model: model,
-			prompt: prompt,
+			messages: [{ role: "user", content: prompt }],
 			temperature: temperature,
 			max_tokens: maxTokens,
 		});
 
-		if (response && response.status === 200 && response.data.choices[0].text) {
-			return response.data.choices[0].text;
+		if (
+			response &&
+			response.status === 200 &&
+			response.data.choices[0].message
+		) {
+			return response.data.choices[0].message.content;
 		} else {
 			console.log(`error: ${response.statusText}`);
 			return null;
