@@ -29,13 +29,14 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	const maxIterations = 5;
 	let iterations = 0;
 
-	while (!testsPassed || iterations < maxIterations) {
-		const testResult = await runTests();
+	while (!testsPassed && iterations < maxIterations) {
+		const testOutput = await runTests();
 
-		if (testResult) {
+		if (!testOutput.toString().includes("FAIL")) {
 			testsPassed = true;
 		} else {
-			const failureMessage = ""; // TODO: Retrieve the failure message or error message from the test output
+			// TODO: parse test output to get failure message (for token optimization)
+			const failureMessage = testOutput.toString();
 			await alterFunction(failureMessage);
 		}
 		iterations++;
