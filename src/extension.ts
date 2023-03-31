@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { generateFunctionFromTests } from "./openAI/generateFunctionFromTests";
 import { getSettingsHtml } from "./settings/getSettingsHtml";
 import { SidebarProvider } from "./sidebar/SidebarProvider";
 

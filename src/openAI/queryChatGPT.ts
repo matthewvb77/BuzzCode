@@ -1,10 +1,8 @@
 import * as vscode from "vscode";
 import { Configuration, OpenAIApi } from "openai";
 
-export async function generateFunctionFromTests(
-	testCode: string
-): Promise<string | null> {
-	/* ----------------- Configuration --------------- */
+export async function queryChatGPT(prompt: string): Promise<string | null> {
+	/* ----------------- Get Configuration --------------- */
 	const apiKey: string =
 		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
 	const configuration = new Configuration({
@@ -26,8 +24,6 @@ export async function generateFunctionFromTests(
 		return null;
 	}
 
-	const prompt = generatePrompt(testCode);
-
 	/* -------------- Query OpenAI ------------------ */
 	try {
 		const response = await openai.createCompletion({
@@ -47,8 +43,4 @@ export async function generateFunctionFromTests(
 		console.error(`Error fetching function from response:`, error);
 		return null;
 	}
-}
-
-function generatePrompt(input: string) {
-	return `Generate a function that passes the following test suite:\n\n${input}\n\nFunction:`;
 }
