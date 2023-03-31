@@ -19,6 +19,5 @@ export async function generateFile(contents: string | null, fileName: string) {
 
 	const newFileUri = vscode.Uri.joinPath(workspaceFolder, fileName);
 
-	const fileContent = "This is the content of the new file.";
-	await vscode.workspace.fs.writeFile(newFileUri, Buffer.from(fileContent));
+	await vscode.workspace.fs.writeFile(newFileUri, Buffer.from(contents));
 }

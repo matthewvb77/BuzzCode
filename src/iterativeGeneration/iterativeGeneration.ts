@@ -22,13 +22,13 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	}
 
 	// TODO: get file name from the user
-	generateFile(functionFileContents, "function.py");
+	await generateFile(functionFileContents, "function.py");
 
 	/* ----------------------------- Generate test file ------------------------------- */
-	const testPrompt = `Generate test file contents for function:\n\n${functionFileContents}\n\nTest File Contents:`;
+	const testPrompt = `Generate a runnable test suite for the following function and include imports:\n\n${functionFileContents}\n\nTest Suite:`;
 	const testFileContents = await queryChatGPT(testPrompt);
 
-	await generateFile(testFileContents, "function.test.py");
+	await generateFile(testFileContents, "function_test.py");
 
 	/* -------- iterate: test -> alter function if needed -> repeat ------- */
 	let testsPassed = false;
@@ -62,7 +62,7 @@ export async function iterativeGeneration(input: string, inputType: string) {
 
 async function runTests() {
 	const shellExecution = new vscode.ShellExecution(
-		"python -m unittest function.test"
+		"python -m unittest function_test"
 	);
 
 	const task = new vscode.Task(
