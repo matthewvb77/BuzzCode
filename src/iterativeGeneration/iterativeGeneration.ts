@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { queryChatGPT } from "../openAI/queryChatGPT";
 import { generateFile } from "./generateFile";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
+import { runTests } from "../helpers/runTests";
 
 export async function iterativeGeneration(input: string, inputType: string) {
 	if (!hasValidAPIKey()) {
@@ -61,7 +62,7 @@ export async function iterativeGeneration(input: string, inputType: string) {
 		} else {
 			// TODO: parse test output to get failure message (for token optimization)
 			const failureMessage = testOutput.toString();
-			await alterFunction(failureMessage);
+			await alterFunction(functionFileName, failureMessage);
 		}
 		iterations++;
 	}
@@ -74,29 +75,15 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	}
 }
 
-async function runTests(testFileName: string | null) {
-	if (!testFileName) {
-		throw new Error("No test file name provided.");
+async function alterFunction(fileName: string | null, failureMessage: string) {
+	if (!fileName) {
+		throw new Error("No file name provided.");
 	}
-	const testName = testFileName.split(".")[0];
-	const shellExecution = new vscode.ShellExecution(
-		"python -m unittest " + testName
-	);
-
-	const task = new vscode.Task(
-		{ type: "test" },
-		vscode.TaskScope.Workspace,
-		"Run tests",
-		"python",
-		shellExecution
-	);
-
-	const result = await vscode.tasks.executeTask(task);
-	return result;
-}
-
-async function alterFunction(failureMessage: string) {
-	const functionFilePath = vscode.Uri.file("function.py");
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		throw new Error("No workspace folder found.");
+	}
+	const functionFilePath = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
 
 	const functionFileContents = (
 		await vscode.workspace.fs.readFile(functionFilePath)
@@ -106,6 +93,7 @@ async function alterFunction(failureMessage: string) {
 	const newFunctionFileContents = await queryChatGPT(prompt);
 
 	if (newFunctionFileContents) {
+		vscode.window.showInformationMessage("Altering function...");
 		const textEncoder = new TextEncoder();
 		await vscode.workspace.fs.writeFile(
 			functionFilePath,
