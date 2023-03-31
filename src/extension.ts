@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import * as crypto from "crypto";
 import { generateFunctionFromTests } from "./copilotIntegration/generateFunctionFromTests";
 import { getSettingsHtml } from "./settings/getSettingsHtml";
 import { SidebarProvider } from "./sidebar/SidebarProvider";
@@ -78,6 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
 					localResourceRoots: [
 						vscode.Uri.joinPath(context.extensionUri, "resources"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "settings"),
+						vscode.Uri.joinPath(context.extensionUri, "src", "sidebar"),
 					],
 				}
 			);
@@ -89,19 +89,20 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			const tooltipUri = settingsPanel.webview.asWebviewUri(tooltipPath);
 
-			const scriptPath = vscode.Uri.joinPath(
+			const settingsScriptPath = vscode.Uri.joinPath(
 				context.extensionUri,
 				"src",
 				"settings",
-				"scripts.js"
+				"settings.js"
 			);
-			const scriptUri = settingsPanel.webview.asWebviewUri(scriptPath);
+			const settingsScriptUri =
+				settingsPanel.webview.asWebviewUri(settingsScriptPath);
 
 			const stylePath = vscode.Uri.joinPath(
 				context.extensionUri,
 				"src",
 				"settings",
-				"styles.css"
+				"settings.css"
 			);
 			const styleUri = settingsPanel.webview.asWebviewUri(stylePath);
 
@@ -112,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
 				temperature,
 				settingsPanel.webview.cspSource,
 				tooltipUri,
-				scriptUri,
+				settingsScriptUri,
 				styleUri
 			);
 

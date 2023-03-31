@@ -51,10 +51,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
 		);
 		const scriptUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, "src", "sidebar/scripts.js")
+			vscode.Uri.joinPath(this._extensionUri, "src", "sidebar/sidebar.js")
 		);
 		const styleMainUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this._extensionUri, "src", "sidebar/styles.css")
+			vscode.Uri.joinPath(this._extensionUri, "src", "sidebar/sidebar.css")
 		);
 
 		// Use a nonce to only allow a specific script to be run.
@@ -71,9 +71,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         		<link href="${styleMainUri}" rel="stylesheet">
 			</head>
       		<body>
-				<textarea id="prompt-input" name="prompt-input" rows="4" placeholder="enter your prompt here..."></textarea>
+				<div class="inline-container">
+					<label for="input-type">Input:</label>
+					<select id="input-type">
+						<option value="description">Function Description</option>
+						<option value="test">Existing Function</option>
+					</select>
+				</div>
+				<textarea id="user-input" name="user-input" rows="4" placeholder=""></textarea>
 				<button id="submit-button">Submit</button>
-				<div class="response" id="response-area"></div>
+				<br>
+				<label id="response-label">Response:</label>
+				<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
 		  		
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
