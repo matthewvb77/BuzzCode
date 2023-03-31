@@ -49,11 +49,9 @@ button {
 	background-color: #569cd6;
 	border: none;
 	color: white;
-	/* padding: 6px 6px; */
 	text-align: center;
 	text-decoration: none;
 	font-size: 18px;
-	margin: 12px 0px;
 	cursor: pointer;
 	border-radius: 4px;
 	align-self: flex-end;
