@@ -30,12 +30,12 @@ export async function queryChatGPT(prompt: string): Promise<string | null> {
 
 	/* -------------- Query OpenAI ------------------ */
 	try {
-		const response = await openai.ChatCompletion.create(
+		const response = await openai.createCompletion({
 			model: model,
 			prompt: prompt,
 			temperature: temperature,
 			max_tokens: maxTokens,
-		);
+		});
 
 		if (response && response.status === 200 && response.data.choices[0].text) {
 			return response.data.choices[0].text;
