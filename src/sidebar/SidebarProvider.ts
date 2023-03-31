@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
-import { getNonce } from "../getNonce";
+import { getNonce } from "../helpers/getNonce";
+import { iterativeGeneration } from "../iterativeGeneration/iterativeGeneration";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -19,22 +20,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-		webviewView.webview.onDidReceiveMessage(async (data) => {
-			switch (data.type) {
-				case "onInfo": {
-					if (!data.value) {
-						return;
-					}
-					vscode.window.showInformationMessage(data.value);
+		webviewView.webview.onDidReceiveMessage(async (message) => {
+			switch (message.command) {
+				case "submit":
+					await iterativeGeneration(message.input, message.inputType);
 					break;
-				}
-				case "onError": {
-					if (!data.value) {
-						return;
-					}
-					vscode.window.showErrorMessage(data.value);
-					break;
-				}
+				default:
+					throw new Error("Invalid command");
 			}
 		});
 	}
@@ -83,7 +75,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<br>
 				<label id="response-label">Response:</label>
 				<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
-		  		
+				<script nonce="${nonce}">
+                	var vscode = acquireVsCodeApi();
+            	</script>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>

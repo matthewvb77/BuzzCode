@@ -1,19 +1,18 @@
 import * as vscode from "vscode";
 import { Configuration, OpenAIApi } from "openai";
 
-export async function generateFunctionFromTests(
-	testCode: string
-): Promise<string | null> {
-	/* ----------------- Configuration --------------- */
+export async function queryChatGPT(prompt: string): Promise<string | null> {
+	/* ----------------- Get Configuration --------------- */
 	const apiKey: string =
 		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
+
 	const configuration = new Configuration({
 		apiKey: apiKey,
 	});
 	const openai = new OpenAIApi(configuration);
 	const model: string =
 		vscode.workspace.getConfiguration("testwise").get("model") ||
-		"text-davinci-003";
+		"gpt-3.5-turbo";
 	const temperature: number =
 		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
 	const maxTokens: number =
@@ -26,19 +25,21 @@ export async function generateFunctionFromTests(
 		return null;
 	}
 
-	const prompt = generatePrompt(testCode);
-
 	/* -------------- Query OpenAI ------------------ */
 	try {
-		const response = await openai.createCompletion({
+		const response = await openai.createChatCompletion({
 			model: model,
-			prompt: prompt,
+			messages: [{ role: "user", content: prompt }],
 			temperature: temperature,
 			max_tokens: maxTokens,
 		});
 
-		if (response && response.status === 200 && response.data.choices[0].text) {
-			return response.data.choices[0].text;
+		if (
+			response &&
+			response.status === 200 &&
+			response.data.choices[0].message
+		) {
+			return response.data.choices[0].message.content;
 		} else {
 			console.log(`error: ${response.statusText}`);
 			return null;
@@ -47,8 +48,4 @@ export async function generateFunctionFromTests(
 		console.error(`Error fetching function from response:`, error);
 		return null;
 	}
-}
-
-function generatePrompt(input: string) {
-	return `Generate a function that passes the following test suite:\n\n${input}\n\nFunction:`;
 }
