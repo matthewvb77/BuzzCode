@@ -35,7 +35,7 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	const testPrompt =
 		`Generate a runnable test suite for the following ` +
 		functionFileName +
-		` include imports like the function and test tool:\n\n${functionFileContents}\n\nTest Suite:'`;
+		`. Import the function we're testing and the test tool:\n\n${functionFileContents}\n\nTest Suite:'`;
 	const testFileContents = await queryChatGPT(testPrompt);
 	const testFileName = await queryChatGPT(
 		"Generate file name for this test suite:\n\n" +
