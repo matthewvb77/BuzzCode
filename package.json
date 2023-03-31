@@ -19,20 +19,10 @@
 				"title": "Hello World"
 			},
 			{
-				"command": "testwise.codeForMe",
-				"category": "TestWise",
-				"title": "Code For Me"
-			},
-			{
 				"command": "testwise.settings",
 				"category": "TestWise",
 				"title": "Settings",
 				"icon": "$(settings-gear)"
-			},
-			{
-				"command": "testwise.showInputBox",
-				"category": "TestWise",
-				"title": "Show Input Box"
 			}
 		],
 		"viewsContainers": {
