@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { getNonce } from "../getNonce";
+import { iterativeGeneration } from "../iterativeGeneration/iterativeGeneration";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
