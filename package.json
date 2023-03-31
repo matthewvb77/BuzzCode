@@ -14,11 +14,6 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "testwise.helloWorld",
-				"category": "TestWise",
-				"title": "Hello World"
-			},
-			{
 				"command": "testwise.settings",
 				"category": "TestWise",
 				"title": "Settings",
