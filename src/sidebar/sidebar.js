@@ -20,6 +20,6 @@
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = document.getElementById("user-input").value;
 		const inputType = document.getElementById("input-type").value;
-		vscode.postMessage({ command: "generate", input, inputType });
+		vscode.postMessage({ command: "submit", input, inputType });
 	});
 })();
