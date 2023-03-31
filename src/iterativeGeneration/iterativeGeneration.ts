@@ -3,6 +3,7 @@ import { queryChatGPT } from "../openAI/queryChatGPT";
 import { generateFile } from "./generateFile";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import { runTests } from "../helpers/runTests";
+import { TextEncoder } from "util";
 
 export async function iterativeGeneration(input: string, inputType: string) {
 	if (!hasValidAPIKey()) {
@@ -11,61 +12,89 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	}
 
 	/* ----------------------------- Generate function file ------------------------------- */
-	let functionFileContents: string | null;
-	let functionFileName: string | null;
+	var functionFileContents: string | null = null;
+	var functionFileName: string | null = null;
+	await vscode.window.withProgress(
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: "Generating function file...",
+			cancellable: false,
+		},
+		async () => {
+			if (inputType === "description") {
+				const prompt = `Generate function described as follows:\n\n${input}\n\nFunction:`;
+				functionFileContents = await queryChatGPT(prompt);
+			} else if (inputType === "test") {
+				functionFileContents = input;
+			} else {
+				throw new Error("Invalid input type");
+			}
 
-	if (inputType === "description") {
-		const prompt = `Generate function described as follows:\n\n${input}\n\nFunction:`;
-		functionFileContents = await queryChatGPT(prompt);
-	} else if (inputType === "test") {
-		functionFileContents = input;
-	} else {
-		throw new Error("Invalid input type");
-	}
+			functionFileName = await queryChatGPT(
+				"Generate file name for this function:\n\n" +
+					functionFileContents +
+					"\n\nFile Name:"
+			);
 
-	functionFileName = await queryChatGPT(
-		"Generate file name for this function:\n\n" +
-			functionFileContents +
-			"\n\nFile Name:"
+			await generateFile(functionFileName, functionFileContents);
+		}
 	);
-
-	await generateFile(functionFileName, functionFileContents);
 
 	/* ----------------------------- Generate test file ------------------------------- */
-	const testPrompt =
-		`Generate a runnable test suite for the following ` +
-		functionFileName +
-		`. Import the function we're testing and the test tool:\n\n${functionFileContents}\n\nTest Suite:'`;
-	const testFileContents = await queryChatGPT(testPrompt);
-	const testFileName = await queryChatGPT(
-		"Generate file name for this test suite:\n\n" +
-			testFileContents +
-			"\n\nFile Name:"
-	);
 
-	await generateFile(testFileName, testFileContents);
+	var testFileName: string | null = null;
+	await vscode.window.withProgress(
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: "Generating test suite...",
+			cancellable: false,
+		},
+		async () => {
+			const testPrompt =
+				`Generate a runnable test suite for the following ` +
+				functionFileName +
+				`. Import the function we're testing and the test tool:\n\n${functionFileContents}\n\nTest Suite:'`;
+			const testFileContents = await queryChatGPT(testPrompt);
+			testFileName = await queryChatGPT(
+				"Generate file name for this test suite:\n\n" +
+					testFileContents +
+					"\n\nFile Name:"
+			);
+
+			await generateFile(testFileName, testFileContents);
+		}
+	);
 
 	/* -------- iterate: test -> alter function if needed -> repeat ------- */
 	let testsPassed = false;
 	const maxIterations = 5;
 	let iterations = 0;
 
-	while (!testsPassed && iterations < maxIterations) {
-		const testOutput = await runTests(testFileName);
+	await vscode.window.withProgress(
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: "Iterating...",
+			cancellable: false,
+		},
+		async () => {
+			while (!testsPassed && iterations < maxIterations) {
+				const testOutput = await runTests(testFileName);
 
-		if (
-			!testOutput.toString().includes("FAIL") &&
-			!testOutput.toString().includes("ERROR") &&
-			testOutput.toString().includes("OK")
-		) {
-			testsPassed = true;
-		} else {
-			// TODO: parse test output to get failure message (for token optimization)
-			const failureMessage = testOutput.toString();
-			await alterFunction(functionFileName, failureMessage);
+				if (
+					!testOutput.toString().includes("FAIL") &&
+					!testOutput.toString().includes("ERROR") &&
+					testOutput.toString().includes("OK")
+				) {
+					testsPassed = true;
+				} else {
+					// TODO: parse test output to get failure message (for token optimization)
+					const failureMessage = testOutput.toString();
+					await alterFunction(functionFileName, failureMessage);
+				}
+				iterations++;
+			}
 		}
-		iterations++;
-	}
+	);
 
 	if (testsPassed) {
 		vscode.window.showInformationMessage("Tests passed!");
