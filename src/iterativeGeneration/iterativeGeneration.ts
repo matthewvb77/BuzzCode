@@ -38,7 +38,11 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	while (!testsPassed && iterations < maxIterations) {
 		const testOutput = await runTests();
 
-		if (!testOutput.toString().includes("FAIL")) {
+		if (
+			!testOutput.toString().includes("FAIL") &&
+			!testOutput.toString().includes("ERROR") &&
+			testOutput.toString().includes("OK")
+		) {
 			testsPassed = true;
 		} else {
 			// TODO: parse test output to get failure message (for token optimization)

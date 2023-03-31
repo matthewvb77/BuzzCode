@@ -11,7 +11,7 @@ export async function queryChatGPT(prompt: string): Promise<string | null> {
 	const openai = new OpenAIApi(configuration);
 	const model: string =
 		vscode.workspace.getConfiguration("testwise").get("model") ||
-		"text-davinci-003";
+		"gpt-3.5-turbo";
 	const temperature: number =
 		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
 	const maxTokens: number =
