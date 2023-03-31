@@ -20,22 +20,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-		webviewView.webview.onDidReceiveMessage(async (data) => {
-			switch (data.type) {
-				case "onInfo": {
-					if (!data.value) {
-						return;
-					}
-					vscode.window.showInformationMessage(data.value);
+		webviewView.webview.onDidReceiveMessage(async (message) => {
+			switch (message.command) {
+				case "submit":
+					await iterativeGeneration(message.input, message.inputType);
 					break;
-				}
-				case "onError": {
-					if (!data.value) {
-						return;
-					}
-					vscode.window.showErrorMessage(data.value);
-					break;
-				}
+				default:
+					throw new Error("Invalid command");
 			}
 		});
 	}
