@@ -71,8 +71,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         		<link href="${styleMainUri}" rel="stylesheet">
 			</head>
       		<body>
+				<textarea id="prompt-input" name="prompt-input" rows="4" placeholder="enter your prompt here..."></textarea>
+				<button id="submit-button">Submit</button>
+				<div class="response" id="response-area"></div>
+		  		
 				<script nonce="${nonce}" src="${scriptUri}"></script>
-				<text> Hello World! -- updated </text>
 			</body>
 			</html>
 		`;
