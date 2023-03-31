@@ -11,6 +11,7 @@ export async function iterativeGeneration(input: string, inputType: string) {
 
 	/* ----------------------------- Generate function file ------------------------------- */
 	let functionFileContents: string | null;
+	let functionFileName: string | null;
 
 	if (inputType === "description") {
 		const prompt = `Generate function described as follows:\n\n${input}\n\nFunction:`;
@@ -21,14 +22,27 @@ export async function iterativeGeneration(input: string, inputType: string) {
 		throw new Error("Invalid input type");
 	}
 
-	// TODO: get file name from the user
-	await generateFile(functionFileContents, "function.py");
+	functionFileName = await queryChatGPT(
+		"Generate file name for this function:\n\n" +
+			functionFileContents +
+			"\n\nFile Name:"
+	);
+
+	await generateFile(functionFileName, functionFileContents);
 
 	/* ----------------------------- Generate test file ------------------------------- */
-	const testPrompt = `Generate a runnable test suite for the following function and include imports:\n\n${functionFileContents}\n\nTest Suite:`;
+	const testPrompt =
+		`Generate a runnable test suite for the following ` +
+		functionFileName +
+		` include imports like the function and test tool:\n\n${functionFileContents}\n\nTest Suite:'`;
 	const testFileContents = await queryChatGPT(testPrompt);
+	const testFileName = await queryChatGPT(
+		"Generate file name for this test suite:\n\n" +
+			testFileContents +
+			"\n\nFile Name:"
+	);
 
-	await generateFile(testFileContents, "function_test.py");
+	await generateFile(testFileName, testFileContents);
 
 	/* -------- iterate: test -> alter function if needed -> repeat ------- */
 	let testsPassed = false;
@@ -36,7 +50,7 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	let iterations = 0;
 
 	while (!testsPassed && iterations < maxIterations) {
-		const testOutput = await runTests();
+		const testOutput = await runTests(testFileName);
 
 		if (
 			!testOutput.toString().includes("FAIL") &&
@@ -60,9 +74,13 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	}
 }
 
-async function runTests() {
+async function runTests(testFileName: string | null) {
+	if (!testFileName) {
+		throw new Error("No test file name provided.");
+	}
+	const testName = testFileName.split(".")[0];
 	const shellExecution = new vscode.ShellExecution(
-		"python -m unittest function_test"
+		"python -m unittest " + testName
 	);
 
 	const task = new vscode.Task(

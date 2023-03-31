@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
-export async function generateFile(contents: string | null, fileName: string) {
+export async function generateFile(
+	fileName: string | null,
+	contents: string | null
+) {
 	/* ------------------------------- Validate Input --------------------------------- */
-	if (!contents) {
-		vscode.window.showErrorMessage("No contents provided.");
+	if (!contents || !fileName) {
+		vscode.window.showErrorMessage("No contents or fileName provided.");
 		return;
 	}
 	/* ----------------------------- Get Current Folder ------------------------------- */
