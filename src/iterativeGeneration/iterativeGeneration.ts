@@ -4,7 +4,7 @@ import { generateFile } from "./generateFile";
 
 export async function iterativeGeneration(input: string, inputType: string) {
 	/* ----------------------------- Generate function file ------------------------------- */
-	let functionFileContents: string | null = null;
+	let functionFileContents: string | null;
 
 	if (inputType === "description") {
 		const prompt = `Generate function described as follows:\n\n${input}\n\nFunction:`;
@@ -25,12 +25,31 @@ export async function iterativeGeneration(input: string, inputType: string) {
 	await generateFile(testFileContents, "function.test.py");
 
 	/* -------- iterate: test -> alter function if needed -> repeat ------- */
-	await iterate();
+	let testsPassed = false;
+	const maxIterations = 5;
+	let iterations = 0;
+
+	while (!testsPassed || iterations < maxIterations) {
+		const testResult = await runTests();
+
+		if (testResult) {
+			testsPassed = true;
+		} else {
+			const failureMessage = ""; // TODO: Retrieve the failure message or error message from the test output
+			await alterFunction(failureMessage);
+		}
+		iterations++;
+	}
+
+	if (testsPassed) {
+		vscode.window.showInformationMessage("Tests passed!");
+		// TODO: Show explanation of the function in the output panel
+	} else {
+		vscode.window.showErrorMessage("Tests failed. Max iterations reached.");
+	}
 }
 
-async function iterate() {
-	// TODO: run tests
-
+async function runTests() {
 	const shellExecution = new vscode.ShellExecution(
 		"python -m unittest function.test"
 	);
@@ -43,9 +62,27 @@ async function iterate() {
 		shellExecution
 	);
 
-	await vscode.tasks.executeTask(task);
+	const result = await vscode.tasks.executeTask(task);
+	return result;
+}
 
-	// TODO: if tests fail, alter function
+async function alterFunction(failureMessage: string) {
+	const functionFilePath = vscode.Uri.file("function.py");
 
-	// TODO: if tests pass, stop, otherwise, repeat
+	const functionFileContents = (
+		await vscode.workspace.fs.readFile(functionFilePath)
+	).toString();
+
+	const prompt = `Alter function to fix test failure:\n\n${failureMessage}\n\nFunction:\n\n${functionFileContents}\n\nNew Function:`;
+	const newFunctionFileContents = await queryChatGPT(prompt);
+
+	if (newFunctionFileContents) {
+		const textEncoder = new TextEncoder();
+		await vscode.workspace.fs.writeFile(
+			functionFilePath,
+			textEncoder.encode(newFunctionFileContents)
+		);
+	} else {
+		throw new Error("Failed to generate a new function.");
+	}
 }
