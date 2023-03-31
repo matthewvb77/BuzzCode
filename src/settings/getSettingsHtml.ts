@@ -7,7 +7,7 @@ import {
 	temperaturePrecision,
 	temperatureStep,
 } from "./configuration";
-import { getNonce } from "../getNonce";
+import { getNonce } from "../helpers/getNonce";
 
 export function getSettingsHtml(
 	apiKey: string,
