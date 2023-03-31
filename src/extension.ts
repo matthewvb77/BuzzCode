@@ -1,56 +1,16 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { generateFunctionFromTests } from "./copilotIntegration/generateFunctionFromTests";
+import { generateFunctionFromTests } from "./openAI/generateFunctionFromTests";
 import { getSettingsHtml } from "./settings/getSettingsHtml";
 import { SidebarProvider } from "./sidebar/SidebarProvider";
 
 let settingsPanel: vscode.WebviewPanel | undefined;
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	// chatbox panel ----------------------------------------------------------------------------------------------------------------
-
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
 			"testwise-sidebar",
 			sidebarProvider
-		)
-	);
-
-	// chatbox panel end -------------------------------------------------------------------------------------------------------------
-
-	// function that pushes a new command where you can query openai api
-	context.subscriptions.push(
-		vscode.commands.registerCommand(
-			"testwise.codeForMe",
-			async (prompt: string) => {
-				// Get user's active vscode window
-				const editor = vscode.window.activeTextEditor;
-				if (!editor) {
-					vscode.window.showErrorMessage("No active text editor found.");
-					return;
-				}
-
-				// Get function from test suite
-				const testSuites = editor.document.getText();
-				const generatedFunction = await generateFunctionFromTests(testSuites);
-
-				if (!generatedFunction) {
-					vscode.window.showErrorMessage(
-						"Failed to generate a function from the test suites."
-					);
-					return;
-				}
-
-				// TODO: spits the function into the cursor, do this differently for ux
-				editor.edit((editBuilder) => {
-					const position = editor.selection.active;
-					editBuilder.insert(position, generatedFunction);
-				});
-			}
 		)
 	);
 
