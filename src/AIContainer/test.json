@@ -1,0 +1,40 @@
+{
+	"instructions": [
+		{
+			"index": 1,
+			"type": "executeCommand",
+			"parameters": {
+				"command": "git clone https://github.com/example/project.git"
+			}
+		},
+		{
+			"index": 2,
+			"type": "executeCommand",
+			"parameters": {
+				"command": "npm install"
+			}
+		},
+		{
+			"index": 3,
+			"type": "generateFile",
+			"parameters": {
+				"fileName": "main.js",
+				"fileContents": "console.log('Hello, World!');"
+			}
+		},
+		{
+			"index": 4,
+			"type": "executeCommand",
+			"parameters": {
+				"command": "node main.js"
+			}
+		},
+		{
+			"index": 5,
+			"type": "query",
+			"parameters": {
+				"prompt": "How can I optimize the performance of the code in main.js?"
+			}
+		}
+	]
+}

@@ -1,17 +1,23 @@
 import * as vscode from "vscode";
 import { queryChatGPT } from "../openAI/queryChatGPT";
-import { generateFile } from "./generateFile";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { runTests } from "../helpers/runTests";
-import { TextEncoder } from "util";
+import { PassThrough } from "stream";
 
-export async function iterativeGeneration(input: string, inputType: string) {
+export async function iterativeDevelopment(input: string, inputType: string) {
 	if (!hasValidAPIKey()) {
 		vscode.window.showErrorMessage("No valid API key found.");
 		return;
 	}
 
-	/* ----------------------------- Generate function file ------------------------------- */
+	/* ----------------------------- EXECUTE INSTRUCTION ------------------------------- */
+	switch (instructionType) {
+		case "executeCommand":
+			break;
+		case "generateFile":
+			break;
+		case "query":
+			break;
+		
 	var functionFileContents: string | null = null;
 	var functionFileName: string | null = null;
 	await vscode.window.withProgress(
