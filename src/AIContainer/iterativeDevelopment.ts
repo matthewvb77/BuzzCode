@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { queryChatGPT } from "../openAI/queryChatGPT";
+import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import { PassThrough } from "stream";
 
