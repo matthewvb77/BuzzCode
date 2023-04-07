@@ -1,4 +1,4 @@
-export const onboard = `You have access to these 4 functions: 
+export const initialize = `You have access to these 4 functions: 
 1. executeCommand(command: string) - executes a commmand in the terminal
 2. generateFile(file name: string, fileContents: string) - generates a file with the given name and contents
 3. queryChatGPT(prompt: string) - queries the OpenAI API with the given prompt
