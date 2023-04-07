@@ -33,6 +33,6 @@ Here is an example of an instruction list:
 	]
 }
 
-Use the commands at your disposal to generate an instruction list to solve the following prompt by any means necessary:
+Use the commands at your disposal to generate an instruction list to solve the following prompt:
 
 `;
