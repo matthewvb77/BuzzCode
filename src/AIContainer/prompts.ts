@@ -14,21 +14,6 @@ Here is an example of an instruction list:
 			"parameters": {
 				"command": "git clone https://github.com/example/project.git"
 			}
-		},
-		{
-			"index": 2,
-			"type": "executeCommand",
-			"parameters": {
-				"command": "npm install"
-			}
-		},
-		{
-			"index": 3,
-			"type": "generateFile",
-			"parameters": {
-				"fileName": "main.js",
-				"fileContents": "console.log('Hello, World!');"
-			}
 		}
 	]
 }
@@ -36,3 +21,5 @@ Here is an example of an instruction list:
 Use the commands at your disposal to generate an instruction list to solve the following prompt:
 
 `;
+
+const errorPrompt = `The following error occurred while executing instruction X: . Please generate a new set of instructions to continue.`;

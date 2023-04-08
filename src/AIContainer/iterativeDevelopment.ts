@@ -12,7 +12,6 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	/* ----------------------------- EXECUTE INSTRUCTIONS ------------------------------- */
 	var instructionsString = await queryChatGPT(initialize + input);
 
 	if (!instructionsString) {
@@ -20,44 +19,64 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	var instructionsJSON = JSON.parse(instructionsString);
+	const parsedObject = JSON.parse(instructionsString);
+	const jsonInstructions: Array<Instruction> = parsedObject.instructions;
 
-	for (const instruction of instructionsJSON) {
+	executeInstructions(jsonInstructions);
+}
+
+interface Instruction {
+	type: string;
+	parameters: any;
+}
+
+async function executeInstructions(jsonInstructions: Array<Instruction>) {
+	for (const instruction of jsonInstructions) {
 		const { type, parameters } = instruction;
 
-		switch (type) {
-			case "executeCommand":
-				const { command } = parameters;
-				try {
+		try {
+			switch (type) {
+				case "executeCommand":
+					const { command } = parameters;
 					const result = await executeCommand(command);
 					console.log(`Command executed: ${command}\nResult:`, result);
-				} catch (error) {
-					console.error(`Error executing command "${command}":`, error);
-				}
-				break;
+					break;
 
-			case "generateFile":
-				const { fileName, fileContents } = parameters;
-				try {
+				case "generateFile":
+					const { fileName, fileContents } = parameters;
 					await generateFile(fileName, fileContents);
-					console.log(`File generated: ${fileName}`);
-				} catch (error) {
-					console.error(`Error generating file "${fileName}":`, error);
-				}
-				break;
+					break;
 
-			case "query":
-				const { prompt } = parameters;
-				try {
-					const response = await queryChatGPT(prompt);
-					console.log(`Query response:`, response);
-				} catch (error) {
-					console.error(`Error querying prompt "${prompt}":`, error);
-				}
-				break;
+				case "queryChatGPT":
+					const { prompt } = parameters;
+					const apiResponse = await queryChatGPT(prompt);
+					console.log(`Query response:`, apiResponse);
+					break;
 
-			default:
-				console.warn(`Unknown instruction type "${type}"`);
+				case "askUser":
+					const { question } = parameters;
+					const userResponse = await askUser(question);
+					console.log(`User response:`, userResponse);
+					break;
+
+				default:
+					console.warn(`Unknown instruction type "${type}"`);
+					break;
+			}
+		} catch (error) {
+			console.error(`Error executing instruction:`, error);
+			const prompt = `The following error occurred while executing instruction ${instruction.toString()}: . Please generate a new set of instructions to continue.`;
+			try {
+				const apiResponse = await queryChatGPT(prompt);
+				console.log(`New instructions from the API:`, apiResponse);
+
+				// Parse the new instructions and call executeInstructions recursively
+				const newInstructions = JSON.parse(apiResponse).instructions;
+				await executeInstructions(newInstructions);
+			} catch (apiError) {
+				console.error(`Error fetching new instructions from the API:`, apiError);
+			}
+		}
 		}
 	}
 }
