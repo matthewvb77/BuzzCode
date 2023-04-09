@@ -20,7 +20,7 @@ Example of an instruction list:
 
 `;
 
-const taskPrompt = `Generate a JSON instruction list in the format above using the commands to solve the following prompt:\n\n`;
+export const taskPrompt = `Generate a JSON instruction list in the format above using the commands to solve the following prompt:\n\n`;
 
-const errorPrompt = `The following error occurred while executing instruction:\n\n`;
-const newTaskPrompt = `Generate a new set of instructions to continue.`;
+export const errorPrompt = `The following error occurred while executing instruction:\n\n`;
+export const newTaskPrompt = `\n\nGenerate a new set of instructions to continue.`;

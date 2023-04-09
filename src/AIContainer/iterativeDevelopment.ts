@@ -4,7 +4,12 @@ import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { initializePrompt } from "./prompts";
+import {
+	initializePrompt,
+	taskPrompt,
+	errorPrompt,
+	newTaskPrompt,
+} from "./prompts";
 
 export async function iterativeDevelopment(input: string) {
 	if (!hasValidAPIKey()) {
@@ -12,7 +17,9 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	var instructionsString = await queryChatGPT(initializePrompt + input);
+	var instructionsString = await queryChatGPT(
+		initializePrompt + taskPrompt + input
+	);
 
 	if (!instructionsString) {
 		vscode.window.showErrorMessage("No instructions provided.");
@@ -30,7 +37,14 @@ interface Instruction {
 	parameters: any;
 }
 
+var recursionLimit = 5;
+var recursionCount = 0;
 async function executeInstructions(jsonInstructions: Array<Instruction>) {
+	if (recursionCount >= recursionLimit) {
+		vscode.window.showErrorMessage("Recursion limit reached.");
+		return;
+	}
+
 	for (const instruction of jsonInstructions) {
 		const { type, parameters } = instruction;
 
@@ -65,20 +79,25 @@ async function executeInstructions(jsonInstructions: Array<Instruction>) {
 			}
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
-			console.error(`Error executing instruction:`, error);
-			const prompt = `You have access to these 4 functions:
-			The following error occurred while executing instruction ${instruction.toString()}: . Please generate a new set of instructions to continue.`;
 			try {
-				const apiResponse = await queryChatGPT(prompt);
+				const apiResponse = await queryChatGPT(
+					initializePrompt + errorPrompt + error + newTaskPrompt
+				);
+				vscode.window.showInformationMessage(`blah`);
 				console.log(`New instructions from the API:`, apiResponse);
 
-				// Parse the new instructions and call executeInstructions recursively
+				if (!apiResponse) {
+					vscode.window.showErrorMessage("No instructions provided.");
+					return;
+				}
 				const newInstructions = JSON.parse(apiResponse).instructions;
 				await executeInstructions(newInstructions);
 			} catch (apiError) {
-				console.error(`Error fetching new instructions from the API:`, apiError);
+				console.error(
+					`Error fetching new instructions from the API:`,
+					apiError
+				);
 			}
-		}
 		}
 	}
 }
