@@ -4,7 +4,7 @@ import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { initialize } from "./prompts";
+import { initializePrompt } from "./prompts";
 
 export async function iterativeDevelopment(input: string) {
 	if (!hasValidAPIKey()) {
@@ -12,7 +12,7 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	var instructionsString = await queryChatGPT(initialize + input);
+	var instructionsString = await queryChatGPT(initializePrompt + input);
 
 	if (!instructionsString) {
 		vscode.window.showErrorMessage("No instructions provided.");
@@ -64,8 +64,10 @@ async function executeInstructions(jsonInstructions: Array<Instruction>) {
 					break;
 			}
 		} catch (error) {
+			// If an error occurs, ask chatGPT for new instructions
 			console.error(`Error executing instruction:`, error);
-			const prompt = `The following error occurred while executing instruction ${instruction.toString()}: . Please generate a new set of instructions to continue.`;
+			const prompt = `You have access to these 4 functions:
+			The following error occurred while executing instruction ${instruction.toString()}: . Please generate a new set of instructions to continue.`;
 			try {
 				const apiResponse = await queryChatGPT(prompt);
 				console.log(`New instructions from the API:`, apiResponse);
