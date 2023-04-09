@@ -28,15 +28,15 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	const parsedObject = JSON.parse(instructionsString);
-	const jsonInstructions: Array<Instruction> = parsedObject.instructions;
+	const instructions: Array<Instruction> =
+		JSON.parse(instructionsString).instructions;
 
 	if (recursionCount >= recursionLimit) {
 		vscode.window.showErrorMessage("Recursion limit reached.");
 		return;
 	}
 
-	for (const instruction of jsonInstructions) {
+	for (const instruction of instructions) {
 		const { type, parameters } = instruction;
 
 		try {
