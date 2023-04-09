@@ -17,11 +17,11 @@ export async function iterativeDevelopment(input: string) {
 		return;
 	}
 
-	var instructionsString = await queryChatGPT(
+	var instructionsString: string | null = await queryChatGPT(
 		initializePrompt + taskPrompt + input
 	);
 
-	if (!instructionsString) {
+	if (instructionsString === null) {
 		vscode.window.showErrorMessage("No instructions provided.");
 		return;
 	}

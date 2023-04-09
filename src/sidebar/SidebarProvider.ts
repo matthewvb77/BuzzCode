@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
-import { iterativeGeneration } from "../iterativeGeneration/iterativeGeneration";
+import { iterativeDevelopment } from "../AIContainer/iterativeDevelopment";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -23,7 +23,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			switch (message.command) {
 				case "submit":
-					await iterativeGeneration(message.input, message.inputType);
+					await iterativeDevelopment(message.input);
 					break;
 				default:
 					throw new Error("Invalid command");
