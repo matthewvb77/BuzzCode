@@ -3,7 +3,9 @@ import * as cp from "child_process";
 
 export function executeCommand(
 	command: string
-): Promise<{ error: cp.ExecException | null; stdout: string; stderr: string }> {
+): Promise<
+	{ error: cp.ExecException | null; stdout: string; stderr: string } | string
+> {
 	return new Promise(async (resolve, reject) => {
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
 		outputChannel.clear();
@@ -19,7 +21,7 @@ export function executeCommand(
 		);
 
 		if (userResponse === "No" || userResponse === undefined) {
-			return reject(new Error("Command execution cancelled by user."));
+			return reject("Cancelled by user.");
 		}
 
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;

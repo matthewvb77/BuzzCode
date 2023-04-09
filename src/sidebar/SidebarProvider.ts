@@ -79,9 +79,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				</div>
 				<textarea id="user-input" name="user-input" rows="4" placeholder=""></textarea>
 				<button id="submit-button">Submit</button>
-				<br>
-				<label id="response-label">Response:</label>
-				<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
+				<!-- DEPRECATED
+					<br>
+					<label id="response-label">Response:</label>
+					<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
+				-->
 				<script nonce="${nonce}">
                 	var vscode = acquireVsCodeApi();
             	</script>

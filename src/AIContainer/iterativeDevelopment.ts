@@ -44,7 +44,12 @@ export async function iterativeDevelopment(input: string) {
 				case "executeCommand":
 					const { command } = parameters;
 					const result = await executeCommand(command);
-					console.log(`Command executed: ${command}\nResult:`, result);
+					if (result === "Cancelled by user.") {
+						vscode.window.showInformationMessage(
+							"User cancelled execution -- Terminating Process."
+						);
+						return;
+					}
 					break;
 
 				case "generateFile":

@@ -1,6 +1,6 @@
 (function () {
-	const userInput = document.getElementById("user-input");
 	/*    DEPRECATED ---------------------------------------------------------
+	const userInput = document.getElementById("user-input");
 	const inputTypeSelect = document.getElementById("input-type");
 
 	function updatePlaceholder() {
