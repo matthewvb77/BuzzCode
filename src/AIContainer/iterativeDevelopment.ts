@@ -3,7 +3,6 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
-import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import {
 	initializePrompt,
 	taskPrompt,
@@ -71,9 +70,6 @@ export async function iterativeDevelopment(input: string) {
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
-				// const apiResponse = await queryChatGPT(
-				// 	initializePrompt + errorPrompt + error + newTaskPrompt
-				// );
 				vscode.window.showInformationMessage(
 					`Error occured: ${error}\n\n Fetching new instructions from the API...`
 				);
@@ -82,9 +78,8 @@ export async function iterativeDevelopment(input: string) {
 					errorPrompt + instruction + error + newTaskPrompt
 				);
 			} catch (apiError) {
-				console.error(
-					`Error fetching new instructions from the API:`,
-					apiError
+				vscode.window.showErrorMessage(
+					`Error fetching new instructions from the API:` + apiError
 				);
 			}
 		}

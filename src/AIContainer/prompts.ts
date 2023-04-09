@@ -2,14 +2,13 @@ export const initializePrompt = `You have access to these functions:
 1. executeCommand(command: string)
 2. generateFile(fileName: string, fileContents: string)
 3. startNextTask(prompt: string)
-4. askUser(question: string)
+4. askUser(question: string) --> only use this function if you are stuck and need to ask a human for help
 
 Example of an instruction list:
 
 {
 	"instructions": [
 		{
-			"index": 1,
 			"type": "executeCommand",
 			"parameters": {
 				"command": "git clone https://github.com/example/project.git"

@@ -23,10 +23,7 @@
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = document.getElementById("user-input").value;
 		const inputType = document.getElementById("input-type").value;
-		if (hasValidAPIKey()) {
-			vscode.postMessage({ command: "submit", input, inputType });
-		} else {
-			vscode.window.showErrorMessage("No valid API key found.");
-		}
+
+		vscode.postMessage({ command: "submit", input, inputType });
 	});
 })();
