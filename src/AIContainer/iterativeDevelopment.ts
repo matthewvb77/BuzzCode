@@ -3,6 +3,7 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
+import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import {
 	initializePrompt,
 	taskPrompt,

@@ -1,6 +1,7 @@
 (function () {
-	const inputTypeSelect = document.getElementById("input-type");
 	const userInput = document.getElementById("user-input");
+	/*    DEPRECATED ---------------------------------------------------------
+	const inputTypeSelect = document.getElementById("input-type");
 
 	function updatePlaceholder() {
 		switch (inputTypeSelect.value) {
@@ -15,15 +16,9 @@
 		}
 	}
 
-	function hasValidAPIKey() {
-		const apiKey = vscode.workspace.getConfiguration("testwise").get("apiKey");
-		return (
-			apiKey !== undefined && apiKey !== null && apiKey.toString().trim() !== ""
-		);
-	}
-
 	updatePlaceholder();
 	inputTypeSelect.addEventListener("change", updatePlaceholder);
+	*/
 
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = document.getElementById("user-input").value;
