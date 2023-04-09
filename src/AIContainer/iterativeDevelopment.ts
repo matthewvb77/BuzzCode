@@ -3,7 +3,6 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
-import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import {
 	initializePrompt,
 	taskPrompt,
@@ -11,12 +10,15 @@ import {
 	newTaskPrompt,
 } from "./prompts";
 
-export async function iterativeDevelopment(input: string) {
-	if (!hasValidAPIKey()) {
-		vscode.window.showErrorMessage("No valid API key found.");
-		return;
-	}
+interface Instruction {
+	type: string;
+	parameters: any;
+}
 
+var recursionLimit = 10;
+var recursionCount = 0;
+
+export async function iterativeDevelopment(input: string) {
 	var instructionsString: string | null = await queryChatGPT(
 		initializePrompt + taskPrompt + input
 	);
@@ -29,17 +31,6 @@ export async function iterativeDevelopment(input: string) {
 	const parsedObject = JSON.parse(instructionsString);
 	const jsonInstructions: Array<Instruction> = parsedObject.instructions;
 
-	executeInstructions(jsonInstructions);
-}
-
-interface Instruction {
-	type: string;
-	parameters: any;
-}
-
-var recursionLimit = 5;
-var recursionCount = 0;
-async function executeInstructions(jsonInstructions: Array<Instruction>) {
 	if (recursionCount >= recursionLimit) {
 		vscode.window.showErrorMessage("Recursion limit reached.");
 		return;
@@ -63,8 +54,8 @@ async function executeInstructions(jsonInstructions: Array<Instruction>) {
 
 				case "queryChatGPT":
 					const { prompt } = parameters;
-					const apiResponse = await queryChatGPT(prompt);
-					console.log(`Query response:`, apiResponse);
+					const newInstructions = await queryChatGPT(initializePrompt + prompt);
+
 					break;
 
 				case "askUser":
@@ -91,7 +82,7 @@ async function executeInstructions(jsonInstructions: Array<Instruction>) {
 					return;
 				}
 				const newInstructions = JSON.parse(apiResponse).instructions;
-				await executeInstructions(newInstructions);
+				await iterativeDevelopment(newInstructions);
 			} catch (apiError) {
 				console.error(
 					`Error fetching new instructions from the API:`,

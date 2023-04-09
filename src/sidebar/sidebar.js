@@ -14,12 +14,24 @@
 				throw new Error("Invalid input type");
 		}
 	}
+
+	function hasValidAPIKey() {
+		const apiKey = vscode.workspace.getConfiguration("testwise").get("apiKey");
+		return (
+			apiKey !== undefined && apiKey !== null && apiKey.toString().trim() !== ""
+		);
+	}
+
 	updatePlaceholder();
 	inputTypeSelect.addEventListener("change", updatePlaceholder);
 
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = document.getElementById("user-input").value;
 		const inputType = document.getElementById("input-type").value;
-		vscode.postMessage({ command: "submit", input, inputType });
+		if (hasValidAPIKey()) {
+			vscode.postMessage({ command: "submit", input, inputType });
+		} else {
+			vscode.window.showErrorMessage("No valid API key found.");
+		}
 	});
 })();
