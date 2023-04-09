@@ -1,7 +1,7 @@
 export const initializePrompt = `You have access to these functions: 
 1. executeCommand(command: string)
 2. generateFile(fileName: string, fileContents: string)
-3. queryChatGPT(prompt: string)
+3. startNextTask(prompt: string)
 4. askUser(question: string)
 
 Example of an instruction list:

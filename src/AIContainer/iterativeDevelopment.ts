@@ -52,10 +52,9 @@ export async function iterativeDevelopment(input: string) {
 					await generateFile(fileName, fileContents);
 					break;
 
-				case "queryChatGPT":
-					const { prompt } = parameters;
-					const newInstructions = await queryChatGPT(initializePrompt + prompt);
-
+				case "startNextTask":
+					const { newPrompt } = parameters;
+					iterativeDevelopment(newPrompt);
 					break;
 
 				case "askUser":
@@ -71,18 +70,16 @@ export async function iterativeDevelopment(input: string) {
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
-				const apiResponse = await queryChatGPT(
-					initializePrompt + errorPrompt + error + newTaskPrompt
+				// const apiResponse = await queryChatGPT(
+				// 	initializePrompt + errorPrompt + error + newTaskPrompt
+				// );
+				vscode.window.showInformationMessage(
+					`Error occured: ${error}\n\n Fetching new instructions from the API...`
 				);
-				vscode.window.showInformationMessage(`blah`);
-				console.log(`New instructions from the API:`, apiResponse);
 
-				if (!apiResponse) {
-					vscode.window.showErrorMessage("No instructions provided.");
-					return;
-				}
-				const newInstructions = JSON.parse(apiResponse).instructions;
-				await iterativeDevelopment(newInstructions);
+				await iterativeDevelopment(
+					errorPrompt + instruction + error + newTaskPrompt
+				);
 			} catch (apiError) {
 				console.error(
 					`Error fetching new instructions from the API:`,
