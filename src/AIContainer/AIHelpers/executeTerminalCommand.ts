@@ -18,8 +18,6 @@ export function executeTerminalCommand(
 		outputChannel.clear();
 		outputChannel.show();
 
-		outputChannel.appendLine(`Running: ${command}`);
-
 		const userResponse = await vscode.window.showWarningMessage(
 			`Are you sure you want to run the following command: ${command}?`,
 			{ modal: true },
@@ -28,8 +26,10 @@ export function executeTerminalCommand(
 		);
 
 		if (userResponse === "No" || userResponse === undefined) {
-			reject("Cancelled by user.");
+			resolve("Cancelled by user.");
+			return;
 		}
+		outputChannel.appendLine(`Running: ${command}`);
 
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
