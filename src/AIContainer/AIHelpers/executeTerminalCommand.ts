@@ -7,7 +7,7 @@ export type CommandResult = {
 	stderr: string;
 };
 
-export function executeCommand(
+export function executeTerminalCommand(
 	command: string
 ): Promise<
 	| { error: cp.ExecException | null; stdout: string; stderr: string }

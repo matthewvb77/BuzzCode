@@ -1,5 +1,5 @@
 export const initializePrompt = `You have access to these functions: 
-1. executeCommand(command: string) --> execute a command in the terminal
+1. executeTerminalCommand(command: string)
 2. generateFile(fileName: string, fileContents: string)
 3. recurse(prompt: string) --> call this function with a new prompt to continue the iterative development process
 4. askUser(question: string) --> only use this function if you are stuck and need to ask a human for help

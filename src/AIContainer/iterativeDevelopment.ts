@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { queryChatGPT } from "./AIHelpers/queryChatGPT";
-import { executeCommand } from "./AIHelpers/executeCommand";
+import { executeTerminalCommand } from "./AIHelpers/executeTerminalCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt, taskPrompt } from "./prompts";
@@ -45,7 +45,7 @@ async function recursiveDevelopmentHelper(input: string) {
 			switch (type) {
 				case "executeCommand":
 					const { command } = parameters;
-					const result = await executeCommand(command);
+					const result = await executeTerminalCommand(command);
 					if (typeof result === "string") {
 						vscode.window.showInformationMessage(
 							"User cancelled execution -- Terminating Process."
