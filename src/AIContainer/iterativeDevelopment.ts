@@ -3,6 +3,7 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
+import { CommandResult } from "./AIHelpers/executeCommand";
 import {
 	initializePrompt,
 	taskPrompt,
@@ -44,7 +45,10 @@ export async function iterativeDevelopment(input: string) {
 				case "executeCommand":
 					const { command } = parameters;
 					const result = await executeCommand(command);
-					if (result === "Cancelled by user.") {
+					if (isCommandResult(result)) {
+						const { error, stdout, stderr } = result;
+						throw new Error(stderr);
+					} else {
 						vscode.window.showInformationMessage(
 							"User cancelled execution -- Terminating Process."
 						);
@@ -57,7 +61,7 @@ export async function iterativeDevelopment(input: string) {
 					await generateFile(fileName, fileContents);
 					break;
 
-				case "startNextTask":
+				case "recurse":
 					const { newPrompt } = parameters;
 					iterativeDevelopment(newPrompt);
 					break;
@@ -89,4 +93,10 @@ export async function iterativeDevelopment(input: string) {
 			}
 		}
 	}
+}
+
+function isCommandResult(
+	result: CommandResult | string
+): result is CommandResult {
+	return typeof result !== "string";
 }
