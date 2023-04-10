@@ -81,9 +81,9 @@ async function recursiveDevelopmentHelper(input: string) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
 				await recursiveDevelopmentHelper(
-					`Here is the original task:\n\n` +
+					`Here is the original task: ` +
 						taskDescription +
-						`This is a recursive call because while this instruction was executed:` +
+						`\n\nThis is a recursive call because while this instruction was executed:` +
 						JSON.stringify(instruction) +
 						`\nThe following error occured:\n\n` +
 						error +
