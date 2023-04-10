@@ -1,9 +1,10 @@
 export const initializePrompt = `You have access to these functions: 
 1. executeTerminalCommand(command: string)
 2. generateFile(fileName: string, fileContents: string)
-3. recurse(newPrompt: string)
-4. askUser(question: string) --> Ask the user a question and recurse with their response. USE THIS FUNCTION AS A LAST RESORT.
-If an error occurs, the recurse process will happen automatically with the error message inluded in the newPrompt.
+3. recurse(newPrompt: string) --> This will happen automatically if any error occurs.
+4. askUser(question: string) --> Ask the user a question and recurse with their response.
+
+Minimize user intervention. Don't use askUser unless you have to.
 
 Example of an instruction list:
 
