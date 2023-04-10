@@ -1,9 +1,9 @@
 export const initializePrompt = `You have access to these functions: 
 1. executeTerminalCommand(command: string)
 2. generateFile(fileName: string, fileContents: string)
-3. recurse(prompt: string) --> call this function with a new prompt to continue the iterative development process
-4. askUser(question: string) --> use this function as a last resort to ask the user for a resource or information
-If an error or failure occurs, the recurse process will happen automatically.
+3. recurse(newPrompt: string)
+4. askUser(question: string) --> Ask the user a question and recurse with their response. USE THIS FUNCTION AS A LAST RESORT.
+If an error occurs, the recurse process will happen automatically with the error message inluded in the newPrompt.
 
 Example of an instruction list:
 
