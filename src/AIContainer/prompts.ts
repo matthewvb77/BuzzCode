@@ -1,5 +1,5 @@
 export const initializePrompt = `You have access to these functions: 
-1. executeCommand(command: string)
+1. executeCommand(command: string) --> execute a command in the terminal
 2. generateFile(fileName: string, fileContents: string)
 3. recurse(prompt: string) --> call this function with a new prompt to continue the iterative development process
 4. askUser(question: string) --> only use this function if you are stuck and need to ask a human for help
@@ -10,6 +10,7 @@ Example of an instruction list:
 {
 	"instructions": [
 		{
+			"index": 0,
 			"type": "executeCommand",
 			"parameters": {
 				"command": "git clone https://github.com/example/project.git"
@@ -21,6 +22,3 @@ Example of an instruction list:
 `;
 
 export const taskPrompt = `Generate a JSON string instruction list in the format above using the commands to solve the following prompt. Escape necessary characters with backslashes:\n\n`;
-
-export const errorPrompt = `The following error occurred while executing instruction:\n\n`;
-export const newTaskPrompt = `\n\nGenerate a new set of instructions to continue.`;

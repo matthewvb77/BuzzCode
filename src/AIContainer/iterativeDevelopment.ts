@@ -3,24 +3,28 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeCommand } from "./AIHelpers/executeCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
-import { CommandResult } from "./AIHelpers/executeCommand";
-import {
-	initializePrompt,
-	taskPrompt,
-	errorPrompt,
-	newTaskPrompt,
-} from "./prompts";
+import { initializePrompt, taskPrompt } from "./prompts";
 
 interface Instruction {
+	index: number;
 	type: string;
 	parameters: any;
 }
 
 var recursionLimit = 10;
 var recursionCount = 0;
+var taskDescription = "";
+export async function recursiveDevelopment(input: string) {
+	taskDescription = input; // Saves last task description for following iteration
+	recursiveDevelopmentHelper(taskDescription);
+}
 
-export async function iterativeDevelopment(input: string) {
+async function recursiveDevelopmentHelper(input: string) {
 	recursionCount++;
+	if (recursionCount >= recursionLimit) {
+		vscode.window.showErrorMessage("Recursion limit reached.");
+		return;
+	}
 
 	var instructionsString: string | null = await queryChatGPT(
 		initializePrompt + taskPrompt + input
@@ -34,11 +38,6 @@ export async function iterativeDevelopment(input: string) {
 	const instructions: Array<Instruction> =
 		JSON.parse(instructionsString).instructions;
 
-	if (recursionCount >= recursionLimit) {
-		vscode.window.showErrorMessage("Recursion limit reached.");
-		return;
-	}
-
 	for (const instruction of instructions) {
 		const { type, parameters } = instruction;
 
@@ -47,14 +46,13 @@ export async function iterativeDevelopment(input: string) {
 				case "executeCommand":
 					const { command } = parameters;
 					const result = await executeCommand(command);
-					if (isCommandResult(result)) {
-						const { error, stdout, stderr } = result;
-						throw new Error(stderr);
-					} else {
+					if (typeof result === "string") {
 						vscode.window.showInformationMessage(
 							"User cancelled execution -- Terminating Process."
 						);
 						return;
+					} else if (result.error) {
+						throw result.error;
 					}
 					break;
 
@@ -65,7 +63,7 @@ export async function iterativeDevelopment(input: string) {
 
 				case "recurse":
 					const { newPrompt } = parameters;
-					await iterativeDevelopment(newPrompt);
+					await recursiveDevelopmentHelper(newPrompt);
 					break;
 
 				case "askUser":
@@ -81,8 +79,12 @@ export async function iterativeDevelopment(input: string) {
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
-				await iterativeDevelopment(
-					errorPrompt + instruction + error + newTaskPrompt
+				await recursiveDevelopmentHelper(
+					`During this instruction:` +
+						JSON.stringify(instruction) +
+						`\nThe following error occured:\n\n` +
+						error +
+						`\n\nFix it`
 				);
 			} catch (apiError) {
 				vscode.window.showErrorMessage(
@@ -91,10 +93,4 @@ export async function iterativeDevelopment(input: string) {
 			}
 		}
 	}
-}
-
-function isCommandResult(
-	result: CommandResult | string
-): result is CommandResult {
-	return typeof result !== "string";
 }

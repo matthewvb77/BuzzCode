@@ -9,7 +9,10 @@ export type CommandResult = {
 
 export function executeCommand(
 	command: string
-): Promise<CommandResult | "Cancelled by user."> {
+): Promise<
+	| { error: cp.ExecException | null; stdout: string; stderr: string }
+	| "Cancelled by user."
+> {
 	return new Promise(async (resolve, reject) => {
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
 		outputChannel.clear();

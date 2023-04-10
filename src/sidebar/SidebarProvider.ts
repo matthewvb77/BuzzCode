@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
-import { iterativeDevelopment } from "../AIContainer/iterativeDevelopment";
+import { recursiveDevelopment } from "../AIContainer/iterativeDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -25,7 +25,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			switch (message.command) {
 				case "submit":
 					if (hasValidAPIKey()) {
-						await iterativeDevelopment(message.input);
+						await recursiveDevelopment(message.input);
 					} else {
 						vscode.window.showErrorMessage(
 							"Please enter a valid API key in the TestWise settings."
