@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
-import { iterativeDevelopment } from "../AIContainer/iterativeDevelopment";
+import { recursiveDevelopment } from "../AIContainer/iterativeDevelopment";
+import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -23,7 +24,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			switch (message.command) {
 				case "submit":
-					await iterativeDevelopment(message.input);
+					if (hasValidAPIKey()) {
+						await recursiveDevelopment(message.input);
+					} else {
+						vscode.window.showErrorMessage(
+							"Please enter a valid API key in the TestWise settings."
+						);
+					}
 					break;
 				default:
 					throw new Error("Invalid command");
@@ -72,9 +79,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				</div>
 				<textarea id="user-input" name="user-input" rows="4" placeholder=""></textarea>
 				<button id="submit-button">Submit</button>
-				<br>
-				<label id="response-label">Response:</label>
-				<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
+				<!-- DEPRECATED
+					<br>
+					<label id="response-label">Response:</label>
+					<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
+				-->
 				<script nonce="${nonce}">
                 	var vscode = acquireVsCodeApi();
             	</script>

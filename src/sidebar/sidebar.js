@@ -1,6 +1,7 @@
 (function () {
-	const inputTypeSelect = document.getElementById("input-type");
+	/*    DEPRECATED ---------------------------------------------------------
 	const userInput = document.getElementById("user-input");
+	const inputTypeSelect = document.getElementById("input-type");
 
 	function updatePlaceholder() {
 		switch (inputTypeSelect.value) {
@@ -14,12 +15,15 @@
 				throw new Error("Invalid input type");
 		}
 	}
+
 	updatePlaceholder();
 	inputTypeSelect.addEventListener("change", updatePlaceholder);
+	*/
 
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = document.getElementById("user-input").value;
 		const inputType = document.getElementById("input-type").value;
+
 		vscode.postMessage({ command: "submit", input, inputType });
 	});
 })();

@@ -1,15 +1,22 @@
 import * as vscode from "vscode";
 import * as cp from "child_process";
 
-export function executeCommand(
+export type CommandResult = {
+	error: cp.ExecException | null;
+	stdout: string;
+	stderr: string;
+};
+
+export function executeTerminalCommand(
 	command: string
-): Promise<{ error: cp.ExecException | null; stdout: string; stderr: string }> {
+): Promise<
+	| { error: cp.ExecException | null; stdout: string; stderr: string }
+	| "Cancelled by user."
+> {
 	return new Promise(async (resolve, reject) => {
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
 		outputChannel.clear();
 		outputChannel.show();
-
-		outputChannel.appendLine(`Running: ${command}`);
 
 		const userResponse = await vscode.window.showWarningMessage(
 			`Are you sure you want to run the following command: ${command}?`,
@@ -19,13 +26,15 @@ export function executeCommand(
 		);
 
 		if (userResponse === "No" || userResponse === undefined) {
-			return reject(new Error("Command execution cancelled by user."));
+			resolve("Cancelled by user.");
+			return;
 		}
+		outputChannel.appendLine(`Running: ${command}`);
 
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
 		if (!workspaceFolder) {
-			return reject(new Error("No workspace folder found."));
+			reject(new Error("No workspace folder found."));
 		}
 
 		const execOptions = {
