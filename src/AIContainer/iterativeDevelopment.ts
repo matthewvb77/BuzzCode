@@ -83,9 +83,9 @@ async function recursiveDevelopmentHelper(input: string) {
 				await recursiveDevelopmentHelper(
 					`Here is the original task:\n\n` +
 						taskDescription +
-						`This instruction was executed:` +
+						`This is a recursive call because while this instruction was executed:` +
 						JSON.stringify(instruction) +
-						`\nAnd the following error occured:\n\n` +
+						`\nThe following error occured:\n\n` +
 						error +
 						`\n\nThink about why this error occured and how to fix it.`
 				);
