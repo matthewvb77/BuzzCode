@@ -72,7 +72,7 @@ async function recursiveDevelopmentHelper(input: string) {
 					await recursiveDevelopmentHelper(
 						`Here is the original task: ` +
 							taskDescription +
-							`\n\nThis is a recursive with the following prompt: ` +
+							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt
 					);
 					break;
@@ -80,7 +80,12 @@ async function recursiveDevelopmentHelper(input: string) {
 				case "askUser":
 					const { question } = parameters;
 					const userResponse = await askUser(question);
-					console.log(`User response:`, userResponse);
+					recursiveDevelopmentHelper(
+						`Here is the original task: ` +
+							taskDescription +
+							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
+							userResponse
+					);
 					break;
 
 				default:
