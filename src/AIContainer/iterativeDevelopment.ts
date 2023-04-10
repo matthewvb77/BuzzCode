@@ -15,7 +15,7 @@ var recursionLimit = 10;
 var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(input: string) {
-	taskDescription = input; // Saves last task description for following iteration
+	taskDescription = input; // Saves original task description
 	recursionCount = 0;
 	recursiveDevelopmentHelper(taskDescription);
 }
@@ -69,7 +69,12 @@ async function recursiveDevelopmentHelper(input: string) {
 
 				case "recurse":
 					const { newPrompt } = parameters;
-					await recursiveDevelopmentHelper(newPrompt);
+					await recursiveDevelopmentHelper(
+						`Here is the original task: ` +
+							taskDescription +
+							`\n\nThis is a recursive with the following prompt: ` +
+							newPrompt
+					);
 					break;
 
 				case "askUser":
