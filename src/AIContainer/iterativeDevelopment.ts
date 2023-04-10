@@ -16,6 +16,7 @@ var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(input: string) {
 	taskDescription = input; // Saves last task description for following iteration
+	recursionCount = 0;
 	recursiveDevelopmentHelper(taskDescription);
 }
 
@@ -80,11 +81,13 @@ async function recursiveDevelopmentHelper(input: string) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
 				await recursiveDevelopmentHelper(
-					`During this instruction:` +
+					`Here is the original task:\n\n` +
+						taskDescription +
+						`This instruction was executed:` +
 						JSON.stringify(instruction) +
-						`\nThe following error occured:\n\n` +
+						`\nAnd the following error occured:\n\n` +
 						error +
-						`\n\nFix it`
+						`\n\nThink about why this error occured and how to fix it.`
 				);
 			} catch (apiError) {
 				vscode.window.showErrorMessage(
