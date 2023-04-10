@@ -21,23 +21,28 @@ export async function recursiveDevelopment(input: string) {
 }
 
 async function recursiveDevelopmentHelper(input: string) {
-	recursionCount++;
-	if (recursionCount >= recursionLimit) {
-		vscode.window.showErrorMessage("Recursion limit reached.");
+	try {
+		recursionCount++;
+		if (recursionCount >= recursionLimit) {
+			vscode.window.showErrorMessage("Recursion limit reached.");
+			return;
+		}
+
+		var instructionsString: string | null = await queryChatGPT(
+			initializePrompt + taskPrompt + input
+		);
+
+		if (instructionsString === null) {
+			vscode.window.showErrorMessage("No instructions provided.");
+			return;
+		}
+
+		var instructions: Array<Instruction> =
+			JSON.parse(instructionsString).instructions;
+	} catch (error) {
+		vscode.window.showErrorMessage("Error occured: " + error);
 		return;
 	}
-
-	var instructionsString: string | null = await queryChatGPT(
-		initializePrompt + taskPrompt + input
-	);
-
-	if (instructionsString === null) {
-		vscode.window.showErrorMessage("No instructions provided.");
-		return;
-	}
-
-	const instructions: Array<Instruction> =
-		JSON.parse(instructionsString).instructions;
 
 	for (const instruction of instructions) {
 		const { type, parameters } = instruction;
@@ -79,21 +84,16 @@ async function recursiveDevelopmentHelper(input: string) {
 			}
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
-			try {
-				await recursiveDevelopmentHelper(
-					`Here is the original task: ` +
-						taskDescription +
-						`\n\nThis is a recursive call because while this instruction was executed:` +
-						JSON.stringify(instruction) +
-						`\nThe following error occured:\n\n` +
-						error +
-						`\n\nThink about why this error occured and how to fix it.`
-				);
-			} catch (apiError) {
-				vscode.window.showErrorMessage(
-					`Error fetching new instructions from the API:` + apiError
-				);
-			}
+
+			await recursiveDevelopmentHelper(
+				`Here is the original task: ` +
+					taskDescription +
+					`\n\nThis is a recursive call because while this instruction was executed:` +
+					JSON.stringify(instruction) +
+					`\nThe following error occured:\n\n` +
+					error +
+					`\n\nThink about why this error occured and how to fix it.`
+			);
 		}
 	}
 }
