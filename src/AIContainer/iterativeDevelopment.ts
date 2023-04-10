@@ -44,7 +44,7 @@ async function recursiveDevelopmentHelper(input: string) {
 
 		try {
 			switch (type) {
-				case "executeCommand":
+				case "executeTerminalCommand":
 					const { command } = parameters;
 					const result = await executeTerminalCommand(command);
 					if (typeof result === "string") {

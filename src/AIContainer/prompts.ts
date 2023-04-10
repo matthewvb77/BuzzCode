@@ -11,7 +11,7 @@ Example of an instruction list:
 	"instructions": [
 		{
 			"index": 0,
-			"type": "executeCommand",
+			"type": "executeTerminalCommand",
 			"parameters": {
 				"command": "git clone https://github.com/example/project.git"
 			}
