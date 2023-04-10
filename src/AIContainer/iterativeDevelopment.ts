@@ -20,6 +20,8 @@ var recursionLimit = 10;
 var recursionCount = 0;
 
 export async function iterativeDevelopment(input: string) {
+	recursionCount++;
+
 	var instructionsString: string | null = await queryChatGPT(
 		initializePrompt + taskPrompt + input
 	);
@@ -63,7 +65,7 @@ export async function iterativeDevelopment(input: string) {
 
 				case "recurse":
 					const { newPrompt } = parameters;
-					iterativeDevelopment(newPrompt);
+					await iterativeDevelopment(newPrompt);
 					break;
 
 				case "askUser":
@@ -79,10 +81,6 @@ export async function iterativeDevelopment(input: string) {
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new instructions
 			try {
-				vscode.window.showInformationMessage(
-					`Error occured: ${error}\n\n Fetching new instructions from the API...`
-				);
-
 				await iterativeDevelopment(
 					errorPrompt + instruction + error + newTaskPrompt
 				);
