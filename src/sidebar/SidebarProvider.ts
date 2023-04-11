@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
+import { queryChatGPT } from "../AIContainer/AIHelpers/queryChatGPT";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -25,7 +26,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			switch (message.command) {
 				case "submit":
 					if (hasValidAPIKey()) {
-						await recursiveDevelopment(message.input);
+						if (message.inputType === "task") {
+							await recursiveDevelopment(message.input);
+						} else if (message.inputType === "question") {
+							const response = await queryChatGPT(message.input);
+							webviewView.webview.postMessage({
+								command: "response",
+								text: response,
+							});
+						} else {
+							throw new Error("Invalid input type");
+						}
 					} else {
 						vscode.window.showErrorMessage(
 							"Please enter a valid API key in the TestWise settings."

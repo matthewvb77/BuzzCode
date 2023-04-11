@@ -33,4 +33,16 @@
 
 		vscode.postMessage({ command: "submit", input, inputType });
 	});
+
+	window.addEventListener("message", (event) => {
+		const message = event.data;
+		switch (message.command) {
+			case "response":
+				const responseArea = document.getElementById("response-area");
+				responseArea.value = message.text;
+				break;
+			default:
+				console.warn("Unknown message received:", message);
+		}
+	});
 })();
