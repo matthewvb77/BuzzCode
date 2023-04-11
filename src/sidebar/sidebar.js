@@ -8,13 +8,13 @@
 		switch (inputTypeSelect.value) {
 			case "task":
 				userInputBox.placeholder = "Give a task...";
-				responseLabel.style.display = "none";
-				responseArea.style.display = "none";
+				responseLabel.classList.remove("show-response");
+				responseArea.classList.remove("show-response");
 				break;
 			case "question":
 				userInputBox.placeholder = "Ask a question...";
-				responseLabel.style.display = "block";
-				responseArea.style.display = "block";
+				responseLabel.classList.add("show-response");
+				responseArea.classList.add("show-response");
 				break;
 			default:
 				throw new Error("Invalid input type");
@@ -23,6 +23,9 @@
 
 	updatePlaceholderAndResponse();
 	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
+	window.addEventListener("load", () => {
+		document.body.classList.add("body-loaded");
+	});
 
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = userInputBox.value;

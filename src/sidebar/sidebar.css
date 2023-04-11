@@ -66,3 +66,18 @@ button:hover {
 	display: flex;
 	align-items: center;
 }
+
+#response-label,
+#response-area {
+	opacity: 0;
+}
+
+.body-loaded #response-label,
+.body-loaded #response-area {
+	transition: opacity 0.3s ease;
+}
+
+#response-label.show-response,
+#response-area.show-response {
+	opacity: 1;
+}
