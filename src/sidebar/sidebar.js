@@ -3,18 +3,21 @@
 	const inputTypeSelect = document.getElementById("input-type");
 	const responseLabel = document.getElementById("response-label");
 	const responseArea = document.getElementById("response-area");
+	const taskProgress = document.getElementById("task-progress");
 
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
 			case "task":
 				userInputBox.placeholder = "Give a task...";
-				responseLabel.classList.remove("show-response");
-				responseArea.classList.remove("show-response");
+				taskProgress.classList.add("show-component");
+				responseLabel.classList.remove("show-component");
+				responseArea.classList.remove("show-component");
 				break;
 			case "question":
 				userInputBox.placeholder = "Ask a question...";
-				responseLabel.classList.add("show-response");
-				responseArea.classList.add("show-response");
+				taskProgress.classList.remove("show-component");
+				responseLabel.classList.add("show-component");
+				responseArea.classList.add("show-component");
 				break;
 			default:
 				throw new Error("Invalid input type");

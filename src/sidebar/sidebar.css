@@ -65,26 +65,54 @@ button:hover {
 .inline-container {
 	display: flex;
 	align-items: center;
+	position: relative;
+}
+
+.bottom-container {
+	position: relative;
+	height: 100%;
 }
 
 #response-label,
-#response-area {
+#response-area,
+#task-progress {
 	opacity: 0;
+	position: absolute;
+	pointer-events: none;
+	width: 100%;
+	height: 20%;
+}
+
+#response-label {
+	top: 0;
+}
+#response-area {
+	top: 30px;
+	height: 90%;
 }
 
 .body-loaded #response-label,
-.body-loaded #response-area {
+.body-loaded #response-area,
+.body-loaded #task-progress {
 	transition: opacity 0.2s ease;
 }
 
-#response-label.show-response,
-#response-area.show-response {
+#response-label.show-component,
+#response-area.show-component,
+#task-progress.show-component {
 	opacity: 1;
+	pointer-events: auto;
 }
 
-#response-area {
-	height: 50%;
+#response-label:not(.show-component) ~ #task-progress,
+#response-area:not(.show-component) ~ #task-progress {
+	opacity: 1;
+	pointer-events: auto;
 }
+
+/* #response-area {
+	height: 50%;
+} */
 
 #user-input {
 	height: 20%;

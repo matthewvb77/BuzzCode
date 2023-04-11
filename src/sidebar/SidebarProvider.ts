@@ -92,13 +92,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<button id="submit-button">Submit</button>
 				<br>
 
-				<div class="inline-container">
-					<div class="loader"></div>
-					<span id="loader-text">Loading SubTasks...</span>
-				</div>
-				
-				<label id="response-label">Response:</label>
-				<textarea id="response-area" name="response-area" placeholder="Jaydee will respond..." readonly></textarea>
+				<div class="bottom-container">
+					<div id="task-progress" class="task-progress">
+						<div class="inline-container">
+							<div class="loader"></div>
+							<span id="loader-text">Loading SubTasks...</span>
+						</div>
+					</div>
+					<label id="response-label">Response:</label>
+					<textarea id="response-area" name="response-area" placeholder="Jaydee will respond..." readonly></textarea>
+				</>
+
 				<script nonce="${nonce}">
                 	var vscode = acquireVsCodeApi();
             	</script>
