@@ -88,7 +88,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						<option value="question">Question</option>
 					</select>
 				</div>
-				<textarea id="user-input" name="user-input" rows="4" placeholder=""></textarea>
+				<textarea id="user-input" name="user-input" placeholder=""></textarea>
 				<button id="submit-button">Submit</button>
 				<br>
 
