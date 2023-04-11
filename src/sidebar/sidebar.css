@@ -7,6 +7,27 @@ body {
 	flex-direction: column;
 	height: calc(100vh - 40px);
 }
+.tabs-wrapper {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+.tab-container {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+.tab-container * {
+	margin: 5px;
+}
+
+.inline-container {
+	display: flex;
+	align-items: center;
+	position: relative;
+}
 label {
 	font-size: 18px;
 	font-weight: 700;
@@ -23,8 +44,6 @@ select {
 	border: 1px solid #3c3c3c;
 	color: #c8c8c8;
 	font-size: 14px;
-	/* padding: 6px 6px; */
-	/* margin: 6px 0; */
 	border-radius: 4px;
 	outline: none;
 	width: 100%;
@@ -62,56 +81,42 @@ button:focus {
 button:hover {
 	background-color: #4080b6;
 }
-.inline-container {
-	display: flex;
-	align-items: center;
-	position: relative;
-}
 
-.bottom-container {
-	position: relative;
-	height: 100%;
-}
-
-#response-label,
-#response-area,
-#task-progress {
+#task-tab,
+#question-tab {
 	opacity: 0;
-	position: absolute;
 	pointer-events: none;
-	width: 100%;
-	height: 20%;
 }
 
 #response-label {
-	top: 0;
+	margin-top: 30px;
 }
 #response-area {
-	top: 30px;
-	height: 90%;
+	height: 50%;
 }
 
-.body-loaded #response-label,
-.body-loaded #response-area,
-.body-loaded #task-progress {
+.body-loaded #task-tab,
+.body-loaded #question-tab {
 	transition: opacity 0.2s ease;
 }
 
-#response-label.show-component,
-#response-area.show-component,
-#task-progress.show-component {
+#task-tab.show-component,
+#question-tab.show-component {
 	opacity: 1;
 	pointer-events: auto;
 }
 
-#response-label:not(.show-component) ~ #task-progress,
-#response-area:not(.show-component) ~ #task-progress {
+#question-tab:not(.show-component) ~ #task-tab {
 	opacity: 1;
 	pointer-events: auto;
 }
 
-#user-input {
+.user-input {
 	height: 20%;
+}
+
+#loader-container {
+	margin-top: 20px;
 }
 
 .loader {
