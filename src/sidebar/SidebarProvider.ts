@@ -45,8 +45,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					taskInProgress = true;
-					await recursiveDevelopment(message.input);
-					taskInProgress = false;
+					try {
+						await recursiveDevelopment(message.input);
+						taskInProgress = false;
+					} catch (error) {
+						vscode.window.showErrorMessage(
+							"Error occurred while running task: " + error
+						);
+						taskInProgress = false;
+					}
 					break;
 
 				case "submit-question":
@@ -57,12 +64,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					questionInProgress = true;
-					const response = await queryChatGPT(message.input);
-					webviewView.webview.postMessage({
-						command: "response",
-						text: response,
-					});
-					questionInProgress = false;
+					try {
+						const response = await queryChatGPT(message.input);
+						webviewView.webview.postMessage({
+							command: "response",
+							text: response,
+						});
+						questionInProgress = false;
+					} catch (error) {
+						vscode.window.showErrorMessage(
+							"Error occurred while responding: " + error
+						);
+						questionInProgress = false;
+					}
 					break;
 
 				default:
