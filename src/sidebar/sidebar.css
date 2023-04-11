@@ -89,3 +89,24 @@ button:hover {
 #user-input {
 	height: 20%;
 }
+
+.loader {
+	margin-right: 10px;
+	border: 4px solid #3c3c3c;
+	border-top: 4px solid #3498db;
+	border-right: 4px solid #3498db;
+	border-bottom: 4px solid #3498db;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
