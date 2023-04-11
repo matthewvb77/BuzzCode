@@ -74,7 +74,7 @@ button:hover {
 
 .body-loaded #response-label,
 .body-loaded #response-area {
-	transition: opacity 0.3s ease;
+	transition: opacity 0.2s ease;
 }
 
 #response-label.show-response,
