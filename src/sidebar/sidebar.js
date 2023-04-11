@@ -27,6 +27,13 @@
 		document.body.classList.add("body-loaded");
 	});
 
+	userInputBox.addEventListener("keydown", function (event) {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
+			document.getElementById("submit-button").click();
+		}
+	});
+
 	document.getElementById("submit-button").addEventListener("click", () => {
 		const input = userInputBox.value;
 		const inputType = inputTypeSelect.value;
