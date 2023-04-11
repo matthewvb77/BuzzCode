@@ -81,3 +81,7 @@ button:hover {
 #response-area.show-response {
 	opacity: 1;
 }
+
+#response-area {
+	height: 100%;
+}
