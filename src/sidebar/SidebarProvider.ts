@@ -73,17 +73,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<div class="inline-container">
 					<label for="input-type">Input:</label>
 					<select id="input-type">
-						<option value="description">Function Description</option>
-						<option value="test">Existing Function</option>
+						<option value="task">Task</option>
+						<option value="question">Question</option>
 					</select>
 				</div>
 				<textarea id="user-input" name="user-input" rows="4" placeholder=""></textarea>
 				<button id="submit-button">Submit</button>
-				<!-- DEPRECATED
-					<br>
-					<label id="response-label">Response:</label>
-					<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
-				-->
+				<br>
+				<label id="response-label">Response:</label>
+				<textarea id="response-area" name="response-area" rows="4" placeholder="Model will respond..." readonly></textarea>
 				<script nonce="${nonce}">
                 	var vscode = acquireVsCodeApi();
             	</script>
