@@ -22,6 +22,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
+		let taskInProgress = false;
+		let questionInProgress = false;
+
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			if (!message.input) {
 				return;
@@ -35,15 +38,31 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 			switch (message.command) {
 				case "submit-task":
+					if (taskInProgress) {
+						vscode.window.showInformationMessage(
+							"A task is already in progress."
+						);
+						return;
+					}
+					taskInProgress = true;
 					await recursiveDevelopment(message.input);
+					taskInProgress = false;
 					break;
 
 				case "submit-question":
+					if (questionInProgress) {
+						vscode.window.showInformationMessage(
+							"A question is already in progress."
+						);
+						return;
+					}
+					questionInProgress = true;
 					const response = await queryChatGPT(message.input);
 					webviewView.webview.postMessage({
 						command: "response",
 						text: response,
 					});
+					questionInProgress = false;
 					break;
 
 				default:
