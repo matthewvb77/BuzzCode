@@ -46,8 +46,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					taskInProgress = true;
-					this.updateProgressBar(5, "Generating subtasks...");
 					this.showTaskStarted();
+					this.updateProgressBar(5, "Generating subtasks...");
 
 					try {
 						const result = await recursiveDevelopment(
