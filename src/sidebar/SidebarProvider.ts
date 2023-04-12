@@ -3,6 +3,7 @@ import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import { queryChatGPT } from "../AIContainer/AIHelpers/queryChatGPT";
+import { Instruction } from "../AIContainer/recursiveDevelopment";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -51,7 +52,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					try {
 						const result = await recursiveDevelopment(
 							message.input,
-							this.updateProgressBar.bind(this)
+							this.updateProgressBar.bind(this),
+							this.onInstructionsReady.bind(this)
 						);
 						if (result === "Cancelled") {
 							this.showTaskCancelled();
@@ -121,6 +123,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				subtask: subtask,
 			});
 		}
+	}
+
+	private async onInstructionsReady(
+		instructions: Array<Instruction>
+	): Promise<void | string> {
+		// TODO
 	}
 
 	private showTaskStarted() {

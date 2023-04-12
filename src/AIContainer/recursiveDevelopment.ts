@@ -5,7 +5,7 @@ import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt, taskPrompt } from "./prompts";
 
-interface Instruction {
+export interface Instruction {
 	index: number;
 	type: string;
 	parameters: any;
@@ -16,16 +16,26 @@ var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(
 	input: string,
-	updateProgressBar: (progress: number, subtask: string) => void
+	updateProgressBar: (progress: number, subtask: string) => void,
+	onInstructionsReady: (
+		instructions: Array<Instruction>
+	) => Promise<void | string>
 ): Promise<void | "Cancelled"> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
-	return await recursiveDevelopmentHelper(taskDescription, updateProgressBar);
+	return await recursiveDevelopmentHelper(
+		taskDescription,
+		updateProgressBar,
+		onInstructionsReady
+	);
 }
 
 async function recursiveDevelopmentHelper(
 	input: string,
-	updateProgressBar: (progress: number, subtask: string) => void
+	updateProgressBar: (progress: number, subtask: string) => void,
+	onInstructionsReady: (
+		instructions: Array<Instruction>
+	) => Promise<void | string>
 ): Promise<void | "Cancelled"> {
 	try {
 		recursionCount++;
@@ -48,6 +58,11 @@ async function recursiveDevelopmentHelper(
 	} catch (error) {
 		vscode.window.showErrorMessage("Error occured: " + error);
 		return;
+	}
+
+	const proceed = await onInstructionsReady(instructions);
+	if (proceed === "Cancelled") {
+		return "Cancelled";
 	}
 
 	for (const [index, instruction] of instructions.entries()) {
@@ -79,7 +94,8 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt,
-						updateProgressBar
+						updateProgressBar,
+						onInstructionsReady
 					);
 					break;
 
@@ -91,7 +107,8 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
 							userResponse,
-						updateProgressBar
+						updateProgressBar,
+						onInstructionsReady
 					);
 					break;
 
@@ -110,7 +127,8 @@ async function recursiveDevelopmentHelper(
 					`\nThe following error occured:\n\n` +
 					error +
 					`\n\nThink about why this error occured and how to fix it.`,
-				updateProgressBar
+				updateProgressBar,
+				onInstructionsReady
 			);
 		}
 	}
