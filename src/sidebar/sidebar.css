@@ -138,9 +138,11 @@ button:hover {
 
 .loader.loader-completed {
 	border: 4px solid #09a03b;
-	border-radius: 50%;
-	width: 30px;
-	height: 30px;
+	animation: none;
+}
+
+.loader.loader-cancelled {
+	border: 4px solid #a11c1c;
 	animation: none;
 }
 

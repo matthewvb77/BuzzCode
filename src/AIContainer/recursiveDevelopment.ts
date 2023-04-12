@@ -17,16 +17,16 @@ var taskDescription = "";
 export async function recursiveDevelopment(
 	input: string,
 	updateProgressBar: (progress: number, subtask: string) => void
-) {
+): Promise<void | "Cancelled"> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
-	await recursiveDevelopmentHelper(taskDescription, updateProgressBar);
+	return await recursiveDevelopmentHelper(taskDescription, updateProgressBar);
 }
 
 async function recursiveDevelopmentHelper(
 	input: string,
 	updateProgressBar: (progress: number, subtask: string) => void
-) {
+): Promise<void | "Cancelled"> {
 	try {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
@@ -64,7 +64,7 @@ async function recursiveDevelopmentHelper(
 						vscode.window.showInformationMessage(
 							"User cancelled execution -- Terminating Process."
 						);
-						return;
+						return "Cancelled";
 					} else if (result.error) {
 						throw result.error;
 					}

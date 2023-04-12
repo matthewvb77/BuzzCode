@@ -49,11 +49,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					this.showTaskStarted();
 
 					try {
-						await recursiveDevelopment(
+						const result = await recursiveDevelopment(
 							message.input,
 							this.updateProgressBar.bind(this)
 						);
-						this.showTaskCompleted();
+						if (result === "Cancelled") {
+							this.showTaskCancelled();
+						} else {
+							this.showTaskCompleted();
+						}
 						taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
@@ -122,6 +126,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "showTaskCompleted",
+			});
+		}
+	}
+
+	private showTaskCancelled() {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "showTaskCancelled",
 			});
 		}
 	}

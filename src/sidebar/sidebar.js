@@ -85,6 +85,9 @@
 				loader.classList.add("loader-completed");
 				break;
 
+			case "showTaskCancelled":
+				progressText.textContent = "Task Cancelled";
+				loader.classList.add("loader-cancelled");
 			default:
 				console.warn("Unknown message received:", message);
 		}
