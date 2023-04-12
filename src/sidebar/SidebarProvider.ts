@@ -3,7 +3,7 @@ import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
 import { queryChatGPT } from "../AIContainer/AIHelpers/queryChatGPT";
-import { Instruction } from "../AIContainer/recursiveDevelopment";
+import { Subtask } from "../AIContainer/recursiveDevelopment";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -53,7 +53,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						const result = await recursiveDevelopment(
 							message.input,
 							this.updateProgressBar.bind(this),
-							this.onInstructionsReady.bind(this)
+							this.onSubtasksReady.bind(this)
 						);
 						if (result === "Cancelled") {
 							this.showTaskCancelled();
@@ -125,16 +125,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private onInstructionsReady(instructions: Instruction[]): Promise<string> {
+	private onSubtasksReady(subtasks: Array<Subtask>): Promise<string> {
 		return new Promise((resolve) => {
-			const instructionsHTML = instructions
-				.map((instruction, index) => {
+			const subtasksHTML = subtasks
+				.map((subtask, index) => {
 					return `
-				<div class="instruction" id="instruction-${index}" onclick="toggleInstruction(${index})">
-				  ${instruction.type}
+				<div class="subtask" id="subtask-${index}" onclick="toggleSubtask(${index})">
+				  ${subtask.type}
 				</div>
-				<div class="instruction-content" id="instruction-content-${index}" style="display: none;">
-				  ${JSON.stringify(instruction.parameters, null, 2)}
+				<div class="subtask-content" id="subtask-content-${index}" style="display: none;">
+				  ${JSON.stringify(subtask.parameters, null, 2)}
 				</div>
 			  `;
 				})
@@ -148,8 +148,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 			if (this._view) {
 				this._view.webview.postMessage({
-					command: "showInstructions",
-					content: instructionsHTML + buttonsHTML,
+					command: "showSubtasks",
+					content: subtasksHTML + buttonsHTML,
 				});
 
 				this._view.webview.onDidReceiveMessage((message) => {
@@ -234,9 +234,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							<progress id="progress-bar" value="5" max="100"></progress>
 						</div>
 
-						<div id="instructions-container">
-							<label id="instructions-label">Subtasks:</label>
-							<div id="instructions-list"></div>
+						<div id="subtasks-container">
+							<label id="subtasks-label">Subtasks:</label>
+							<div id="subtasks-list"></div>
 						</div>
 					</div>
 

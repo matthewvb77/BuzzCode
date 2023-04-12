@@ -90,19 +90,17 @@
 				progressText.textContent = message.subtask;
 				break;
 
-			case "showInstructions":
-				const instructionsContainer = document.getElementById(
-					"instructions-container"
-				);
-				instructionsContainer.innerHTML = ""; // Clear the container
+			case "showSubtasks":
+				const subtasksContainer = document.getElementById("subtasks-container");
+				subtasksContainer.innerHTML = ""; // Clear the container
 
-				message.instructions.forEach((instruction) => {
+				message.subtasks.forEach((subtask) => {
 					const listItem = document.createElement("li");
-					listItem.innerHTML = `${instruction.index + 1}. ${instruction.type}`;
+					listItem.innerHTML = `${subtask.index + 1}. ${subtask.type}`;
 					listItem.addEventListener("click", () => {
 						listItem.classList.toggle("expanded");
 					});
-					instructionsContainer.appendChild(listItem);
+					subtasksContainer.appendChild(listItem);
 				});
 				break;
 

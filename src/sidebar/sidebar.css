@@ -184,21 +184,21 @@ button:hover {
 	border-radius: 4px;
 }
 
-/* Instructions Container */
-#instructions-container {
+/* Subtasks Container */
+#subtasks-container {
 	margin-top: 20px;
 }
 
-/* Instruction List Items */
-#instructions-container li {
+/* Subtask List Items */
+#subtasks-container li {
 	cursor: pointer;
 	font-weight: bold;
 	margin-bottom: 10px;
 	list-style: none;
 }
 
-/* Instruction Details */
-#instructions-container li.expanded::after {
+/* Subtask Details */
+#subtasks-container li.expanded::after {
 	content: " (Details)";
 	font-weight: normal;
 	color: #569cd6;
