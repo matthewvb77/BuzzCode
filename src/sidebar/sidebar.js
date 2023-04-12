@@ -69,6 +69,15 @@
 				progressBar.value = message.progress;
 				break;
 
+			case "showTaskStarted":
+				const progressContainer = document.getElementById("progress-container");
+				progressContainer.classList.add("show-component");
+				break;
+
+			case "showTaskCompleted":
+				// pass
+				break;
+
 			default:
 				console.warn("Unknown message received:", message);
 		}

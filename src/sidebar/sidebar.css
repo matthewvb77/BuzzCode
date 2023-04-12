@@ -82,7 +82,8 @@ button:hover {
 }
 
 #task-tab,
-#question-tab {
+#question-tab,
+#progress-container {
 	opacity: 0;
 	pointer-events: none;
 }
@@ -95,12 +96,14 @@ button:hover {
 }
 
 .body-loaded #task-tab,
-.body-loaded #question-tab {
+.body-loaded #question-tab,
+.body-loaded #progress-container {
 	transition: opacity 0.2s ease;
 }
 
 #task-tab.show-component,
-#question-tab.show-component {
+#question-tab.show-component,
+#progress-container.show-component {
 	opacity: 1;
 	pointer-events: auto;
 }
