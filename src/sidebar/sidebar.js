@@ -76,6 +76,7 @@
 			case "showTaskStarted":
 				const progressContainer = document.getElementById("progress-container");
 				loader.classList.remove("loader-completed");
+				loader.classList.remove("loader-cancelled");
 				progressContainer.classList.add("show-component");
 				break;
 

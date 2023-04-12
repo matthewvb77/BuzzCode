@@ -61,9 +61,6 @@ async function recursiveDevelopmentHelper(
 					const { command } = parameters;
 					const result = await executeTerminalCommand(command);
 					if (typeof result === "string") {
-						vscode.window.showInformationMessage(
-							"User cancelled execution -- Terminating Process."
-						);
 						return "Cancelled";
 					} else if (result.error) {
 						throw result.error;

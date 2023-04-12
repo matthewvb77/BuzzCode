@@ -142,7 +142,7 @@ button:hover {
 }
 
 .loader.loader-cancelled {
-	border: 4px solid #a11c1c;
+	border: 4px solid #c02626;
 	animation: none;
 }
 
