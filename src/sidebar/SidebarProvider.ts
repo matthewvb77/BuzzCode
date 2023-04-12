@@ -46,7 +46,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					}
 					taskInProgress = true;
 					try {
-						await recursiveDevelopment(message.input);
+						await recursiveDevelopment(
+							message.input,
+							this.updateProgressBar.bind(this)
+						);
 						taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
@@ -79,6 +82,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					}
 					break;
 
+				case "updateProgressBar":
+					this.updateProgressBar(message.progress);
+					break;
+
 				default:
 					throw new Error("Invalid command");
 			}
@@ -87,6 +94,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	public revive(panel: vscode.WebviewView) {
 		this._view = panel;
+	}
+
+	private updateProgressBar(progress: number) {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "updateProgressBar",
+				progress: progress,
+			});
+		}
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {

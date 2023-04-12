@@ -14,13 +14,19 @@ interface Instruction {
 var recursionLimit = 10;
 var recursionCount = 0;
 var taskDescription = "";
-export async function recursiveDevelopment(input: string) {
+export async function recursiveDevelopment(
+	input: string,
+	updateProgressBar: (progress: number) => void
+) {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
-	recursiveDevelopmentHelper(taskDescription);
+	recursiveDevelopmentHelper(taskDescription, updateProgressBar);
 }
 
-async function recursiveDevelopmentHelper(input: string) {
+async function recursiveDevelopmentHelper(
+	input: string,
+	updateProgressBar: (progress: number) => void
+) {
 	try {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
@@ -44,7 +50,7 @@ async function recursiveDevelopmentHelper(input: string) {
 		return;
 	}
 
-	for (const instruction of instructions) {
+	for (const [index, instruction] of instructions.entries()) {
 		const { type, parameters } = instruction;
 
 		try {
@@ -73,7 +79,8 @@ async function recursiveDevelopmentHelper(input: string) {
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
-							newPrompt
+							newPrompt,
+						updateProgressBar
 					);
 					break;
 
@@ -84,7 +91,8 @@ async function recursiveDevelopmentHelper(input: string) {
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
-							userResponse
+							userResponse,
+						updateProgressBar
 					);
 					break;
 
@@ -102,8 +110,12 @@ async function recursiveDevelopmentHelper(input: string) {
 					JSON.stringify(instruction) +
 					`\nThe following error occured:\n\n` +
 					error +
-					`\n\nThink about why this error occured and how to fix it.`
+					`\n\nThink about why this error occured and how to fix it.`,
+				updateProgressBar
 			);
 		}
+
+		const progress = ((index + 1) / instructions.length) * 100;
+		updateProgressBar(progress);
 	}
 }

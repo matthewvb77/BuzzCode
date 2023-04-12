@@ -63,6 +63,12 @@
 				const responseArea = document.getElementById("response-area");
 				responseArea.value = message.text;
 				break;
+
+			case "updateProgressBar":
+				const progressBar = document.getElementById("progress-bar");
+				progressBar.value = message.progress;
+				break;
+
 			default:
 				console.warn("Unknown message received:", message);
 		}
