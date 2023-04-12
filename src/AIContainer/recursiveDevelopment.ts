@@ -16,7 +16,7 @@ var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(
 	input: string,
-	updateProgressBar: (progress: number) => void
+	updateProgressBar: (progress: number, subtask: string) => void
 ) {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
@@ -25,7 +25,7 @@ export async function recursiveDevelopment(
 
 async function recursiveDevelopmentHelper(
 	input: string,
-	updateProgressBar: (progress: number) => void
+	updateProgressBar: (progress: number, subtask: string) => void
 ) {
 	try {
 		recursionCount++;
@@ -116,6 +116,22 @@ async function recursiveDevelopmentHelper(
 		}
 
 		const progress = ((index + 1) / instructions.length) * 100;
-		updateProgressBar(progress);
+		updateProgressBar(progress, getDescription(instruction));
+	}
+}
+
+function getDescription(instruction: Instruction) {
+	const { type, parameters } = instruction;
+	switch (type) {
+		case "executeTerminalCommand":
+			return `Executing terminal command...`;
+		case "generateFile":
+			return `Generating file: ${parameters.fileName}`;
+		case "recurse":
+			return `Recursing with new prompt...`;
+		case "askUser":
+			return `Asking user for input...`;
+		default:
+			return `Unknown instruction type "${type}"`;
 	}
 }

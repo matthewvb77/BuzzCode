@@ -45,7 +45,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					taskInProgress = true;
-					this.updateProgressBar(0);
+					this.updateProgressBar(0, "Generating subtasks...");
 					this.showTaskStarted();
 
 					try {
@@ -87,7 +87,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					break;
 
 				case "updateProgressBar":
-					this.updateProgressBar(message.progress);
+					this.updateProgressBar(message.progress, message.subtask);
 					break;
 
 				default:
@@ -100,11 +100,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		this._view = panel;
 	}
 
-	private updateProgressBar(progress: number) {
+	private updateProgressBar(progress: number, subtask: string) {
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "updateProgressBar",
 				progress: progress,
+				subtask: subtask,
 			});
 		}
 	}

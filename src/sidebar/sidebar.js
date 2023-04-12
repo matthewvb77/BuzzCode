@@ -66,7 +66,9 @@
 
 			case "updateProgressBar":
 				const progressBar = document.getElementById("progress-bar");
+				const progressText = document.getElementById("loader-text");
 				progressBar.value = message.progress;
+				progressText.textContent = message.subtask;
 				break;
 
 			case "showTaskStarted":

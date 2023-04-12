@@ -136,6 +136,11 @@ button:hover {
 	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
 }
 
+#loader-text {
+	font-size: 14px;
+	margin-top: 20px;
+}
+
 @keyframes spin {
 	0% {
 		transform: rotate(0deg);
