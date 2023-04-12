@@ -125,10 +125,40 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private async onInstructionsReady(
-		instructions: Array<Instruction>
-	): Promise<void | string> {
-		// TODO
+	private onInstructionsReady(instructions: Instruction[]): Promise<string> {
+		return new Promise((resolve) => {
+			const instructionsHTML = instructions
+				.map((instruction, index) => {
+					return `
+				<div class="instruction" id="instruction-${index}" onclick="toggleInstruction(${index})">
+				  ${instruction.type}
+				</div>
+				<div class="instruction-content" id="instruction-content-${index}" style="display: none;">
+				  ${JSON.stringify(instruction.parameters, null, 2)}
+				</div>
+			  `;
+				})
+				.join("");
+
+			const buttonsHTML = `
+			<button id="confirmBtn">Confirm</button>
+			<button id="regenerateBtn">Regenerate</button>
+			<button id="cancelBtn">Cancel</button>
+		  `;
+
+			if (this._view) {
+				this._view.webview.postMessage({
+					command: "showInstructions",
+					content: instructionsHTML + buttonsHTML,
+				});
+
+				this._view.webview.onDidReceiveMessage((message) => {
+					if (message.command === "userAction") {
+						resolve(message.action);
+					}
+				});
+			}
+		});
 	}
 
 	private showTaskStarted() {
@@ -202,6 +232,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								<span id="loader-text">Generating Subtasks...</span>
 							</div>
 							<progress id="progress-bar" value="5" max="100"></progress>
+						</div>
+
+						<div id="instructions-container">
+							<label id="instructions-label">Subtasks:</label>
+							<div id="instructions-list"></div>
 						</div>
 					</div>
 

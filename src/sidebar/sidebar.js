@@ -24,6 +24,13 @@
 		}
 	}
 
+	function userAction(action) {
+		vscode.postMessage({
+			command: "userAction",
+			action: action,
+		});
+	}
+
 	updatePlaceholderAndResponse();
 	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
 	window.addEventListener("load", () => {
@@ -56,6 +63,16 @@
 		vscode.postMessage({ command: "submit-question", input });
 	});
 
+	document
+		.getElementById("confirmBtn")
+		.addEventListener("click", () => userAction("confirm"));
+	document
+		.getElementById("regenerateBtn")
+		.addEventListener("click", () => userAction("regenerate"));
+	document
+		.getElementById("cancelBtn")
+		.addEventListener("click", () => userAction("cancel"));
+
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const progressText = document.getElementById("loader-text");
@@ -71,6 +88,22 @@
 			case "updateProgressBar":
 				progressBar.value = message.progress;
 				progressText.textContent = message.subtask;
+				break;
+
+			case "showInstructions":
+				const instructionsContainer = document.getElementById(
+					"instructions-container"
+				);
+				instructionsContainer.innerHTML = ""; // Clear the container
+
+				message.instructions.forEach((instruction) => {
+					const listItem = document.createElement("li");
+					listItem.innerHTML = `${instruction.index + 1}. ${instruction.type}`;
+					listItem.addEventListener("click", () => {
+						listItem.classList.toggle("expanded");
+					});
+					instructionsContainer.appendChild(listItem);
+				});
 				break;
 
 			case "showTaskStarted":

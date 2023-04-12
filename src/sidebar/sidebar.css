@@ -183,3 +183,23 @@ button:hover {
 	background-color: #3498db;
 	border-radius: 4px;
 }
+
+/* Instructions Container */
+#instructions-container {
+	margin-top: 20px;
+}
+
+/* Instruction List Items */
+#instructions-container li {
+	cursor: pointer;
+	font-weight: bold;
+	margin-bottom: 10px;
+	list-style: none;
+}
+
+/* Instruction Details */
+#instructions-container li.expanded::after {
+	content: " (Details)";
+	font-weight: normal;
+	color: #569cd6;
+}

@@ -60,9 +60,23 @@ async function recursiveDevelopmentHelper(
 		return;
 	}
 
-	const proceed = await onInstructionsReady(instructions);
-	if (proceed === "Cancelled") {
-		return "Cancelled";
+	const userAction = await onInstructionsReady(instructions);
+	switch (userAction) {
+		case "confirm":
+			break;
+
+		case "regenerate":
+			return await recursiveDevelopmentHelper(
+				input,
+				updateProgressBar,
+				onInstructionsReady
+			);
+
+		case "cancel":
+			return "Cancelled";
+
+		default:
+			throw new Error("Invalid user action");
 	}
 
 	for (const [index, instruction] of instructions.entries()) {
