@@ -26,7 +26,6 @@ body {
 .inline-container {
 	display: flex;
 	align-items: center;
-	position: relative;
 }
 label {
 	font-size: 18px;
@@ -115,7 +114,10 @@ button:hover {
 	height: 20%;
 }
 
-#loader-container {
+#progress-container {
+	width: 100%;
+	height: 60%;
+	border-radius: 4px;
 	margin-top: 20px;
 }
 
@@ -138,4 +140,27 @@ button:hover {
 	100% {
 		transform: rotate(360deg);
 	}
+}
+
+#progress-bar {
+	width: 100%;
+	height: 20px;
+	-webkit-appearance: none;
+	appearance: none;
+	border: none;
+	border-radius: 4px;
+}
+
+#progress-bar::-webkit-progress-bar {
+	background-color: #3c3c3c;
+	border-radius: 4px;
+}
+
+#progress-bar::-webkit-progress-value {
+	background-color: #3498db;
+	border-radius: 4px;
+}
+#progress-bar::-moz-progress-bar {
+	background-color: #3498db;
+	border-radius: 4px;
 }
