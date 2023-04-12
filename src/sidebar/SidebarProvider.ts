@@ -74,20 +74,29 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						return;
 					}
-					questionInProgress = true;
-					try {
-						const response = await queryChatGPT(message.input);
-						webviewView.webview.postMessage({
-							command: "response",
-							text: response,
-						});
-						questionInProgress = false;
-					} catch (error) {
-						vscode.window.showErrorMessage(
-							"Error occurred while responding: " + error
-						);
-						questionInProgress = false;
-					}
+					await vscode.window.withProgress(
+						{
+							location: vscode.ProgressLocation.Notification,
+							title: "Generating response...",
+							cancellable: false,
+						},
+						async () => {
+							questionInProgress = true;
+							try {
+								const response = await queryChatGPT(message.input);
+								webviewView.webview.postMessage({
+									command: "response",
+									text: response,
+								});
+								questionInProgress = false;
+							} catch (error) {
+								vscode.window.showErrorMessage(
+									"Error occurred while responding: " + error
+								);
+								questionInProgress = false;
+							}
+						}
+					);
 					break;
 
 				case "updateProgressBar":
