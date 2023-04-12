@@ -58,6 +58,10 @@
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
+		const progressText = document.getElementById("loader-text");
+		const progressBar = document.getElementById("progress-bar");
+		const loader = document.getElementById("loader");
+
 		switch (message.command) {
 			case "response":
 				const responseArea = document.getElementById("response-area");
@@ -65,19 +69,20 @@
 				break;
 
 			case "updateProgressBar":
-				const progressBar = document.getElementById("progress-bar");
-				const progressText = document.getElementById("loader-text");
 				progressBar.value = message.progress;
 				progressText.textContent = message.subtask;
 				break;
 
 			case "showTaskStarted":
 				const progressContainer = document.getElementById("progress-container");
+				loader.classList.remove("loader-completed");
 				progressContainer.classList.add("show-component");
 				break;
 
 			case "showTaskCompleted":
-				// pass
+				progressText.textContent = "Task Completed";
+				progressBar.value = 100;
+				loader.classList.add("loader-completed");
 				break;
 
 			default:

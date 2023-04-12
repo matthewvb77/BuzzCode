@@ -45,7 +45,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					taskInProgress = true;
-					this.updateProgressBar(0, "Generating subtasks...");
+					this.updateProgressBar(5, "Generating subtasks...");
 					this.showTaskStarted();
 
 					try {
@@ -169,10 +169,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 						<div id="progress-container">
 							<div class="inline-container">
-								<div class="loader"></div>
+								<div id="loader" class="loader"></div>
 								<span id="loader-text">Generating Subtasks...</span>
 							</div>
-							<progress id="progress-bar" value="0" max="100"></progress>
+							<progress id="progress-bar" value="5" max="100"></progress>
 						</div>
 					</div>
 

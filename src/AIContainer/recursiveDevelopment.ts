@@ -20,7 +20,7 @@ export async function recursiveDevelopment(
 ) {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
-	recursiveDevelopmentHelper(taskDescription, updateProgressBar);
+	await recursiveDevelopmentHelper(taskDescription, updateProgressBar);
 }
 
 async function recursiveDevelopmentHelper(
@@ -52,6 +52,8 @@ async function recursiveDevelopmentHelper(
 
 	for (const [index, instruction] of instructions.entries()) {
 		const { type, parameters } = instruction;
+		const progress = ((index + 1) / (instructions.length + 1)) * 100; // +1 is to include the subtask generation
+		updateProgressBar(progress, getDescription(instruction));
 
 		try {
 			switch (type) {
@@ -87,7 +89,7 @@ async function recursiveDevelopmentHelper(
 				case "askUser":
 					const { question } = parameters;
 					const userResponse = await askUser(question);
-					recursiveDevelopmentHelper(
+					await recursiveDevelopmentHelper(
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
@@ -114,9 +116,6 @@ async function recursiveDevelopmentHelper(
 				updateProgressBar
 			);
 		}
-
-		const progress = ((index + 1) / instructions.length) * 100;
-		updateProgressBar(progress, getDescription(instruction));
 	}
 }
 
