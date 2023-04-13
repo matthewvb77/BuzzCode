@@ -217,7 +217,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 						<div id="progress-container" class="show-component">
 							<div class="inline-container">
-								<div id="loader" class="loader"></div>
+								<div id="progress-loader" class="loader"></div>
 								<span id="progress-text" class="subtask-text">Generating subtasks...</span>
 							</div>
 

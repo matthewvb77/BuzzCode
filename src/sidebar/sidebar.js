@@ -8,6 +8,7 @@
 	const questionSubmitButton = document.getElementById(
 		"question-submit-button"
 	);
+	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
 	function updatePlaceholderAndResponse() {
@@ -68,7 +69,7 @@
 		.addEventListener("click", () => userAction("regenerate"));
 
 	function userAction(action) {
-		loader.classList.remove("loader-waiting");
+		progressLoader.classList.remove("loader-waiting");
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
@@ -82,7 +83,9 @@
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
-		const loader = document.getElementById("loader");
+		const activeSubtaskLoader = document.querySelector(
+			".subtask-container .loader:not(.loader-completed):not(.loader-initial)"
+		);
 
 		switch (message.command) {
 			case "response":
@@ -109,14 +112,23 @@
 				switch (type) {
 					case "executeTerminalCommand":
 						progressText.textContent = `Executing terminal command...`;
+						break;
+
 					case "generateFile":
 						progressText.textContent = `Generating file: ${parameters.fileName}`;
+						break;
+
 					case "recurse":
 						progressText.textContent = `Recursing with new prompt...`;
+						break;
+
 					case "askUser":
 						progressText.textContent = `Asking user for input...`;
+						break;
+
 					default:
 						progressText.textContent = `Unknown subtask type "${type}"`;
+						break;
 				}
 				break;
 
@@ -124,7 +136,7 @@
 				const subtasksContainer = document.getElementById("subtasks-container");
 				subtasksContainer.innerHTML = ""; // Clear the container
 				progressText.textContent = "Please review the subtasks below:";
-				loader.classList.add("loader-waiting");
+				progressLoader.classList.add("loader-waiting");
 
 				message.subtasks.forEach((subtask) => {
 					const listItem = document.createElement("li");
@@ -150,29 +162,28 @@
 
 			case "showTaskStarted":
 				const progressContainer = document.getElementById("progress-container");
-				loader.classList.remove("loader-completed");
-				loader.classList.remove("loader-cancelled");
-				loader.classList.remove("loader-waiting");
+				progressLoader.classList.remove("loader-completed");
+				progressLoader.classList.remove("loader-cancelled");
+				progressLoader.classList.remove("loader-waiting");
 				progressContainer.classList.add("show-component");
 				break;
 
 			case "showTaskCompleted":
-				const lastSubtaskLoader = document
-					.getElementById("subtasks-container")
-					.querySelector("li:last-child .loader");
-				lastSubtaskLoader.classList.add("loader-completed");
+				activeSubtaskLoader.classList.add("loader-completed");
 				progressText.textContent = "Task Completed";
-				loader.classList.add("loader-completed");
+				progressLoader.classList.add("loader-completed");
 				break;
 
 			case "showTaskCancelled":
+				activeSubtaskLoader.classList.add("loader-cancelled");
 				progressText.textContent = "Task Cancelled";
-				loader.classList.add("loader-cancelled");
+				progressLoader.classList.add("loader-cancelled");
 				break;
 
 			case "showTaskError":
+				activeSubtaskLoader.classList.add("loader-cancelled");
 				progressText.textContent = "Error Occurred";
-				loader.classList.add("loader-cancelled");
+				progressLoader.classList.add("loader-cancelled");
 				break;
 
 			default:
