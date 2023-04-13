@@ -57,7 +57,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						if (result === "Cancelled") {
 							this.showTaskCancelled();
-						} else if (result === "Error") {
+						} else if (typeof result === "string") {
 							this.showTaskError();
 						} else {
 							this.showTaskCompleted();
