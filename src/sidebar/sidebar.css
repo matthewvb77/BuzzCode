@@ -152,6 +152,11 @@ button:hover {
 	border: 4px solid #c59920;
 	animation: none;
 }
+.loader.loader-initial {
+	border: 4px solid #3498db;
+	animation: none;
+}
+
 #loader {
 	width: 30px;
 	height: 30px;
@@ -173,29 +178,6 @@ button:hover {
 	100% {
 		transform: rotate(360deg);
 	}
-}
-
-#progress-bar {
-	width: 100%;
-	height: 20px;
-	-webkit-appearance: none;
-	appearance: none;
-	border: none;
-	border-radius: 4px;
-}
-
-#progress-bar::-webkit-progress-bar {
-	background-color: #3c3c3c;
-	border-radius: 4px;
-}
-
-#progress-bar::-webkit-progress-value {
-	background-color: #3498db;
-	border-radius: 4px;
-}
-#progress-bar::-moz-progress-bar {
-	background-color: #3498db;
-	border-radius: 4px;
 }
 
 #subtasks-container {

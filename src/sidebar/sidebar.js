@@ -82,7 +82,6 @@
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
-		// const progressBar = document.getElementById("progress-bar");
 		const loader = document.getElementById("loader");
 
 		switch (message.command) {
@@ -91,8 +90,7 @@
 				responseArea.value = message.text;
 				break;
 
-			case "updateProgressBar":
-				// progressBar.value = message.progress;
+			case "updateProgress":
 				progressText.textContent = message.subtask;
 				break;
 
@@ -109,6 +107,7 @@
 					const subtaskLoader = document.createElement("div");
 					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 					subtaskLoader.classList.add("loader");
+					subtaskLoader.classList.add("loader-initial");
 					listItem.appendChild(subtaskLoader);
 
 					const subtaskText = document.createElement("span");
@@ -133,7 +132,6 @@
 
 			case "showTaskCompleted":
 				progressText.textContent = "Task Completed";
-				// progressBar.value = 100;
 				loader.classList.add("loader-completed");
 				break;
 

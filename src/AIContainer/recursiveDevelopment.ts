@@ -16,21 +16,21 @@ var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(
 	input: string,
-	updateProgressBar: (progress: number, subtask: string) => void,
+	updateProgress: (progress: number, subtask: string) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
 	return await recursiveDevelopmentHelper(
 		taskDescription,
-		updateProgressBar,
+		updateProgress,
 		onSubtasksReady
 	);
 }
 
 async function recursiveDevelopmentHelper(
 	input: string,
-	updateProgressBar: (progress: number, subtask: string) => void,
+	updateProgress: (progress: number, subtask: string) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
 ): Promise<void | string> {
 	try {
@@ -63,7 +63,7 @@ async function recursiveDevelopmentHelper(
 		case "regenerate":
 			return await recursiveDevelopmentHelper(
 				input,
-				updateProgressBar,
+				updateProgress,
 				onSubtasksReady
 			);
 
@@ -77,7 +77,7 @@ async function recursiveDevelopmentHelper(
 	for (const [index, subtask] of subtasks.entries()) {
 		const { type, parameters } = subtask;
 		const progress = ((index + 1) / (subtasks.length + 1)) * 100; // +1 is to include the subtask generation
-		updateProgressBar(progress, getDescription(subtask));
+		updateProgress(progress, getDescription(subtask));
 
 		try {
 			switch (type) {
@@ -103,7 +103,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt,
-						updateProgressBar,
+						updateProgress,
 						onSubtasksReady
 					);
 					break;
@@ -116,7 +116,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
 							userResponse,
-						updateProgressBar,
+						updateProgress,
 						onSubtasksReady
 					);
 					break;
@@ -136,7 +136,7 @@ async function recursiveDevelopmentHelper(
 					`\nThe following error occured:\n\n` +
 					error +
 					`\n\nThink about why this error occured and how to fix it.`,
-				updateProgressBar,
+				updateProgress,
 				onSubtasksReady
 			);
 		}

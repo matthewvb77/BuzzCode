@@ -223,8 +223,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								<span id="task-text" class="subtask-text">Generating subtasks...</span>
 							</div>
 
-							<!-- <progress id="progress-bar" value="5" max="100"></progress> -->
-
 							<div id="subtasks-container">
 							<!-- TEMP FOR TESTING -->
 								<li class="subtask-container">
