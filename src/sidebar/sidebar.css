@@ -166,9 +166,8 @@ button:hover {
 	font-size: 14px;
 }
 
-#task-text {
-	font-size: 14px;
-	margin-top: 20px;
+#progress-text {
+	margin-top: 10px;
 }
 
 @keyframes spin {

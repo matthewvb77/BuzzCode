@@ -25,22 +25,6 @@
 		}
 	}
 
-	function getSubtaskDetails(subtask) {
-		const { type, parameters } = subtask;
-		switch (type) {
-			case "executeTerminalCommand":
-				return `Executing terminal command...`;
-			case "generateFile":
-				return `Generating file: ${parameters.fileName}`;
-			case "recurse":
-				return `Recursing with new prompt...`;
-			case "askUser":
-				return `Asking user for input...`;
-			default:
-				return `Unknown subtask type "${type}"`;
-		}
-	}
-
 	updatePlaceholderAndResponse();
 	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
 	window.addEventListener("load", () => {
@@ -107,7 +91,33 @@
 				break;
 
 			case "onStartSubtask":
-				progressText.textContent = message.subtask;
+				const { index, type, parameters } = message.subtask;
+
+				// Update subtask loader states
+				if (index !== 0) {
+					const previousLoader = document.getElementById(
+						`subtask-loader-${index - 1}`
+					);
+					previousLoader.classList.add("loader-completed");
+				}
+				const currentLoader = document.getElementById(
+					`subtask-loader-${index}`
+				);
+				currentLoader.classList.remove("loader-initial");
+
+				// Update progress text
+				switch (type) {
+					case "executeTerminalCommand":
+						progressText.textContent = `Executing terminal command...`;
+					case "generateFile":
+						progressText.textContent = `Generating file: ${parameters.fileName}`;
+					case "recurse":
+						progressText.textContent = `Recursing with new prompt...`;
+					case "askUser":
+						progressText.textContent = `Asking user for input...`;
+					default:
+						progressText.textContent = `Unknown subtask type "${type}"`;
+				}
 				break;
 
 			case "showSubtasks":
