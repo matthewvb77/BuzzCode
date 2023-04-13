@@ -8,7 +8,7 @@
 	const questionSubmitButton = document.getElementById(
 		"question-submit-button"
 	);
-	const progressText = document.getElementById("task-text");
+	const progressText = document.getElementById("progress-text");
 
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
@@ -22,6 +22,22 @@
 				break;
 			default:
 				throw new Error("Invalid input type");
+		}
+	}
+
+	function getSubtaskDetails(subtask) {
+		const { type, parameters } = subtask;
+		switch (type) {
+			case "executeTerminalCommand":
+				return `Executing terminal command...`;
+			case "generateFile":
+				return `Generating file: ${parameters.fileName}`;
+			case "recurse":
+				return `Recursing with new prompt...`;
+			case "askUser":
+				return `Asking user for input...`;
+			default:
+				return `Unknown subtask type "${type}"`;
 		}
 	}
 
@@ -90,7 +106,7 @@
 				responseArea.value = message.text;
 				break;
 
-			case "updateProgress":
+			case "onStartSubtask":
 				progressText.textContent = message.subtask;
 				break;
 

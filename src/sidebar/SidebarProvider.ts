@@ -47,12 +47,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					}
 					taskInProgress = true;
 					this.showTaskStarted();
-					this.updateProgressBar(5, "Generating subtasks...");
 
 					try {
 						const result = await recursiveDevelopment(
 							message.input,
-							this.updateProgressBar.bind(this),
+							this.onStartSubtask.bind(this),
 							this.onSubtasksReady.bind(this)
 						);
 						if (result === "Cancelled") {
@@ -103,8 +102,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					);
 					break;
 
-				case "updateProgressBar":
-					this.updateProgressBar(message.progress, message.subtask);
+				case "onStartSubtask":
+					this.onStartSubtask(message.subtask);
 					break;
 
 				default:
@@ -117,11 +116,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		this._view = panel;
 	}
 
-	private updateProgressBar(progress: number, subtask: string) {
+	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
 			this._view.webview.postMessage({
-				command: "updateProgressBar",
-				progress: progress,
+				command: "onStartSubtask",
 				subtask: subtask,
 			});
 		}
@@ -220,7 +218,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						<div id="progress-container" class="show-component">
 							<div class="inline-container">
 								<div id="loader" class="loader"></div>
-								<span id="task-text" class="subtask-text">Generating subtasks...</span>
+								<span id="progress-text" class="subtask-text">Generating subtasks...</span>
 							</div>
 
 							<div id="subtasks-container">

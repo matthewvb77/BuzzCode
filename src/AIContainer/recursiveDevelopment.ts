@@ -16,21 +16,21 @@ var recursionCount = 0;
 var taskDescription = "";
 export async function recursiveDevelopment(
 	input: string,
-	updateProgress: (progress: number, subtask: string) => void,
+	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
 	return await recursiveDevelopmentHelper(
 		taskDescription,
-		updateProgress,
+		onStartSubtask,
 		onSubtasksReady
 	);
 }
 
 async function recursiveDevelopmentHelper(
 	input: string,
-	updateProgress: (progress: number, subtask: string) => void,
+	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
 ): Promise<void | string> {
 	try {
@@ -63,7 +63,7 @@ async function recursiveDevelopmentHelper(
 		case "regenerate":
 			return await recursiveDevelopmentHelper(
 				input,
-				updateProgress,
+				onStartSubtask,
 				onSubtasksReady
 			);
 
@@ -76,8 +76,7 @@ async function recursiveDevelopmentHelper(
 
 	for (const [index, subtask] of subtasks.entries()) {
 		const { type, parameters } = subtask;
-		const progress = ((index + 1) / (subtasks.length + 1)) * 100; // +1 is to include the subtask generation
-		updateProgress(progress, getDescription(subtask));
+		onStartSubtask(subtask);
 
 		try {
 			switch (type) {
@@ -103,7 +102,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt,
-						updateProgress,
+						onStartSubtask,
 						onSubtasksReady
 					);
 					break;
@@ -116,7 +115,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
 							userResponse,
-						updateProgress,
+						onStartSubtask,
 						onSubtasksReady
 					);
 					break;
@@ -136,25 +135,9 @@ async function recursiveDevelopmentHelper(
 					`\nThe following error occured:\n\n` +
 					error +
 					`\n\nThink about why this error occured and how to fix it.`,
-				updateProgress,
+				onStartSubtask,
 				onSubtasksReady
 			);
 		}
-	}
-}
-
-function getDescription(subtask: Subtask) {
-	const { type, parameters } = subtask;
-	switch (type) {
-		case "executeTerminalCommand":
-			return `Executing terminal command...`;
-		case "generateFile":
-			return `Generating file: ${parameters.fileName}`;
-		case "recurse":
-			return `Recursing with new prompt...`;
-		case "askUser":
-			return `Asking user for input...`;
-		default:
-			return `Unknown subtask type "${type}"`;
 	}
 }
