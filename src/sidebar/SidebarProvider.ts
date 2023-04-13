@@ -127,7 +127,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private onSubtasksReady(subtasks: Array<Subtask>): Promise<string> {
+	private async onSubtasksReady(subtasks: Array<Subtask>): Promise<string> {
 		return new Promise((resolve) => {
 			if (this._view) {
 				this._view.webview.postMessage({

@@ -24,13 +24,6 @@
 		}
 	}
 
-	function userAction(action) {
-		vscode.postMessage({
-			command: "userAction",
-			action: action,
-		});
-	}
-
 	updatePlaceholderAndResponse();
 	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
 	window.addEventListener("load", () => {
@@ -73,6 +66,15 @@
 		.getElementById("regenerate-button")
 		.addEventListener("click", () => userAction("regenerate"));
 
+	function userAction(action) {
+		loader.classList.remove("loader-waiting");
+
+		vscode.postMessage({
+			command: "userAction",
+			action: action,
+		});
+	}
+
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const progressText = document.getElementById("loader-text");
@@ -93,6 +95,8 @@
 			case "showSubtasks":
 				const subtasksContainer = document.getElementById("subtasks-container");
 				subtasksContainer.innerHTML = ""; // Clear the container
+				progressText.textContent = "Please review the subtasks below:";
+				loader.classList.add("loader-waiting");
 
 				message.subtasks.forEach((subtask) => {
 					const listItem = document.createElement("li");
@@ -108,6 +112,7 @@
 				const progressContainer = document.getElementById("progress-container");
 				loader.classList.remove("loader-completed");
 				loader.classList.remove("loader-cancelled");
+				loader.classList.remove("loader-waiting");
 				progressContainer.classList.add("show-component");
 				break;
 

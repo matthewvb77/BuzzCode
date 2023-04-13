@@ -71,7 +71,7 @@ async function recursiveDevelopmentHelper(
 			return "Cancelled";
 
 		default:
-			throw new Error("Invalid user action");
+			return "Error";
 	}
 
 	for (const [index, subtask] of subtasks.entries()) {

@@ -148,6 +148,11 @@ button:hover {
 	animation: none;
 }
 
+.loader.loader-waiting {
+	border: 4px solid #c59920;
+	animation: none;
+}
+
 #loader-text {
 	font-size: 14px;
 	margin-top: 20px;
