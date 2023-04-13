@@ -57,6 +57,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						if (result === "Cancelled") {
 							this.showTaskCancelled();
+						} else if (result === "Error") {
+							this.showTaskError();
 						} else {
 							this.showTaskCompleted();
 						}
@@ -127,29 +129,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onSubtasksReady(subtasks: Array<Subtask>): Promise<string> {
 		return new Promise((resolve) => {
-			const subtasksHTML = subtasks
-				.map((subtask, index) => {
-					return `
-				<div class="subtask" id="subtask-${index}" onclick="toggleSubtask(${index})">
-				  ${subtask.type}
-				</div>
-				<div class="subtask-content" id="subtask-content-${index}" style="display: none;">
-				  ${JSON.stringify(subtask.parameters, null, 2)}
-				</div>
-			  `;
-				})
-				.join("");
-
-			const buttonsHTML = `
-			<button id="confirmBtn">Confirm</button>
-			<button id="regenerateBtn">Regenerate</button>
-			<button id="cancelBtn">Cancel</button>
-		  `;
-
 			if (this._view) {
 				this._view.webview.postMessage({
 					command: "showSubtasks",
-					content: subtasksHTML + buttonsHTML,
+					subtasks: subtasks,
 				});
 
 				this._view.webview.onDidReceiveMessage((message) => {
@@ -181,6 +164,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "showTaskCancelled",
+			});
+		}
+	}
+
+	private showTaskError() {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "showTaskError",
 			});
 		}
 	}

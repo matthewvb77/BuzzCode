@@ -6,17 +6,17 @@ export const initializePrompt = `You have access to these functions:
 
 Minimize user intervention. Don't use askUser unless you have to. If you need to interact with web interfaces, use a tool like Selenium WebDriver.
 
-Example of an instruction list:
+Example of a subtask list:
 
-{"instructions": [{"index": 0,"type": "executeTerminalCommand","parameters": {"command": "git clone https://github.com/example/project.git"}}]}
+{"subtasks": [{"index": 0,"type": "executeTerminalCommand","parameters": {"command": "git clone https://github.com/example/project.git"}}]}
 
 `;
 
-export const taskPrompt = `Generate a JSON instruction list using the commands to solve the following prompt. Escape necessary characters with backslashes: `;
+export const taskPrompt = `Generate a JSON subtask list using the commands to solve the following prompt. Escape necessary characters with backslashes: `;
 
 /*
 {
-	"instructions": [
+	"subtasks": [
 		{
 			"index": 0,
 			"type": "executeTerminalCommand",

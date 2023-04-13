@@ -18,7 +18,7 @@ export async function recursiveDevelopment(
 	input: string,
 	updateProgressBar: (progress: number, subtask: string) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
-): Promise<void | "Cancelled"> {
+): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
 	return await recursiveDevelopmentHelper(
@@ -32,7 +32,7 @@ async function recursiveDevelopmentHelper(
 	input: string,
 	updateProgressBar: (progress: number, subtask: string) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
-): Promise<void | "Cancelled"> {
+): Promise<void | string> {
 	try {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
@@ -52,7 +52,7 @@ async function recursiveDevelopmentHelper(
 		var subtasks: Array<Subtask> = JSON.parse(subtasksString).subtasks;
 	} catch (error) {
 		vscode.window.showErrorMessage("Error occured: " + error);
-		return;
+		return "Error: " + error;
 	}
 
 	const userAction = await onSubtasksReady(subtasks);

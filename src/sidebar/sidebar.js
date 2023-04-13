@@ -64,19 +64,19 @@
 	});
 
 	document
-		.getElementById("confirmBtn")
+		.getElementById("confirm-button")
 		.addEventListener("click", () => userAction("confirm"));
 	document
-		.getElementById("regenerateBtn")
-		.addEventListener("click", () => userAction("regenerate"));
-	document
-		.getElementById("cancelBtn")
+		.getElementById("cancel-button")
 		.addEventListener("click", () => userAction("cancel"));
+	document
+		.getElementById("regenerate-button")
+		.addEventListener("click", () => userAction("regenerate"));
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const progressText = document.getElementById("loader-text");
-		const progressBar = document.getElementById("progress-bar");
+		// const progressBar = document.getElementById("progress-bar");
 		const loader = document.getElementById("loader");
 
 		switch (message.command) {
@@ -86,7 +86,7 @@
 				break;
 
 			case "updateProgressBar":
-				progressBar.value = message.progress;
+				// progressBar.value = message.progress;
 				progressText.textContent = message.subtask;
 				break;
 
@@ -113,13 +113,20 @@
 
 			case "showTaskCompleted":
 				progressText.textContent = "Task Completed";
-				progressBar.value = 100;
+				// progressBar.value = 100;
 				loader.classList.add("loader-completed");
 				break;
 
 			case "showTaskCancelled":
 				progressText.textContent = "Task Cancelled";
 				loader.classList.add("loader-cancelled");
+				break;
+
+			case "showTaskCancelled":
+				progressText.textContent = "Error Occurred";
+				loader.classList.add("loader-cancelled");
+				break;
+
 			default:
 				console.warn("Unknown message received:", message);
 		}
