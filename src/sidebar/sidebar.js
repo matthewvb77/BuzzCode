@@ -157,6 +157,10 @@
 				break;
 
 			case "showTaskCompleted":
+				const lastSubtaskLoader = document
+					.getElementById("subtasks-container")
+					.querySelector("li:last-child .loader");
+				lastSubtaskLoader.classList.add("loader-completed");
 				progressText.textContent = "Task Completed";
 				loader.classList.add("loader-completed");
 				break;
