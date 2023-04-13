@@ -74,6 +74,7 @@ button {
 	cursor: pointer;
 	border-radius: 4px;
 	align-self: flex-end;
+	overflow: hidden;
 }
 button:focus {
 	outline: none;
@@ -203,6 +204,7 @@ button:hover {
 
 #buttons-container * {
 	width: 30%;
+	font-size: 14px;
 }
 
 #buttons-container {
@@ -212,5 +214,5 @@ button:hover {
 
 /* -------------------- Temp CSS so I can see what I'm doing ----------------------- */
 #progress-container {
-	background-color: #3f3f3f;
+	/* background-color: #3f3f3f; */
 }
