@@ -71,8 +71,8 @@
 		loader.classList.remove("loader-waiting");
 
 		if (action === "regenerate") {
-			progressText.textContent = "Generating subtasks...";
-		} else if (action === "confirm") {
+			progressText.textContent = "Regenerating subtasks...";
+		}
 
 		vscode.postMessage({
 			command: "userAction",
