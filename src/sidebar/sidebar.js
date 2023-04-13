@@ -8,7 +8,7 @@
 	const questionSubmitButton = document.getElementById(
 		"question-submit-button"
 	);
-	const progressText = document.getElementById("loader-text");
+	const progressText = document.getElementById("task-text");
 
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
@@ -104,7 +104,18 @@
 
 				message.subtasks.forEach((subtask) => {
 					const listItem = document.createElement("li");
-					listItem.innerHTML = `${subtask.index + 1}. ${subtask.type}`;
+					listItem.classList.add("subtask-container");
+
+					const subtaskLoader = document.createElement("div");
+					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
+					subtaskLoader.classList.add("loader");
+					listItem.appendChild(subtaskLoader);
+
+					const subtaskText = document.createElement("span");
+					subtaskText.classList.add("subtask-text");
+					subtaskText.textContent = subtask.type;
+					listItem.appendChild(subtaskText);
+
 					listItem.addEventListener("click", () => {
 						listItem.classList.toggle("expanded");
 					});

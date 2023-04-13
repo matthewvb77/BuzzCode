@@ -133,8 +133,8 @@ button:hover {
 	border-right: 4px solid #3498db;
 	border-bottom: 4px solid #3498db;
 	border-radius: 50%;
-	width: 30px;
-	height: 30px;
+	width: 20px;
+	height: 20px;
 	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
 }
 
@@ -152,8 +152,16 @@ button:hover {
 	border: 4px solid #c59920;
 	animation: none;
 }
+#loader {
+	width: 30px;
+	height: 30px;
+}
 
-#loader-text {
+.subtask-text {
+	font-size: 14px;
+}
+
+#task-text {
 	font-size: 14px;
 	margin-top: 20px;
 }
@@ -196,7 +204,6 @@ button:hover {
 
 #subtasks-container li {
 	cursor: pointer;
-	font-weight: bold;
 	margin-bottom: 10px;
 	list-style: none;
 }
@@ -217,7 +224,13 @@ button:hover {
 	justify-content: space-between;
 }
 
+.subtask-container {
+	display: flex;
+	align-items: center;
+	margin-left: 20px;
+}
+
 /* -------------------- Temp CSS so I can see what I'm doing ----------------------- */
 #progress-container {
-	/* background-color: #3f3f3f; */
+	background-color: #3f3f3f;
 }

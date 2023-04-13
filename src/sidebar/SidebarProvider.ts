@@ -220,12 +220,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						<div id="progress-container" class="show-component">
 							<div class="inline-container">
 								<div id="loader" class="loader"></div>
-								<span id="loader-text">Generating subtasks...</span>
+								<span id="task-text" class="subtask-text">Generating subtasks...</span>
 							</div>
 
 							<!-- <progress id="progress-bar" value="5" max="100"></progress> -->
 
-							<div id="subtasks-container"></div>
+							<div id="subtasks-container">
+							<!-- TEMP FOR TESTING -->
+								<li class="subtask-container">
+									<div id="subtask-loader-0" class="loader"></div>
+									<span class="subtask-text">Subtask 0</span>
+								</li>
+
+								<li class="subtask-container expanded">
+									<div id="subtask-loader-1" class="loader"></div>
+									<span class="subtask-text">Subtask 1</span>
+								</li>
+
+							</div>
 
 							<div id="buttons-container" class="inline-container">
 								<button id="confirm-button">Confirm</button>
