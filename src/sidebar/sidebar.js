@@ -8,6 +8,7 @@
 	const questionSubmitButton = document.getElementById(
 		"question-submit-button"
 	);
+	const progressText = document.getElementById("loader-text");
 
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
@@ -69,6 +70,10 @@
 	function userAction(action) {
 		loader.classList.remove("loader-waiting");
 
+		if (action === "regenerate") {
+			progressText.textContent = "Generating subtasks...";
+		} else if (action === "confirm") {
+
 		vscode.postMessage({
 			command: "userAction",
 			action: action,
@@ -77,7 +82,6 @@
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
-		const progressText = document.getElementById("loader-text");
 		// const progressBar = document.getElementById("progress-bar");
 		const loader = document.getElementById("loader");
 
@@ -127,7 +131,7 @@
 				loader.classList.add("loader-cancelled");
 				break;
 
-			case "showTaskCancelled":
+			case "showTaskError":
 				progressText.textContent = "Error Occurred";
 				loader.classList.add("loader-cancelled");
 				break;
