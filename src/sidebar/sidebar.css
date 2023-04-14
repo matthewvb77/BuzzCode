@@ -65,7 +65,7 @@ span[contenteditable="true"] {
 	outline: none;
 }
 button {
-	background-color: #569cd6;
+	background-color: #3498db;
 	border: none;
 	color: white;
 	text-align: center;
@@ -254,6 +254,21 @@ button:hover {
 
 .subtask-container.expanded .subtask-details {
 	display: block; /* Show the details when the container is expanded */
+	font-size: 14px;
+}
+
+.subtask-details code {
+	display: inline-block;
+	background-color: #1e1e1e;
+	border-radius: 4px;
+	padding: 2px 4px;
+	color: whitesmoke;
+	font-family: "Courier New", Courier, monospace;
+}
+
+.warning-text {
+	color: #c59920;
+	font-weight: bold;
 }
 
 #buttons-container * {
@@ -265,8 +280,3 @@ button:hover {
 	display: flex;
 	justify-content: space-between;
 }
-
-/* -------------------- Temp CSS so I can see what I'm doing ----------------------- */
-/* #progress-container {
-	background-color: #3f3f3f;
-} */

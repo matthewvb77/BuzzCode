@@ -172,7 +172,10 @@
 					// create subtask text
 					const subtaskText = document.createElement("span");
 					subtaskText.classList.add("subtask-text");
-					subtaskText.textContent = subtask.type;
+					subtaskText.textContent = getSubtaskSummary(
+						subtask.type,
+						subtask.parameters
+					);
 					subtaskHeader.appendChild(subtaskText);
 
 					// create subtask expand icon
@@ -183,7 +186,32 @@
 					// create subtask details container
 					const subtaskDetails = document.createElement("div");
 					subtaskDetails.classList.add("subtask-details");
-					subtaskDetails.textContent = "Subtask details content..."; // Replace this with actual content
+
+					// populate subtask details
+					switch (subtask.type) {
+						case "generateFile":
+							subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
+							subtaskDetails.classList.add("warning-text");
+							break;
+
+						case "executeTerminalCommand":
+							const codeBlock = document.createElement("code");
+							codeBlock.textContent = `> ` + subtask.parameters.command;
+							subtaskDetails.appendChild(codeBlock);
+							break;
+
+						case "recurse":
+							subtaskDetails.textContent = `New prompt: ${subtask.parameters.prompt}`;
+							break;
+
+						case "askUser":
+							subtaskDetails.textContent = `Ask User: ${subtask.parameters.question}`;
+							break;
+
+						default:
+							throw error("Unknown subtask type: " + subtask.type);
+					}
+
 					listItem.appendChild(subtaskDetails);
 
 					// create subtask details
