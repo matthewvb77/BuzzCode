@@ -178,12 +178,12 @@ button:hover {
 
 .loader.loader-completed::before {
 	font-family: "codicon";
-	content: "\eab2";
+	content: "\eab2"; /* check */
 }
 
 .loader.loader-cancelled::before {
 	font-family: "codicon";
-	content: "\ea76";
+	content: "\ea76"; /* close */
 }
 
 .loader.loader-waiting::before {
@@ -238,8 +238,12 @@ button:hover {
 .subtask-expand-icon::before {
 	position: absolute;
 	right: 10px;
-	font-size: 20px;
-	content: "";
+	top: 5px;
+	font-size: 22px;
+	font-weight: 900;
+	font-family: "codicon";
+	vertical-align: middle;
+	content: "\eab4"; /* chevron-down */
 }
 
 .subtask-details {
