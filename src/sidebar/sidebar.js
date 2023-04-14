@@ -166,14 +166,17 @@
 					changeLoaderState(subtaskLoader, "loader-initial");
 					listItem.appendChild(subtaskLoader);
 
+					// create subtask text
 					const subtaskText = document.createElement("span");
 					subtaskText.classList.add("subtask-text");
 					subtaskText.textContent = subtask.type;
 					listItem.appendChild(subtaskText);
 
+					// create subtask details
 					listItem.addEventListener("click", () => {
 						listItem.classList.toggle("expanded");
 					});
+
 					subtasksContainer.appendChild(listItem);
 				});
 				break;

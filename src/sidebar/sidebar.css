@@ -221,6 +221,10 @@ button:hover {
 	align-items: center;
 	margin-left: 20px;
 	margin-bottom: 10px;
+	background-color: #3c3c3c;
+	border: 4px solid #3c3c3c;
+	border-left: 10px solid #3c3c3c;
+	border-radius: 4px;
 }
 
 #subtasks-container li.expanded::after {
