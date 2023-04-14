@@ -225,7 +225,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						<button id="task-submit-button" class="submit-button">Submit</button>
 						<br>
 
-						<div id="progress-container" class="show-component">
+						<div id="progress-container">
 							<div class="inline-container">
 								<div id="progress-loader" class="loader"></div>
 								<span id="progress-text" class="subtask-text">Generating subtasks...</span>

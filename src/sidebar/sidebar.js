@@ -5,9 +5,12 @@
 	const userTaskInputBox = document.getElementById("task-user-input");
 	const userQuestionInputBox = document.getElementById("question-user-input");
 	const taskSubmitButton = document.getElementById("task-submit-button");
+	const subtasksContainer = document.getElementById("subtasks-container");
+	const progressContainer = document.getElementById("progress-container");
 	const questionSubmitButton = document.getElementById(
 		"question-submit-button"
 	);
+	const buttonsContainer = document.getElementById("buttons-container");
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
@@ -92,7 +95,10 @@
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
+			subtasksContainer.innerHTML = "";
 		}
+
+		buttonsContainer.classList.remove("show-component");
 
 		vscode.postMessage({
 			command: "userAction",
@@ -147,10 +153,9 @@
 				break;
 
 			case "showSubtasks":
-				const subtasksContainer = document.getElementById("subtasks-container");
-				subtasksContainer.innerHTML = ""; // Clear the container
 				progressText.textContent = "Please review the subtasks below:";
 				changeLoaderState(progressLoader, "loader-waiting");
+				buttonsContainer.classList.add("show-component");
 
 				message.subtasks.forEach((subtask) => {
 					// create subtask container
@@ -224,7 +229,7 @@
 				break;
 
 			case "showTaskStarted":
-				const progressContainer = document.getElementById("progress-container");
+				subtasksContainer.innerHTML = "";
 				progressText.textContent = "Generating subtasks...";
 				changeLoaderState(progressLoader, "loader-active");
 				progressContainer.classList.add("show-component");
