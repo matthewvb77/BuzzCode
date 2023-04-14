@@ -54,20 +54,20 @@ button {
 }
 
 /* span {
-    color: #1e1e1e;
-    color: #d4d4d4;
-    color: #9cdcfe;
-    color: #d19a66;
-    color: #dcdcaa;
-    color: #c586c0;
-    color: #d4d4d4;
-    color: #dcdcaa;
-    color: #b5cea8;
-    color: #ce9178;
-    color: #6a9955;
-    color: #d4d4d4;
-    color: #569cd6;
-  } */
+	color: #1e1e1e;
+	color: #d4d4d4;
+	color: #9cdcfe;
+	color: #d19a66;
+	color: #dcdcaa;
+	color: #c586c0;
+	color: #d4d4d4;
+	color: #dcdcaa;
+	color: #b5cea8;
+	color: #ce9178;
+	color: #6a9955;
+	color: #d4d4d4;
+	color: #569cd6;
+} */
 
 button:hover {
 	cursor: pointer;

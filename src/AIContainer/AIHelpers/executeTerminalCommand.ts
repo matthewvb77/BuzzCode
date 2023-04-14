@@ -11,7 +11,7 @@ export function executeTerminalCommand(
 	command: string
 ): Promise<
 	| { error: cp.ExecException | null; stdout: string; stderr: string }
-	| "Cancelled by user."
+	| "Cancelled"
 > {
 	return new Promise(async (resolve, reject) => {
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
@@ -26,7 +26,7 @@ export function executeTerminalCommand(
 		);
 
 		if (userResponse === "No" || userResponse === undefined) {
-			resolve("Cancelled by user.");
+			resolve("Cancelled");
 			return;
 		}
 		outputChannel.appendLine(`Running: ${command}`);

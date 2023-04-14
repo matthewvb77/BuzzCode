@@ -5,7 +5,7 @@ import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt, taskPrompt } from "./prompts";
 
-interface Instruction {
+export interface Subtask {
 	index: number;
 	type: string;
 	parameters: any;
@@ -14,13 +14,25 @@ interface Instruction {
 var recursionLimit = 10;
 var recursionCount = 0;
 var taskDescription = "";
-export async function recursiveDevelopment(input: string) {
+export async function recursiveDevelopment(
+	input: string,
+	onStartSubtask: (subtask: Subtask) => void,
+	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
+): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
-	recursiveDevelopmentHelper(taskDescription);
+	return await recursiveDevelopmentHelper(
+		taskDescription,
+		onStartSubtask,
+		onSubtasksReady
+	);
 }
 
-async function recursiveDevelopmentHelper(input: string) {
+async function recursiveDevelopmentHelper(
+	input: string,
+	onStartSubtask: (subtask: Subtask) => void,
+	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
+): Promise<void | string> {
 	try {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
@@ -28,24 +40,43 @@ async function recursiveDevelopmentHelper(input: string) {
 			return;
 		}
 
-		var instructionsString: string | null = await queryChatGPT(
+		var subtasksString: string | null = await queryChatGPT(
 			initializePrompt + taskPrompt + input
 		);
 
-		if (instructionsString === null) {
-			vscode.window.showErrorMessage("No instructions provided.");
+		if (subtasksString === null) {
+			vscode.window.showErrorMessage("No subtasks provided.");
 			return;
 		}
 
-		var instructions: Array<Instruction> =
-			JSON.parse(instructionsString).instructions;
+		var subtasks: Array<Subtask> = JSON.parse(subtasksString).subtasks;
 	} catch (error) {
 		vscode.window.showErrorMessage("Error occured: " + error);
-		return;
+		return "Error: " + error;
 	}
 
-	for (const instruction of instructions) {
-		const { type, parameters } = instruction;
+	const userAction = await onSubtasksReady(subtasks);
+	switch (userAction) {
+		case "confirm":
+			break;
+
+		case "regenerate":
+			return await recursiveDevelopmentHelper(
+				input,
+				onStartSubtask,
+				onSubtasksReady
+			);
+
+		case "cancel":
+			return "Cancelled";
+
+		default:
+			return "Error";
+	}
+
+	for (const [index, subtask] of subtasks.entries()) {
+		const { type, parameters } = subtask;
+		onStartSubtask(subtask);
 
 		try {
 			switch (type) {
@@ -53,10 +84,7 @@ async function recursiveDevelopmentHelper(input: string) {
 					const { command } = parameters;
 					const result = await executeTerminalCommand(command);
 					if (typeof result === "string") {
-						vscode.window.showInformationMessage(
-							"User cancelled execution -- Terminating Process."
-						);
-						return;
+						return "Cancelled";
 					} else if (result.error) {
 						throw result.error;
 					}
@@ -73,36 +101,42 @@ async function recursiveDevelopmentHelper(input: string) {
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
-							newPrompt
+							newPrompt,
+						onStartSubtask,
+						onSubtasksReady
 					);
 					break;
 
 				case "askUser":
 					const { question } = parameters;
 					const userResponse = await askUser(question);
-					recursiveDevelopmentHelper(
+					await recursiveDevelopmentHelper(
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
-							userResponse
+							userResponse,
+						onStartSubtask,
+						onSubtasksReady
 					);
 					break;
 
 				default:
-					console.warn(`Unknown instruction type "${type}"`);
+					console.warn(`Unknown subtask type "${type}"`);
 					break;
 			}
 		} catch (error) {
-			// If an error occurs, ask chatGPT for new instructions
+			// If an error occurs, ask chatGPT for new subtasks
 
 			await recursiveDevelopmentHelper(
 				`Here is the original task: ` +
 					taskDescription +
-					`\n\nThis is a recursive call because while this instruction was executed:` +
-					JSON.stringify(instruction) +
+					`\n\nThis is a recursive call because while this subtask was executed:` +
+					JSON.stringify(subtask) +
 					`\nThe following error occured:\n\n` +
 					error +
-					`\n\nThink about why this error occured and how to fix it.`
+					`\n\nThink about why this error occured and how to fix it.`,
+				onStartSubtask,
+				onSubtasksReady
 			);
 		}
 	}
