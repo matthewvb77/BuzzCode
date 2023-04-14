@@ -230,10 +230,14 @@ button:hover {
 .subtask-header {
 	display: flex;
 	align-items: center;
+	position: relative;
 }
 
 .subtask-expand-icon::before {
-	content: "˅"; /* List of alternatives: ˅ ⌄ ⏷ ▼ ▽ ▾ ▿ ⛛ ⯆ 🞃 🢗*/
+	position: absolute;
+	right: 10px;
+	font-size: 20px;
+	content: "\$(0xea61)"; /* List of alternatives: ˅ ⌄ ⏷ ▼ ▽ ▾ ▿ ⛛ ⯆ 🞃 🢗*/
 }
 
 .subtask-details {

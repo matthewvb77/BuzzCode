@@ -178,7 +178,7 @@
 					subtaskHeader.appendChild(subtaskText);
 
 					// create subtask expand icon
-					const subtaskExpandIcon = document.createElement("div");
+					const subtaskExpandIcon = document.createElement("span");
 					subtaskExpandIcon.classList.add("subtask-expand-icon");
 					subtaskHeader.appendChild(subtaskExpandIcon);
 
