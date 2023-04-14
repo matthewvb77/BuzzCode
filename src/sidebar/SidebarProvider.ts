@@ -232,8 +232,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							</div>
 
 							<div id="subtasks-container">
-								<div id="subtask-1" class="subtask">
-									<span class="codicon codicon-check">asdf</span>
+								<div class="subtask-container">
+									<div class="subtask-text">Subtask 1</div>
+									<div class="loader loader-completed"></div>
+								</div>
+								<div class="subtask-container">
+									<div class="subtask-text">Subtask 2</div>
+									<div class="loader loader-waiting"></div>
+								</div>
+								<div class="subtask-container">
+									<div class="subtask-text">Subtask 3</div>
+									<div class="loader loader-cancelled"></div>
 								</div>
 							</div>
 

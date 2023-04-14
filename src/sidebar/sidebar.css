@@ -168,7 +168,7 @@ button:hover {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 900;
 }
 
@@ -177,11 +177,13 @@ button:hover {
 }
 
 .loader.loader-completed::before {
-	content: "✔";
+	font-family: "codicon";
+	content: "\eab2";
 }
 
 .loader.loader-cancelled::before {
-	content: "✕";
+	font-family: "codicon";
+	content: "\ea76";
 }
 
 .loader.loader-waiting::before {
@@ -237,7 +239,7 @@ button:hover {
 	position: absolute;
 	right: 10px;
 	font-size: 20px;
-	content: "\$(0xea61)"; /* List of alternatives: ˅ ⌄ ⏷ ▼ ▽ ▾ ▿ ⛛ ⯆ 🞃 🢗*/
+	content: "";
 }
 
 .subtask-details {
