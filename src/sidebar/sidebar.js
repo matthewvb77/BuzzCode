@@ -177,6 +177,11 @@
 					subtaskText.textContent = subtask.type;
 					subtaskHeader.appendChild(subtaskText);
 
+					// create subtask expand icon
+					const subtaskExpandIcon = document.createElement("div");
+					subtaskExpandIcon.classList.add("subtask-expand-icon");
+					subtaskHeader.appendChild(subtaskExpandIcon);
+
 					// create subtask details container
 					const subtaskDetails = document.createElement("div");
 					subtaskDetails.classList.add("subtask-details");

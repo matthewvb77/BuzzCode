@@ -232,6 +232,10 @@ button:hover {
 	align-items: center;
 }
 
+.subtask-expand-icon::before {
+	content: "˅"; /* List of alternatives: ˅ ⌄ ⏷ ▼ ▽ ▾ ▿ ⛛ ⯆ 🞃 🢗*/
+}
+
 .subtask-details {
 	display: none; /* Hide the details by default */
 	padding: 10px;

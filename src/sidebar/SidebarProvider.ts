@@ -200,7 +200,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         		<link href="${styleMainUri}" rel="stylesheet">
-				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codicons/0.0.1/codicon.min.css">
 			</head>
       		<body>
 				<div class="inline-container">
