@@ -162,6 +162,7 @@
 
 			case "showTaskStarted":
 				const progressContainer = document.getElementById("progress-container");
+				progressText.textContent = "Generating subtasks...";
 				progressLoader.classList.remove("loader-completed");
 				progressLoader.classList.remove("loader-cancelled");
 				progressLoader.classList.remove("loader-waiting");
@@ -175,7 +176,9 @@
 				break;
 
 			case "showTaskCancelled":
-				activeSubtaskLoader.classList.add("loader-cancelled");
+				if (activeSubtaskLoader) {
+					activeSubtaskLoader.classList.add("loader-cancelled");
+				}
 				progressText.textContent = "Task Cancelled";
 				progressLoader.classList.add("loader-cancelled");
 				break;
