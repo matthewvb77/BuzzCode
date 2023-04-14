@@ -187,6 +187,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		const styleMainUri = webview.asWebviewUri(
 			vscode.Uri.joinPath(this._extensionUri, "src", "sidebar/sidebar.css")
 		);
+		const codiconStylesheetUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(
+				this._extensionUri,
+				"node_modules",
+				"vscode-codicons",
+				"dist",
+				"codicon.css"
+			)
+		);
 
 		// Use a nonce to only allow a specific script to be run.
 		const nonce = getNonce();
@@ -200,6 +209,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         		<link href="${styleMainUri}" rel="stylesheet">
+				<link rel="stylesheet" href="${codiconStylesheetUri}">
 			</head>
       		<body>
 				<div class="inline-container">
@@ -222,7 +232,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							</div>
 
 							<div id="subtasks-container">
-								<li id="subtask-1" class="subtask">Subtask </li>
+								<div id="subtask-1" class="subtask">
+									<span class="codicon codicon-check">asdf</span>
+								</div>
 							</div>
 
 							<div id="buttons-container" class="inline-container">
