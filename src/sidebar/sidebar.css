@@ -157,6 +157,9 @@ button:hover {
 	animation: none;
 }
 
+.loader-icon {
+}
+
 #progress-loader {
 	width: 30px;
 	height: 30px;

@@ -81,6 +81,22 @@
 		});
 	}
 
+	function changeLoaderState(loader, state) {
+		if (!loader) {
+			return;
+		}
+		loader.classList.remove("loader-completed");
+		loader.classList.remove("loader-cancelled");
+		loader.classList.remove("loader-waiting");
+		loader.classList.remove("loader-initial");
+
+		if (state === "loader-active") {
+			// The loader is active by default
+		} else {
+			loader.classList.add(state);
+		}
+	}
+
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const activeSubtaskLoader = document.querySelector(
@@ -101,12 +117,12 @@
 					const previousLoader = document.getElementById(
 						`subtask-loader-${index - 1}`
 					);
-					previousLoader.classList.add("loader-completed");
+					changeLoaderState(previousLoader, "loader-completed");
 				}
 				const currentLoader = document.getElementById(
 					`subtask-loader-${index}`
 				);
-				currentLoader.classList.remove("loader-initial");
+				changeLoaderState(currentLoader, "loader-active");
 
 				// Update progress text
 				switch (type) {
@@ -136,7 +152,7 @@
 				const subtasksContainer = document.getElementById("subtasks-container");
 				subtasksContainer.innerHTML = ""; // Clear the container
 				progressText.textContent = "Please review the subtasks below:";
-				progressLoader.classList.add("loader-waiting");
+				changeLoaderState(progressLoader, "loader-waiting");
 
 				message.subtasks.forEach((subtask) => {
 					const listItem = document.createElement("li");
@@ -145,7 +161,7 @@
 					const subtaskLoader = document.createElement("div");
 					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 					subtaskLoader.classList.add("loader");
-					subtaskLoader.classList.add("loader-initial");
+					changeLoaderState(subtaskLoader, "loader-initial");
 					listItem.appendChild(subtaskLoader);
 
 					const subtaskText = document.createElement("span");
@@ -163,30 +179,26 @@
 			case "showTaskStarted":
 				const progressContainer = document.getElementById("progress-container");
 				progressText.textContent = "Generating subtasks...";
-				progressLoader.classList.remove("loader-completed");
-				progressLoader.classList.remove("loader-cancelled");
-				progressLoader.classList.remove("loader-waiting");
+				changeLoaderState(progressLoader, "loader-active");
 				progressContainer.classList.add("show-component");
 				break;
 
 			case "showTaskCompleted":
-				activeSubtaskLoader.classList.add("loader-completed");
+				changeLoaderState(activeSubtaskLoader, "loader-completed");
 				progressText.textContent = "Task Completed";
-				progressLoader.classList.add("loader-completed");
+				changeLoaderState(progressLoader, "loader-completed");
 				break;
 
 			case "showTaskCancelled":
-				if (activeSubtaskLoader) {
-					activeSubtaskLoader.classList.add("loader-cancelled");
-				}
+				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
 				progressText.textContent = "Task Cancelled";
-				progressLoader.classList.add("loader-cancelled");
+				changeLoaderState(progressLoader, "loader-cancelled");
 				break;
 
 			case "showTaskError":
-				activeSubtaskLoader.classList.add("loader-cancelled");
+				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
 				progressText.textContent = "Error Occurred";
-				progressLoader.classList.add("loader-cancelled");
+				changeLoaderState(progressLoader, "loader-cancelled");
 				break;
 
 			default:

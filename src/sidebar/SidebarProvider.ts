@@ -196,10 +196,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src ${webview.cspSource}; script-src ${webview.cspSource} 'nonce-${nonce}';">				
+				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src ${webview.cspSource} https://\*.vscode-cdn.net https://cdnjs.cloudflare.com; script-src ${webview.cspSource} 'nonce-${nonce}';">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         		<link href="${styleMainUri}" rel="stylesheet">
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codicons/0.0.1/codicon.min.css">
 			</head>
       		<body>
 				<div class="inline-container">
