@@ -196,7 +196,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src ${webview.cspSource} https://\*.vscode-cdn.net https://cdnjs.cloudflare.com; script-src ${webview.cspSource} 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src ${webview.cspSource}; script-src ${webview.cspSource} 'nonce-${nonce}';">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         		<link href="${styleMainUri}" rel="stylesheet">
@@ -225,13 +225,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							<div id="subtasks-container">
 							<!-- TEMP FOR TESTING -->
 								<li class="subtask-container">
-									<div id="subtask-loader-0" class="loader"></div>
+									<div id="subtask-loader-0" class="loader loader-completed"></div>
 									<span class="subtask-text">Subtask 0</span>
 								</li>
 
 								<li class="subtask-container expanded">
-									<div id="subtask-loader-1" class="loader"></div>
+									<div id="subtask-loader-1" class="loader loader-cancelled"></div>
 									<span class="subtask-text">Subtask 1</span>
+								</li>
+
+								<li class="subtask-container expanded">
+									<div id="subtask-loader-2" class="loader loader-waiting"></div>
+									<span class="subtask-text">Subtask 2</span>
 								</li>
 
 							</div>

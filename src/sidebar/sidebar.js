@@ -155,9 +155,11 @@
 				changeLoaderState(progressLoader, "loader-waiting");
 
 				message.subtasks.forEach((subtask) => {
+					// create subtask container
 					const listItem = document.createElement("li");
 					listItem.classList.add("subtask-container");
 
+					// create subtask loader
 					const subtaskLoader = document.createElement("div");
 					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 					subtaskLoader.classList.add("loader");
