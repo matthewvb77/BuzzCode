@@ -218,7 +218,7 @@ button:hover {
 .subtask-container {
 	cursor: pointer;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	margin-left: 20px;
 	margin-bottom: 10px;
 	background-color: #3c3c3c;
@@ -227,10 +227,19 @@ button:hover {
 	border-radius: 4px;
 }
 
-#subtasks-container li.expanded::after {
-	content: " (Details)";
-	font-weight: normal;
-	color: #569cd6;
+.subtask-header {
+	display: flex;
+	align-items: center;
+}
+
+.subtask-details {
+	display: none; /* Hide the details by default */
+	padding: 10px;
+	font-size: 14px;
+}
+
+.subtask-container.expanded .subtask-details {
+	display: block; /* Show the details when the container is expanded */
 }
 
 #buttons-container * {

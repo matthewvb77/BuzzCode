@@ -159,18 +159,29 @@
 					const listItem = document.createElement("li");
 					listItem.classList.add("subtask-container");
 
+					// create subtask header container
+					const subtaskHeader = document.createElement("div");
+					subtaskHeader.classList.add("subtask-header");
+					listItem.appendChild(subtaskHeader);
+
 					// create subtask loader
 					const subtaskLoader = document.createElement("div");
 					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 					subtaskLoader.classList.add("loader");
 					changeLoaderState(subtaskLoader, "loader-initial");
-					listItem.appendChild(subtaskLoader);
+					subtaskHeader.appendChild(subtaskLoader);
 
 					// create subtask text
 					const subtaskText = document.createElement("span");
 					subtaskText.classList.add("subtask-text");
 					subtaskText.textContent = subtask.type;
-					listItem.appendChild(subtaskText);
+					subtaskHeader.appendChild(subtaskText);
+
+					// create subtask details container
+					const subtaskDetails = document.createElement("div");
+					subtaskDetails.classList.add("subtask-details");
+					subtaskDetails.textContent = "Subtask details content..."; // Replace this with actual content
+					listItem.appendChild(subtaskDetails);
 
 					// create subtask details
 					listItem.addEventListener("click", () => {
