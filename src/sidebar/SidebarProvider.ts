@@ -25,6 +25,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		let taskInProgress = false;
 		let questionInProgress = false;
+		const abortController = new AbortController();
+		const signal = abortController.signal;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			if (!message.input) {
@@ -51,6 +53,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					try {
 						const result = await recursiveDevelopment(
 							message.input,
+							signal,
 							this.onStartSubtask.bind(this),
 							this.onSubtasksReady.bind(this),
 							this.onSubtaskError.bind(this)
@@ -71,6 +74,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					}
 					break;
 
+				case "cancel-task":
+					if (!taskInProgress) {
+						vscode.window.showInformationMessage(
+							"No task is currently in progress."
+						);
+						return;
+					}
+					this.showTaskCancelled();
+					abortController.abort();
+
 				case "submit-question":
 					if (questionInProgress) {
 						vscode.window.showInformationMessage(
@@ -87,7 +100,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						async () => {
 							questionInProgress = true;
 							try {
-								const response = await queryChatGPT(message.input);
+								const response = await queryChatGPT(message.input, signal);
 								webviewView.webview.postMessage({
 									command: "response",
 									text: response,
@@ -238,9 +251,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							<div class="inline-container">
 								<div id="progress-loader" class="loader"></div>
 								<span id="progress-text" class="subtask-text">Generating subtasks...</span>
-								<button id="task-cancel-button">Cancel
-									<i id="cancel-icon" class="codicon codicon-close"></i>
-								</button>
+								<button id="task-cancel-button" class="codicon codicon-close"></button>
 							</div>
 
 							<div id="subtasks-container"></div>

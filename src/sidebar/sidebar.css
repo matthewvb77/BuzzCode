@@ -294,17 +294,15 @@ button:hover {
 
 #task-cancel-button {
 	background-color: #e03838;
-	width: 80px;
-	font-size: 10px;
-	font-weight: 900;
 	margin-left: auto;
-	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	height: 40px;
+	width: 40px;
+	border-radius: 50%;
+	font-size: 16px;
+	font-weight: 900;
+	font-family: "codicon";
 }
 
-#cancel-icon {
-	font-weight: 900;
-	margin-left: 5px;
+#task-cancel-button:hover {
+	background-color: #c03838;
 }

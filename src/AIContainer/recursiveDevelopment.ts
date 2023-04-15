@@ -4,7 +4,7 @@ import { executeTerminalCommand } from "./AIHelpers/executeTerminalCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt, taskPrompt } from "./prompts";
-
+import axios from "axios";
 export interface Subtask {
 	index: number;
 	type: string;
@@ -16,6 +16,7 @@ var recursionCount = 0;
 var taskDescription = ``;
 export async function recursiveDevelopment(
 	input: string,
+	signal: AbortSignal,
 	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
 	onSubtaskError: () => void
@@ -24,6 +25,7 @@ export async function recursiveDevelopment(
 	recursionCount = 0;
 	return await recursiveDevelopmentHelper(
 		taskDescription,
+		signal,
 		onStartSubtask,
 		onSubtasksReady,
 		onSubtaskError
@@ -32,6 +34,7 @@ export async function recursiveDevelopment(
 
 async function recursiveDevelopmentHelper(
 	input: string,
+	signal: AbortSignal,
 	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
 	onSubtaskError: () => void
@@ -44,7 +47,8 @@ async function recursiveDevelopmentHelper(
 		}
 
 		var subtasksString: string | null = await queryChatGPT(
-			initializePrompt + taskPrompt + input
+			initializePrompt + taskPrompt + input,
+			signal
 		);
 
 		if (subtasksString === null) {
@@ -66,6 +70,7 @@ async function recursiveDevelopmentHelper(
 		case "regenerate":
 			return await recursiveDevelopmentHelper(
 				input,
+				signal,
 				onStartSubtask,
 				onSubtasksReady,
 				onSubtaskError
@@ -109,6 +114,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt,
+						signal,
 						onStartSubtask,
 						onSubtasksReady,
 						onSubtaskError
@@ -122,6 +128,7 @@ async function recursiveDevelopmentHelper(
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
 							userResponse,
+						signal,
 						onStartSubtask,
 						onSubtasksReady,
 						onSubtaskError
@@ -144,6 +151,7 @@ async function recursiveDevelopmentHelper(
 					`\nThe following error occured:\n\n` +
 					error +
 					`\n\nThink about why this error occured and how to fix it.`,
+				signal,
 				onStartSubtask,
 				onSubtasksReady,
 				onSubtaskError

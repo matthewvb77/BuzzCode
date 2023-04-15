@@ -5,6 +5,7 @@
 	const userTaskInputBox = document.getElementById("task-user-input");
 	const userQuestionInputBox = document.getElementById("question-user-input");
 	const taskSubmitButton = document.getElementById("task-submit-button");
+	const taskCancelButton = document.getElementById("task-cancel-button");
 	const subtasksContainer = document.getElementById("subtasks-container");
 	const progressContainer = document.getElementById("progress-container");
 	const questionSubmitButton = document.getElementById(
@@ -105,6 +106,10 @@
 		const input = userQuestionInputBox.value;
 
 		vscode.postMessage({ command: "submit-question", input });
+	});
+
+	taskCancelButton.addEventListener("click", () => {
+		vscode.postMessage({ command: "cancel-task" });
 	});
 
 	document
