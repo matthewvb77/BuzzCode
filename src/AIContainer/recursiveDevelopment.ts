@@ -17,21 +17,24 @@ var taskDescription = ``;
 export async function recursiveDevelopment(
 	input: string,
 	onStartSubtask: (subtask: Subtask) => void,
-	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
+	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
+	onSubtaskError: () => void
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
 	return await recursiveDevelopmentHelper(
 		taskDescription,
 		onStartSubtask,
-		onSubtasksReady
+		onSubtasksReady,
+		onSubtaskError
 	);
 }
 
 async function recursiveDevelopmentHelper(
 	input: string,
 	onStartSubtask: (subtask: Subtask) => void,
-	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>
+	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
+	onSubtaskError: () => void
 ): Promise<void | string> {
 	try {
 		recursionCount++;
@@ -64,7 +67,8 @@ async function recursiveDevelopmentHelper(
 			return await recursiveDevelopmentHelper(
 				input,
 				onStartSubtask,
-				onSubtasksReady
+				onSubtasksReady,
+				onSubtaskError
 			);
 
 		case "cancel":
@@ -97,28 +101,28 @@ async function recursiveDevelopmentHelper(
 
 				case "recurse":
 					const { newPrompt } = parameters;
-					await recursiveDevelopmentHelper(
+					return await recursiveDevelopmentHelper(
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call with the following prompt: ` +
 							newPrompt,
 						onStartSubtask,
-						onSubtasksReady
+						onSubtasksReady,
+						onSubtaskError
 					);
-					break;
 
 				case "askUser":
 					const { question } = parameters;
 					const userResponse = await askUser(question);
-					await recursiveDevelopmentHelper(
+					return await recursiveDevelopmentHelper(
 						`Here is the original task: ` +
 							taskDescription +
 							`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
 							userResponse,
 						onStartSubtask,
-						onSubtasksReady
+						onSubtasksReady,
+						onSubtaskError
 					);
-					break;
 
 				default:
 					console.warn(`Unknown subtask type "${type}"`);
@@ -127,7 +131,9 @@ async function recursiveDevelopmentHelper(
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new subtasks
 
-			await recursiveDevelopmentHelper(
+			onSubtaskError();
+
+			return await recursiveDevelopmentHelper(
 				`Here is the original task: ` +
 					taskDescription +
 					`\n\nThis is a recursive call because while this subtask was executed:` +
@@ -136,7 +142,8 @@ async function recursiveDevelopmentHelper(
 					error +
 					`\n\nThink about why this error occured and how to fix it.`,
 				onStartSubtask,
-				onSubtasksReady
+				onSubtasksReady,
+				onSubtaskError
 			);
 		}
 	}

@@ -52,7 +52,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						const result = await recursiveDevelopment(
 							message.input,
 							this.onStartSubtask.bind(this),
-							this.onSubtasksReady.bind(this)
+							this.onSubtasksReady.bind(this),
+							this.onSubtaskError.bind(this)
 						);
 						if (result === "Cancelled") {
 							this.showTaskCancelled();
@@ -170,6 +171,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "showTaskError",
+			});
+		}
+	}
+
+	private onSubtaskError() {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "onSubtaskError",
 			});
 		}
 	}

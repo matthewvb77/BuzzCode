@@ -14,6 +14,8 @@
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
+	var subtaskCount = 0;
+
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
 			case "task":
@@ -186,6 +188,9 @@
 				buttonsContainer.classList.add("show-component");
 
 				message.subtasks.forEach((subtask) => {
+					// if this is a recursive call, add the subtasks to the end of the list
+					const subtaskIndex = subtaskCount + subtask.index;
+
 					// create subtask container
 					const listItem = document.createElement("li");
 					listItem.classList.add("subtask-container");
@@ -197,7 +202,7 @@
 
 					// create subtask loader
 					const subtaskLoader = document.createElement("div");
-					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
+					subtaskLoader.setAttribute("id", `subtask-loader-${subtaskIndex}`);
 					subtaskLoader.classList.add("loader");
 					changeLoaderState(subtaskLoader, "loader-initial");
 					subtaskHeader.appendChild(subtaskLoader);
@@ -258,10 +263,13 @@
 
 					subtasksContainer.appendChild(listItem);
 				});
+
+				subtaskCount += message.subtasks.length;
 				break;
 
 			case "showTaskStarted":
 				subtasksContainer.innerHTML = "";
+				subtaskCount = 0;
 				progressText.textContent = "Generating subtasks...";
 				changeLoaderState(progressLoader, "loader-active");
 				progressContainer.classList.add("show-component");
@@ -281,8 +289,13 @@
 
 			case "showTaskError":
 				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				progressText.textContent = "Error Occurred";
+				progressText.textContent = "Error Occurred: Terminating Task";
 				changeLoaderState(progressLoader, "loader-cancelled");
+				break;
+
+			case "onSubtaskError":
+				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
+				progressText.textContent = "Error Occurred: Generating next steps";
 				break;
 
 			default:
