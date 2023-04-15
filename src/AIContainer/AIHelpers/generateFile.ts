@@ -23,7 +23,7 @@ export async function generateFile(
 	const newFileUri = vscode.Uri.joinPath(workspaceFolder, fileName);
 
 	const overwrite = await vscode.window.showWarningMessage(
-		`This action might overwrite an existing file '${fileName}'. Do you want to proceed?`,
+		`This action will overwrite '${fileName}' if it already exists. Do you want to proceed?`,
 		{ modal: true },
 		"Yes"
 	);
