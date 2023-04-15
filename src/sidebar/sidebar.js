@@ -157,7 +157,7 @@
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const activeSubtaskLoader = document.querySelector(
-			".subtask-container .loader:not(.loader-completed):not(.loader-initial)"
+			".subtask-container .loader:not(.loader-completed):not(.loader-initial):not(.loader-cancelled)"
 		);
 
 		switch (message.command) {
