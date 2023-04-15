@@ -12,7 +12,8 @@ Example of a subtask list:
 
 `;
 
-export const taskPrompt = `Generate a JSON subtask list using the commands to solve the following prompt. Escape necessary characters with backslashes: `;
+export const taskPrompt = `Generate a JSON subtask list using the commands to solve the following prompt.
+JSON.parse(subtasksString) will be used to parse your response, so escape characters when necessary: `;
 
 /*
 {
