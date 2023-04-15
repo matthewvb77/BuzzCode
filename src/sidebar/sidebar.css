@@ -27,6 +27,8 @@ body {
 .inline-container {
 	display: flex;
 	align-items: center;
+	position: relative;
+	width: 100%;
 }
 label {
 	font-size: 18px;
@@ -288,4 +290,21 @@ button:hover {
 #buttons-container {
 	display: flex;
 	justify-content: space-between;
+}
+
+#task-cancel-button {
+	background-color: #e03838;
+	width: 80px;
+	font-size: 10px;
+	font-weight: 900;
+	margin-left: auto;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#cancel-icon {
+	font-weight: 900;
+	margin-left: 5px;
 }
