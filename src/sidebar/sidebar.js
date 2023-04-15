@@ -15,6 +15,7 @@
 	const progressText = document.getElementById("progress-text");
 
 	var subtaskCount = 0;
+	var previousSubtaskCount = 0;
 
 	function updatePlaceholderAndResponse() {
 		switch (inputTypeSelect.value) {
@@ -40,7 +41,7 @@
 			case "executeTerminalCommand":
 				if (tense === "imperative") {
 					return `Execute terminal command`;
-				} else if (tent === "ongoing") {
+				} else if (tense === "ongoing") {
 					return `Executing terminal command...`;
 				}
 				break;
@@ -96,7 +97,7 @@
 
 	taskSubmitButton.addEventListener("click", () => {
 		const input = userTaskInputBox.value;
-
+		subtaskCount = 0;
 		vscode.postMessage({ command: "submit-task", input });
 	});
 
@@ -121,7 +122,12 @@
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
-			subtasksContainer.innerHTML = "";
+
+			// Remove subtasks with an index >= previousSubtaskCount
+			while (subtasksContainer.children.length > previousSubtaskCount) {
+				subtasksContainer.removeChild(subtasksContainer.lastChild);
+			}
+			subtaskCount = previousSubtaskCount;
 		}
 
 		buttonsContainer.classList.remove("show-component");
@@ -162,16 +168,18 @@
 
 			case "onStartSubtask":
 				const { index, type, parameters } = message.subtask;
+				const subtaskIndex = previousSubtaskCount + index;
 
-				// Update subtask loader states
+				// if the subtask is not the first one in a recursive call, mark the previous subtask as completed
 				if (index !== 0) {
 					const previousLoader = document.getElementById(
-						`subtask-loader-${index - 1}`
+						`subtask-loader-${subtaskIndex - 1}`
 					);
+
 					changeLoaderState(previousLoader, "loader-completed");
 				}
 				const currentLoader = document.getElementById(
-					`subtask-loader-${index}`
+					`subtask-loader-${subtaskIndex}`
 				);
 				changeLoaderState(currentLoader, "loader-active");
 
@@ -263,7 +271,7 @@
 
 					subtasksContainer.appendChild(listItem);
 				});
-
+				previousSubtaskCount = subtaskCount;
 				subtaskCount += message.subtasks.length;
 				break;
 
