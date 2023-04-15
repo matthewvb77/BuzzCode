@@ -13,7 +13,7 @@ Example of a subtask list:
 `;
 
 export const taskPrompt = `Generate a JSON subtask list using the commands to solve the following prompt.
-JSON.parse(subtasksString) will be used to parse your response, so escape characters when necessary: `;
+JSON.parse(response) will be used to parse your response, so respond only with JSON and escape characters when necessary: `;
 
 /*
 {
