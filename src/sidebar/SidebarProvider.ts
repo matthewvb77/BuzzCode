@@ -239,7 +239,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								<button id="regenerate-button">Regenerate</button>
 							</div>
 						</div>
-						
 					</div>
 
 					<div id="question-tab" class="tab-container">

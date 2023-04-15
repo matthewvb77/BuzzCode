@@ -13,7 +13,7 @@ export interface Subtask {
 
 var recursionLimit = 10;
 var recursionCount = 0;
-var taskDescription = "";
+var taskDescription = ``;
 export async function recursiveDevelopment(
 	input: string,
 	onStartSubtask: (subtask: Subtask) => void,
@@ -74,7 +74,7 @@ async function recursiveDevelopmentHelper(
 			return "Error";
 	}
 
-	for (const [index, subtask] of subtasks.entries()) {
+	for (const subtask of subtasks) {
 		const { type, parameters } = subtask;
 		onStartSubtask(subtask);
 

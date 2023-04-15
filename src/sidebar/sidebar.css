@@ -200,6 +200,9 @@ button:hover {
 
 .subtask-text {
 	font-size: 14px;
+	margin-right: 40px;
+	background-color: #000000;
+	overflow: hidden;
 }
 
 #progress-text {
@@ -266,6 +269,11 @@ button:hover {
 	padding: 2px 4px;
 	color: whitesmoke;
 	font-family: "Courier New", Courier, monospace;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.subtask-details-textarea {
 }
 
 .warning-text {

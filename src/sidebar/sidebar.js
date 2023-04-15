@@ -29,19 +29,43 @@
 		}
 	}
 
-	function getSubtaskSummary(type, parameters) {
+	function getSubtaskSummary(type, parameters, tense) {
+		if (!(tense === "ongoing" || tense === "imperative")) {
+			throw (error = new Error("Invalid tense"));
+		}
+
 		switch (type) {
 			case "executeTerminalCommand":
-				return `Executing terminal command...`;
+				if (tense === "imperative") {
+					return `Execute terminal command`;
+				} else if (tent === "ongoing") {
+					return `Executing terminal command...`;
+				}
+				break;
 
 			case "generateFile":
-				return `Generating file: ${parameters.fileName}`;
+				if (tense === "imperative") {
+					return `Generate file: ${parameters.fileName}`;
+				} else if (tense === "ongoing") {
+					return `Generating file: ${parameters.fileName}`;
+				}
+				break;
 
 			case "recurse":
-				return `Recursing with new prompt...`;
+				if (tense === "imperative") {
+					return `Recurse with new prompt`;
+				} else if (tense === "ongoing") {
+					return `Recursing with new prompt...`;
+				}
+				break;
 
 			case "askUser":
-				return `Asking user for input...`;
+				if (tense === "imperative") {
+					return `Ask user for input`;
+				} else if (tense === "ongoing") {
+					return `Asking user for input...`;
+				}
+				break;
 
 			default:
 				return `Unknown subtask type "${type}"`;
@@ -149,7 +173,11 @@
 				);
 				changeLoaderState(currentLoader, "loader-active");
 
-				progressText.textContent = getSubtaskSummary(type, parameters);
+				progressText.textContent = getSubtaskSummary(
+					type,
+					parameters,
+					"ongoing"
+				);
 				break;
 
 			case "showSubtasks":
@@ -179,7 +207,8 @@
 					subtaskText.classList.add("subtask-text");
 					subtaskText.textContent = getSubtaskSummary(
 						subtask.type,
-						subtask.parameters
+						subtask.parameters,
+						"imperative"
 					);
 					subtaskHeader.appendChild(subtaskText);
 
@@ -206,7 +235,10 @@
 							break;
 
 						case "recurse":
-							subtaskDetails.textContent = `New prompt: ${subtask.parameters.prompt}`;
+							const newPromptTextArea = document.createElement("textarea");
+							newPromptTextArea.classList.add("subtask-details-textarea");
+							newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
+							subtaskDetails.appendChild(newPromptTextArea);
 							break;
 
 						case "askUser":
