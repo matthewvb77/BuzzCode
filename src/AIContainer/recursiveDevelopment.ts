@@ -86,17 +86,20 @@ async function recursiveDevelopmentHelper(
 			switch (type) {
 				case "executeTerminalCommand":
 					const { command } = parameters;
-					const result = await executeTerminalCommand(command);
-					if (typeof result === "string") {
+					const commandResult = await executeTerminalCommand(command);
+					if (typeof commandResult === "string") {
 						return "Cancelled";
-					} else if (result.error) {
-						throw result.error;
+					} else if (commandResult.error) {
+						throw commandResult.error;
 					}
 					break;
 
 				case "generateFile":
 					const { fileName, fileContents } = parameters;
-					await generateFile(fileName, fileContents);
+					const fileCreationResult = await generateFile(fileName, fileContents);
+					if (typeof fileCreationResult === "string") {
+						return "Cancelled";
+					}
 					break;
 
 				case "recurse":
