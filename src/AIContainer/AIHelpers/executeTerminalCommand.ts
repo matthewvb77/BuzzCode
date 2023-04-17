@@ -29,7 +29,6 @@ export function executeTerminalCommand(
 			resolve("Cancelled");
 			return;
 		}
-		outputChannel.appendLine(`Running: ${command}`);
 
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 

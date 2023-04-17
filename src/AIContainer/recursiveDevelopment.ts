@@ -46,14 +46,15 @@ async function recursiveDevelopmentHelper(
 			return;
 		}
 
-		var subtasksString: string | null = await queryChatGPT(
+		var subtasksString: string = await queryChatGPT(
 			initializePrompt + taskPrompt + input,
 			signal
 		);
 
-		if (subtasksString === null) {
-			vscode.window.showErrorMessage("No subtasks provided.");
-			return;
+		if (subtasksString === "Cancelled") {
+			return "Cancelled";
+		} else if (subtasksString === "Error") {
+			return "Error";
 		}
 
 		var subtasks: Array<Subtask> = JSON.parse(subtasksString).subtasks;

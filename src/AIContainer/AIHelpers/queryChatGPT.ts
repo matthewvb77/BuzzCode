@@ -4,7 +4,7 @@ import axios from "axios";
 export async function queryChatGPT(
 	prompt: string,
 	signal: AbortSignal
-): Promise<string | null> {
+): Promise<string> {
 	/* ----------------- Get Configuration --------------- */
 	const apiKey: string =
 		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
@@ -21,7 +21,7 @@ export async function queryChatGPT(
 		vscode.window.showErrorMessage(
 			"Please set the API key in TestWise settings."
 		);
-		return null;
+		return "Error";
 	}
 
 	/* -------------- Query OpenAI using Axios ------------------ */
@@ -49,14 +49,13 @@ export async function queryChatGPT(
 			return response.data.choices[0].message.content;
 		} else {
 			console.log(`error: ${response.statusText}`);
-			return null;
+			return "Error";
 		}
 	} catch (error) {
 		if (axios.isCancel(error)) {
-			console.log("Request cancelled:", error.message);
+			return "Cancelled";
 		} else {
-			console.error(`Error fetching function from response:`, error);
+			return "Error";
 		}
-		return null;
 	}
 }

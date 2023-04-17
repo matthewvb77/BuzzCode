@@ -25,11 +25,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		let taskInProgress = false;
 		let questionInProgress = false;
-		const abortController = new AbortController();
-		const signal = abortController.signal;
+		var abortController: AbortController | undefined;
+		var signal: AbortSignal | undefined;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
-			if (!message.input) {
+			if (!message.input && message.command !== "cancel-task") {
 				return;
 			}
 			if (!hasValidAPIKey()) {
@@ -48,6 +48,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						return;
 					}
 					taskInProgress = true;
+					abortController = new AbortController();
+					signal = abortController.signal;
 					this.showTaskStarted();
 
 					try {
@@ -77,12 +79,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				case "cancel-task":
 					if (!taskInProgress) {
 						vscode.window.showInformationMessage(
-							"No task is currently in progress."
+							"No task is currently in progress. This should not happen."
 						);
 						return;
 					}
-					this.showTaskCancelled();
+					if (!abortController) {
+						throw Error(
+							"abortController is undefined, this should not happen."
+						);
+					}
 					abortController.abort();
+					break;
 
 				case "submit-question":
 					if (questionInProgress) {
@@ -100,6 +107,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						async () => {
 							questionInProgress = true;
 							try {
+								if (!signal) {
+									throw Error("signal is undefined, this should not happen.");
+								}
 								const response = await queryChatGPT(message.input, signal);
 								webviewView.webview.postMessage({
 									command: "response",
