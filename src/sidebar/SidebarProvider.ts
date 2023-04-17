@@ -79,7 +79,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				case "cancel-task":
 					if (!taskInProgress) {
 						vscode.window.showInformationMessage(
-							"No task is currently in progress. This should not happen."
+							"No task is currently in progress."
 						);
 						return;
 					}
@@ -149,8 +149,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private async onSubtasksReady(subtasks: Array<Subtask>): Promise<string> {
-		return new Promise((resolve) => {
+	private async onSubtasksReady(
+		subtasks: Array<Subtask>,
+		signal: AbortSignal
+	): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const onAbort = () => {
+				reject(new DOMException("The operation was aborted.", "AbortError"));
+			};
+
+			// Listen for the 'abort' event on the signal
+			signal.addEventListener("abort", onAbort);
+
 			if (this._view) {
 				this._view.webview.postMessage({
 					command: "showSubtasks",
@@ -159,6 +169,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 				this._view.webview.onDidReceiveMessage((message) => {
 					if (message.command === "userAction") {
+						// Remove the event listener before resolving
+						signal.removeEventListener("abort", onAbort);
 						resolve(message.action);
 					}
 				});

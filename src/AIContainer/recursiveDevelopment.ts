@@ -4,7 +4,6 @@ import { executeTerminalCommand } from "./AIHelpers/executeTerminalCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt, taskPrompt } from "./prompts";
-import axios from "axios";
 export interface Subtask {
 	index: number;
 	type: string;
@@ -18,7 +17,10 @@ export async function recursiveDevelopment(
 	input: string,
 	signal: AbortSignal,
 	onStartSubtask: (subtask: Subtask) => void,
-	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
+	onSubtasksReady: (
+		subtasks: Array<Subtask>,
+		signal: AbortSignal
+	) => Promise<void | string>,
 	onSubtaskError: () => void
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
@@ -36,7 +38,10 @@ async function recursiveDevelopmentHelper(
 	input: string,
 	signal: AbortSignal,
 	onStartSubtask: (subtask: Subtask) => void,
-	onSubtasksReady: (subtasks: Array<Subtask>) => Promise<void | string>,
+	onSubtasksReady: (
+		subtasks: Array<Subtask>,
+		signal: AbortSignal
+	) => Promise<void | string>,
 	onSubtaskError: () => void
 ): Promise<void | string> {
 	try {
@@ -63,7 +68,7 @@ async function recursiveDevelopmentHelper(
 		return "Error: " + error;
 	}
 
-	const userAction = await onSubtasksReady(subtasks);
+	const userAction = await onSubtasksReady(subtasks, signal);
 	switch (userAction) {
 		case "confirm":
 			break;
