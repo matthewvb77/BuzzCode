@@ -109,6 +109,8 @@
 	});
 
 	taskCancelButton.addEventListener("click", () => {
+		progressLoader.classList.remove("loader-waiting");
+		buttonsContainer.classList.remove("show-component");
 		vscode.postMessage({ command: "cancel-task" });
 	});
 

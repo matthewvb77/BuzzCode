@@ -32,7 +32,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			if (!message.input && message.command !== "cancel-task") {
 				return;
 			}
-			if (!hasValidAPIKey()) {
+			if (!hasValidAPIKey() && message.command !== "cancel-task") {
 				vscode.window.showErrorMessage(
 					"Please enter a valid API key in the TestWise settings."
 				);
@@ -153,13 +153,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		subtasks: Array<Subtask>,
 		signal: AbortSignal
 	): Promise<string> {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			const onAbort = () => {
-				reject(new DOMException("The operation was aborted.", "AbortError"));
+				signal.onabort = null;
+				resolve("cancel");
+				return;
 			};
-
-			// Listen for the 'abort' event on the signal
-			signal.addEventListener("abort", onAbort);
+			signal.onabort = onAbort;
 
 			if (this._view) {
 				this._view.webview.postMessage({
@@ -169,9 +169,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 				this._view.webview.onDidReceiveMessage((message) => {
 					if (message.command === "userAction") {
-						// Remove the event listener before resolving
-						signal.removeEventListener("abort", onAbort);
+						signal.onabort = null;
 						resolve(message.action);
+						return;
 					}
 				});
 			}

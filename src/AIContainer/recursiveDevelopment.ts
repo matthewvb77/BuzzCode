@@ -20,7 +20,7 @@ export async function recursiveDevelopment(
 	onSubtasksReady: (
 		subtasks: Array<Subtask>,
 		signal: AbortSignal
-	) => Promise<void | string>,
+	) => Promise<string>,
 	onSubtaskError: () => void
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
@@ -41,7 +41,7 @@ async function recursiveDevelopmentHelper(
 	onSubtasksReady: (
 		subtasks: Array<Subtask>,
 		signal: AbortSignal
-	) => Promise<void | string>,
+	) => Promise<string>,
 	onSubtaskError: () => void
 ): Promise<void | string> {
 	try {
@@ -68,16 +68,7 @@ async function recursiveDevelopmentHelper(
 		return "Error: " + error;
 	}
 
-	try {
-		var userAction = await onSubtasksReady(subtasks, signal);
-	} catch (error) {
-		if ((error as Error).name === "AbortError") {
-			return "Cancelled";
-		} else {
-			vscode.window.showErrorMessage("Error occured: " + error);
-			return "Error";
-		}
-	}
+	var userAction = await onSubtasksReady(subtasks, signal);
 
 	switch (userAction) {
 		case "confirm":
