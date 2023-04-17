@@ -44,28 +44,28 @@ async function recursiveDevelopmentHelper(
 	) => Promise<string>,
 	onSubtaskError: () => void
 ): Promise<void | string> {
+	recursionCount++;
+	if (recursionCount >= recursionLimit) {
+		vscode.window.showErrorMessage("Recursion limit reached.");
+		return;
+	}
+
+	var subtasksString: string = await queryChatGPT(
+		initializePrompt + taskPrompt + input,
+		signal
+	);
+
+	if (subtasksString === "Cancelled") {
+		return "Cancelled";
+	} else if (subtasksString === "Error") {
+		return "Error";
+	}
+
 	try {
-		recursionCount++;
-		if (recursionCount >= recursionLimit) {
-			vscode.window.showErrorMessage("Recursion limit reached.");
-			return;
-		}
-
-		var subtasksString: string = await queryChatGPT(
-			initializePrompt + taskPrompt + input,
-			signal
-		);
-
-		if (subtasksString === "Cancelled") {
-			return "Cancelled";
-		} else if (subtasksString === "Error") {
-			return "Error";
-		}
-
 		var subtasks: Array<Subtask> = JSON.parse(subtasksString).subtasks;
 	} catch (error) {
-		vscode.window.showErrorMessage("Error occured: " + error);
-		return "Error: " + error;
+		vscode.window.showErrorMessage("ChatGPT returned invalid JSON.");
+		return "Error";
 	}
 
 	var userAction = await onSubtasksReady(subtasks, signal);
