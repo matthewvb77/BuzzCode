@@ -287,25 +287,29 @@
 				subtaskCount = 0;
 				progressText.textContent = "Generating subtasks...";
 				changeLoaderState(progressLoader, "loader-active");
+				taskCancelButton.classList.add("show-component");
 				progressContainer.classList.add("show-component");
 				break;
 
 			case "showTaskCompleted":
 				changeLoaderState(activeSubtaskLoader, "loader-completed");
-				progressText.textContent = "Task Completed";
 				changeLoaderState(progressLoader, "loader-completed");
+				progressText.textContent = "Task Completed";
+				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "showTaskCancelled":
 				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				progressText.textContent = "Task Cancelled";
 				changeLoaderState(progressLoader, "loader-cancelled");
+				progressText.textContent = "Task Cancelled";
+				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "showTaskError":
 				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				progressText.textContent = "Error Occurred: Terminating Task";
 				changeLoaderState(progressLoader, "loader-cancelled");
+				progressText.textContent = "Error Occurred: Terminating Task";
+				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "onSubtaskError":

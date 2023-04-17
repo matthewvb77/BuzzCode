@@ -88,7 +88,8 @@ button:hover {
 #task-tab,
 #question-tab,
 #progress-container,
-#buttons-container {
+#buttons-container,
+#task-cancel-button {
 	opacity: 0;
 	pointer-events: none;
 }
@@ -102,14 +103,17 @@ button:hover {
 
 .body-loaded #task-tab,
 .body-loaded #question-tab,
-.body-loaded #progress-container {
+.body-loaded #progress-container,
+.body-loaded #buttons-container,
+.body-loaded #task-cancel-button {
 	transition: opacity 0.2s ease;
 }
 
 #task-tab.show-component,
 #question-tab.show-component,
 #progress-container.show-component,
-#buttons-container.show-component {
+#buttons-container.show-component,
+#task-cancel-button.show-component {
 	opacity: 1;
 	pointer-events: auto;
 }
