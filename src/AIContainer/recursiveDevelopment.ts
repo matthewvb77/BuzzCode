@@ -68,7 +68,17 @@ async function recursiveDevelopmentHelper(
 		return "Error: " + error;
 	}
 
-	const userAction = await onSubtasksReady(subtasks, signal);
+	try {
+		var userAction = await onSubtasksReady(subtasks, signal);
+	} catch (error) {
+		if ((error as Error).name === "AbortError") {
+			return "Cancelled";
+		} else {
+			vscode.window.showErrorMessage("Error occured: " + error);
+			return "Error";
+		}
+	}
+
 	switch (userAction) {
 		case "confirm":
 			break;
