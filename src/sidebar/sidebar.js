@@ -139,9 +139,8 @@
 				break;
 
 			case "waiting":
-				progressText.textContent = "Please review the subtasks below:";
 				changeLoaderState(progressLoader, "loader-waiting");
-				buttonsContainer.classList.add("show-component");
+				progressText.textContent = "Please review the subtasks below:";
 				break;
 
 			case "completed":
@@ -274,6 +273,8 @@
 
 					subtasksContainer.appendChild(listItem);
 				});
+
+				buttonsContainer.classList.add("show-component");
 
 				break;
 

@@ -51,7 +51,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		var signal: AbortSignal | undefined;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
-			if (!message.input) {
+			if (!message.input && message.command !== "cancel-task") {
+				vscode.window.showInformationMessage("No task entered");
 				return;
 			}
 			if (!hasValidAPIKey()) {
