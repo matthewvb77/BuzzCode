@@ -153,6 +153,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			signal.onabort = onAbort;
 
 			if (this._view) {
+				this.updateTaskState("waiting");
+
 				this._view.webview.postMessage({
 					command: "showSubtasks",
 					subtasks: subtasks,

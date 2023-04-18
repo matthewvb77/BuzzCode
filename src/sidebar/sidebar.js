@@ -138,6 +138,12 @@
 				progressContainer.classList.add("show-component");
 				break;
 
+			case "waiting":
+				progressText.textContent = "Please review the subtasks below:";
+				changeLoaderState(progressLoader, "loader-waiting");
+				buttonsContainer.classList.add("show-component");
+				break;
+
 			case "completed":
 				changeLoaderState(progressLoader, "loader-completed");
 				progressText.textContent = "Task Completed";
@@ -196,10 +202,6 @@
 				break;
 
 			case "showSubtasks":
-				progressText.textContent = "Please review the subtasks below:";
-				changeLoaderState(progressLoader, "loader-waiting");
-				buttonsContainer.classList.add("show-component");
-
 				message.subtasks.forEach((subtask) => {
 					// if this is a recursive call, add the subtasks to the end of the list
 					const subtaskIndex = subtaskCount + subtask.index;
