@@ -7,22 +7,6 @@ body {
 	flex-direction: column;
 	height: 100%;
 }
-.tabs-wrapper {
-	position: relative;
-	height: 65%;
-	width: 100%;
-}
-
-.tab-container {
-	position: absolute;
-	height: 100%; /* 10px is the margin */
-	width: 100%;
-}
-
-.tab-container * {
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
 
 .inline-container {
 	display: flex;
@@ -37,11 +21,7 @@ label {
 	vertical-align: middle;
 	margin-right: 8px;
 }
-select:focus {
-	outline: none;
-}
-textarea,
-select {
+textarea {
 	background-color: #3c3c3c;
 	border: 1px solid #3c3c3c;
 	color: #c8c8c8;
@@ -50,11 +30,7 @@ select {
 	outline: none;
 	width: 100%;
 }
-select {
-	height: 32px;
-	font-size: 16px;
-	width: 175px;
-}
+
 textarea:focus {
 	outline: none;
 }
@@ -84,9 +60,6 @@ button:focus {
 button:hover {
 	background-color: #4080b6;
 }
-
-#task-tab,
-#question-tab,
 #progress-container,
 #buttons-container,
 #task-cancel-button {
@@ -94,31 +67,15 @@ button:hover {
 	pointer-events: none;
 }
 
-#response-label {
-	margin-top: 30px;
-}
-#response-area {
-	height: 50%;
-}
-
-.body-loaded #task-tab,
-.body-loaded #question-tab,
 .body-loaded #progress-container,
 .body-loaded #buttons-container,
 .body-loaded #task-cancel-button {
 	transition: opacity 0.2s ease;
 }
 
-#task-tab.show-component,
-#question-tab.show-component,
 #progress-container.show-component,
 #buttons-container.show-component,
 #task-cancel-button.show-component {
-	opacity: 1;
-	pointer-events: auto;
-}
-
-#question-tab:not(.show-component) ~ #task-tab {
 	opacity: 1;
 	pointer-events: auto;
 }

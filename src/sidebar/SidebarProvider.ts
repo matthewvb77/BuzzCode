@@ -14,15 +14,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	/* ------------------ State Persistence Helpers ---------------------  */
 	private messageQueue: Array<any> = [];
 
-	private flushMessageQueue() {
-		while (this.messageQueue.length > 0) {
-			const message = this.messageQueue.shift();
-			if (this._view) {
-				this._view.webview.postMessage(message);
-			}
-		}
-	}
-
 	public resolveWebviewView(webviewView: vscode.WebviewView) {
 		this._view = webviewView;
 
@@ -34,14 +25,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.onDidChangeVisibility(() => {
 			if (webviewView.visible) {
-				this.flushMessageQueue();
+				// ratcheting the message queue to add atomicity
+				while (this.messageQueue.length > 0) {
+					const message = this.messageQueue[0];
+					if (this._view) {
+						this._view.webview.postMessage(message);
+					}
+
+					// wait for response before removing from queue
+					this.messageQueue.shift();
+				}
 			}
 		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
 		let taskInProgress = false;
-		let questionInProgress = false;
 		var abortController: AbortController | undefined;
 		var signal: AbortSignal | undefined;
 
@@ -57,7 +56,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			}
 
 			switch (message.command) {
-				case "submit-task":
+				case "response":
+					break;
+
+				case "submit":
 					if (taskInProgress) {
 						vscode.window.showInformationMessage(
 							"A task is already in progress."
@@ -108,41 +110,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					abortController.abort();
 					break;
 
-				case "submit-question":
-					if (questionInProgress) {
-						vscode.window.showInformationMessage(
-							"A question is already in progress."
-						);
-						return;
-					}
-					await vscode.window.withProgress(
-						{
-							location: vscode.ProgressLocation.Notification,
-							title: "Generating response...",
-							cancellable: false,
-						},
-						async () => {
-							questionInProgress = true;
-							try {
-								if (!signal) {
-									throw Error("signal is undefined, this should not happen.");
-								}
-								const response = await queryChatGPT(message.input, signal);
-								webviewView.webview.postMessage({
-									command: "response",
-									text: response,
-								});
-								questionInProgress = false;
-							} catch (error) {
-								vscode.window.showErrorMessage(
-									"Error occurred while responding: " + error
-								);
-								questionInProgress = false;
-							}
-						}
-					);
-					break;
-
 				case "onStartSubtask":
 					this.onStartSubtask(message.subtask);
 					break;
@@ -168,7 +135,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private postMessageToWebview(message: any) {
 		if (this._view && this._view.visible) {
-			this.postMessageToWebview(message);
+			this._view.webview.postMessage(message);
 		} else {
 			this.messageQueue.push(message);
 		}
@@ -281,43 +248,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link rel="stylesheet" href="${codiconStylesheetUri}">
 			</head>
       		<body>
-				<div class="inline-container">
-					<label for="input-type">Input:</label>
-					<select id="input-type">
-						<option value="task">Task</option>
-						<option value="question">Question</option>
-					</select>
-				</div>
-				<div class="tabs-wrapper">
-					<div id="task-tab" class="tab-container">
-						<textarea id="task-user-input" class="user-input" name="task-user-input" placeholder="Give a task..."></textarea>
-						<button id="task-submit-button" class="submit-button">Submit</button>
-						<br>
+				<Span>Input:</Span>
+				<textarea id="user-input" class="user-input" name="user-input" placeholder="Give a task..."></textarea>
+				<button id="submit-button" class="submit-button">Submit</button>
+				<br>
 
-						<div id="progress-container">
-							<div class="inline-container">
-								<div id="progress-loader" class="loader"></div>
-								<span id="progress-text" class="subtask-text">Generating subtasks...</span>
-								<button id="task-cancel-button" class="codicon codicon-close"></button>
-							</div>
-
-							<div id="subtasks-container"></div>
-
-							<div id="buttons-container" class="inline-container">
-								<button id="confirm-button">Confirm</button>
-								<button id="cancel-button">Cancel</button>
-								<button id="regenerate-button">Regenerate</button>
-							</div>
-						</div>
+				<div id="progress-container">
+					<div class="inline-container">
+						<div id="progress-loader" class="loader"></div>
+						<span id="progress-text" class="subtask-text">Generating subtasks...</span>
+						<button id="task-cancel-button" class="codicon codicon-close"></button>
 					</div>
 
-					<div id="question-tab" class="tab-container">
-						<textarea id="question-user-input" class="user-input" name="user-input" placeholder="Ask a question..."></textarea>
-						<button id="question-submit-button">Submit</button>
-						<br>
+					<div id="subtasks-container"></div>
 
-						<label id="response-label">Response:</label>
-						<textarea id="response-area" name="response-area" placeholder="TestWise will respond..." readonly></textarea>
+					<div id="buttons-container" class="inline-container">
+						<button id="confirm-button">Confirm</button>
+						<button id="cancel-button">Cancel</button>
+						<button id="regenerate-button">Regenerate</button>
 					</div>
 				</div>
 
