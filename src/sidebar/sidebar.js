@@ -1,37 +1,15 @@
 (function () {
-	const inputTypeSelect = document.getElementById("input-type");
-	const questionTab = document.getElementById("question-tab");
-	const taskTab = document.getElementById("task-tab");
-	const userTaskInputBox = document.getElementById("task-user-input");
-	const userQuestionInputBox = document.getElementById("question-user-input");
-	const taskSubmitButton = document.getElementById("task-submit-button");
+	const userInputBox = document.getElementById("user-input");
+	const taskSubmitButton = document.getElementById("submit-button");
 	const taskCancelButton = document.getElementById("task-cancel-button");
 	const subtasksContainer = document.getElementById("subtasks-container");
 	const progressContainer = document.getElementById("progress-container");
-	const questionSubmitButton = document.getElementById(
-		"question-submit-button"
-	);
 	const buttonsContainer = document.getElementById("buttons-container");
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
 	var subtaskCount = 0;
 	var previousSubtaskCount = 0;
-
-	function updatePlaceholderAndResponse() {
-		switch (inputTypeSelect.value) {
-			case "task":
-				questionTab.classList.remove("show-component");
-				taskTab.classList.add("show-component");
-				break;
-			case "question":
-				taskTab.classList.remove("show-component");
-				questionTab.classList.add("show-component");
-				break;
-			default:
-				throw new Error("Invalid input type");
-		}
-	}
 
 	function getSubtaskSummary(type, parameters, tense) {
 		if (!(tense === "ongoing" || tense === "imperative")) {
@@ -76,36 +54,21 @@
 		}
 	}
 
-	updatePlaceholderAndResponse();
-	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
 	window.addEventListener("load", () => {
 		document.body.classList.add("body-loaded");
 	});
 
-	userTaskInputBox.addEventListener("keydown", function (event) {
+	userInputBox.addEventListener("keydown", function (event) {
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
 			taskSubmitButton.click();
 		}
 	});
 
-	userQuestionInputBox.addEventListener("keydown", function (event) {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			questionSubmitButton.click();
-		}
-	});
-
 	taskSubmitButton.addEventListener("click", () => {
-		const input = userTaskInputBox.value;
+		const input = userInputBox.value;
 		subtaskCount = 0;
-		vscode.postMessage({ command: "submit-task", input });
-	});
-
-	questionSubmitButton.addEventListener("click", () => {
-		const input = userQuestionInputBox.value;
-
-		vscode.postMessage({ command: "submit-question", input });
+		vscode.postMessage({ command: "submit", input });
 	});
 
 	taskCancelButton.addEventListener("click", () => {

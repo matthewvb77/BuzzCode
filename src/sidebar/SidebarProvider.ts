@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { queryChatGPT } from "../AIContainer/AIHelpers/queryChatGPT";
 import { Subtask } from "../AIContainer/recursiveDevelopment";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
