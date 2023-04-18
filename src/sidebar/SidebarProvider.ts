@@ -11,15 +11,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
 
+	/* ------------------ State Persistence Helpers ---------------------  */
+	private messageQueue: Array<any> = [];
+
+	private flushMessageQueue() {
+		while (this.messageQueue.length > 0) {
+			const message = this.messageQueue.shift();
+			if (this._view) {
+				this._view.webview.postMessage(message);
+			}
+		}
+	}
+
 	public resolveWebviewView(webviewView: vscode.WebviewView) {
 		this._view = webviewView;
 
 		webviewView.webview.options = {
 			// Allow scripts in the webview
 			enableScripts: true,
-
 			localResourceRoots: [this._extensionUri],
 		};
+
+		webviewView.onDidChangeVisibility(() => {
+			if (webviewView.visible) {
+				this.flushMessageQueue();
+			}
+		});
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
@@ -142,10 +159,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "onStartSubtask",
 				subtask: subtask,
 			});
+		}
+	}
+
+	private postMessageToWebview(message: any) {
+		if (this._view && this._view.visible) {
+			this.postMessageToWebview(message);
+		} else {
+			this.messageQueue.push(message);
 		}
 	}
 
@@ -162,7 +187,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			signal.onabort = onAbort;
 
 			if (this._view) {
-				this._view.webview.postMessage({
+				this.postMessageToWebview({
 					command: "showSubtasks",
 					subtasks: subtasks,
 				});
@@ -180,7 +205,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskStarted() {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "showTaskStarted",
 			});
 		}
@@ -188,7 +213,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskCompleted() {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "showTaskCompleted",
 			});
 		}
@@ -196,7 +221,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskCancelled() {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "showTaskCancelled",
 			});
 		}
@@ -204,7 +229,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskError() {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "showTaskError",
 			});
 		}
@@ -212,7 +237,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onSubtaskError() {
 		if (this._view) {
-			this._view.webview.postMessage({
+			this.postMessageToWebview({
 				command: "onSubtaskError",
 			});
 		}
