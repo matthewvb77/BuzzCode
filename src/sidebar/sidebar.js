@@ -44,9 +44,7 @@
 		.getElementById("regenerate-button")
 		.addEventListener("click", () => userAction("regenerate"));
 
-	/* ------------------------------ Helpers ----------------------------
-	- Must be called from within the "2. Act" step of 'message' event listener (to maintian atomicity)
-	*/
+	/* ------------------------------ Helpers --------------------------- */
 
 	function getSubtaskSummary(type, parameters, tense) {
 		if (!(tense === "ongoing" || tense === "imperative")) {
@@ -114,7 +112,7 @@
 
 	function changeLoaderState(loader, state) {
 		if (!loader) {
-			return;
+			throw (error = new Error("Invalid arguments"));
 		}
 		loader.classList.remove("loader-completed");
 		loader.classList.remove("loader-cancelled");
@@ -125,6 +123,41 @@
 			// The loader is active by default
 		} else {
 			loader.classList.add(state);
+		}
+	}
+
+	function updateTaskState(state) {
+		switch (state) {
+			case "started":
+				subtasksContainer.innerHTML = "";
+
+				changeLoaderState(progressLoader, "loader-active");
+				progressText.textContent = "Generating subtasks...";
+				taskCancelButton.classList.add("show-component");
+
+				progressContainer.classList.add("show-component");
+				break;
+
+			case "completed":
+				changeLoaderState(progressLoader, "loader-completed");
+				progressText.textContent = "Task Completed";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			case "cancelled":
+				changeLoaderState(progressLoader, "loader-cancelled");
+				progressText.textContent = "Task Cancelled";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			case "error":
+				changeLoaderState(progressLoader, "loader-cancelled");
+				progressText.textContent = "Error Occurred: Terminating Task";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			default:
+				throw (error = new Error("Invalid state"));
 		}
 	}
 
@@ -248,37 +281,18 @@
 
 				break;
 
-			case "showTaskStarted":
-				subtasksContainer.innerHTML = "";
-				subtaskCount = 0;
-				progressText.textContent = "Generating subtasks...";
-				changeLoaderState(progressLoader, "loader-active");
-				taskCancelButton.classList.add("show-component");
-				progressContainer.classList.add("show-component");
-
-				break;
-
-			case "showTaskCompleted":
-				changeLoaderState(activeSubtaskLoader, "loader-completed");
-				changeLoaderState(progressLoader, "loader-completed");
-				progressText.textContent = "Task Completed";
-				taskCancelButton.classList.remove("show-component");
-
-				break;
-
-			case "showTaskCancelled":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				changeLoaderState(progressLoader, "loader-cancelled");
-				progressText.textContent = "Task Cancelled";
-				taskCancelButton.classList.remove("show-component");
-				break;
-
-			case "showTaskError":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				changeLoaderState(progressLoader, "loader-cancelled");
-				progressText.textContent = "Error Occurred: Terminating Task";
-				taskCancelButton.classList.remove("show-component");
-
+			case "updateTaskState":
+				if (activeSubtaskLoader) {
+					if (message.taskState === "completed") {
+						changeLoaderState(activeSubtaskLoader, "loader-completed");
+					} else if (
+						message.taskState === "cancelled" ||
+						message.taskState === "error"
+					) {
+						changeLoaderState(activeSubtaskLoader, "loader-cancelled");
+					}
+				}
+				updateTaskState(message.taskState);
 				break;
 
 			case "onSubtaskError":
@@ -287,8 +301,23 @@
 
 				break;
 
+			case "rebuild":
+				userInputBox.value = message.state.userInput;
+
+				break;
+
 			default:
 				console.warn("Unknown message received:", message);
 		}
 	});
 })();
+
+/*
+_state: any = {
+	userInput: String,
+	subtasks: Array<Subtask>,
+	subtaskStates: Array<String>,
+	taskState: String,
+	previousSubtaskCount: Number,
+};
+*/

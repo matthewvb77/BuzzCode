@@ -17,13 +17,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
 
-	/* ------------------ State Persistence Helpers ---------------------  */
-	private messageQueue: Array<any> = [];
-
-	private _updateWebview() {
+	private _rebuildWebview() {
 		if (this._view) {
 			this._view.webview.postMessage({
-				command: "update",
+				command: "rebuild",
 				state: this._state,
 			});
 		}
@@ -43,7 +40,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.onDidChangeVisibility(() => {
 			if (webviewView.visible) {
-				this._updateWebview();
+				this._rebuildWebview();
 			}
 		});
 
@@ -75,7 +72,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					taskInProgress = true;
 					abortController = new AbortController();
 					signal = abortController.signal;
-					this.showTaskStarted();
+					// TODO: update the state (empty subtasks, task state = "started")
+					this.updateTaskState("started");
 
 					try {
 						const result = await recursiveDevelopment(
@@ -86,11 +84,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							this.onSubtaskError.bind(this)
 						);
 						if (result === "Cancelled") {
-							this.showTaskCancelled();
+							this.updateTaskState("cancelled");
 						} else if (typeof result === "string") {
-							this.showTaskError();
+							this.updateTaskState("error");
 						} else {
-							this.showTaskCompleted();
+							this.updateTaskState("completed");
 						}
 						taskInProgress = false;
 					} catch (error) {
@@ -168,34 +166,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
-	private showTaskStarted() {
+	private updateTaskState(state: String) {
 		if (this._view) {
 			this._view.webview.postMessage({
-				command: "showTaskStarted",
-			});
-		}
-	}
-
-	private showTaskCompleted() {
-		if (this._view) {
-			this._view.webview.postMessage({
-				command: "showTaskCompleted",
-			});
-		}
-	}
-
-	private showTaskCancelled() {
-		if (this._view) {
-			this._view.webview.postMessage({
-				command: "showTaskCancelled",
-			});
-		}
-	}
-
-	private showTaskError() {
-		if (this._view) {
-			this._view.webview.postMessage({
-				command: "showTaskError",
+				command: "updateTaskState",
+				taskState: state,
 			});
 		}
 	}
@@ -246,7 +221,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link rel="stylesheet" href="${codiconStylesheetUri}">
 			</head>
       		<body>
-				<Span>Input:</Span>
 				<textarea id="user-input" class="user-input" name="user-input" placeholder="Give a task..."></textarea>
 				<button id="submit-button" class="submit-button">Submit</button>
 				<br>
