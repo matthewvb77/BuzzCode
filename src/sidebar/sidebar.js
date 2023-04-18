@@ -178,18 +178,17 @@
 		switch (message.command) {
 			case "onStartSubtask":
 				const { index, type, parameters } = message.subtask;
-				const subtaskIndex = previousSubtaskCount + index;
 
 				// if the subtask is not the first one in a recursive call, mark the previous subtask as completed
 				if (index !== 0) {
 					const previousLoader = document.getElementById(
-						`subtask-loader-${subtaskIndex - 1}`
+						`subtask-loader-${index - 1}`
 					);
-
 					changeLoaderState(previousLoader, "loader-completed");
 				}
+
 				const currentLoader = document.getElementById(
-					`subtask-loader-${subtaskIndex}`
+					`subtask-loader-${index}`
 				);
 				changeLoaderState(currentLoader, "loader-active");
 
@@ -203,9 +202,6 @@
 
 			case "showSubtasks":
 				message.subtasks.forEach((subtask) => {
-					// if this is a recursive call, add the subtasks to the end of the list
-					const subtaskIndex = subtaskCount + subtask.index;
-
 					// create subtask container
 					const listItem = document.createElement("li");
 					listItem.classList.add("subtask-container");
@@ -217,7 +213,7 @@
 
 					// create subtask loader
 					const subtaskLoader = document.createElement("div");
-					subtaskLoader.setAttribute("id", `subtask-loader-${subtaskIndex}`);
+					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 					subtaskLoader.classList.add("loader");
 					changeLoaderState(subtaskLoader, "loader-initial");
 					subtaskHeader.appendChild(subtaskLoader);
@@ -278,8 +274,6 @@
 
 					subtasksContainer.appendChild(listItem);
 				});
-				previousSubtaskCount = subtaskCount;
-				subtaskCount += message.subtasks.length;
 
 				break;
 

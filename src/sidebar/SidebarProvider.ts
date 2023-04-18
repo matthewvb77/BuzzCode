@@ -8,12 +8,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
 	_doc?: vscode.TextDocument;
 	_state: any = {
-		userInput: String,
-		taskInProgress: Boolean,
-		taskState: String,
+		userInput: String, // done
+		taskInProgress: Boolean, // done
+		taskState: String, // done
 		subtasks: Array<Subtask>,
 		subtaskStates: Array<String>,
-		previousSubtaskCount: Number,
 	};
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -52,10 +51,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		var signal: AbortSignal | undefined;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
-			if (!message.input && message.command !== "cancel-task") {
+			if (!message.input) {
 				return;
 			}
-			if (!hasValidAPIKey() && message.command !== "cancel-task") {
+			if (!hasValidAPIKey()) {
 				vscode.window.showErrorMessage(
 					"Please enter a valid API key in the TestWise settings."
 				);
@@ -88,7 +87,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						if (result === "Cancelled") {
 							this.updateTaskState("cancelled");
-						} else if (typeof result === "string") {
+						} else if (result === "Error") {
 							this.updateTaskState("error");
 						} else {
 							this.updateTaskState("completed");
@@ -98,6 +97,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						vscode.window.showErrorMessage(
 							"Error occurred while running task: " + error
 						);
+						this.updateTaskState("error");
 						this._state.taskInProgress = false;
 					}
 					break;
@@ -105,7 +105,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				case "cancel-task":
 					if (!this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
-							"No task is currently in progress."
+							"No task is currently in progress, this should not happen."
 						);
 						return;
 					}
@@ -154,7 +154,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 			if (this._view) {
 				this.updateTaskState("waiting");
+				// update subtask indices
+				subtasks.forEach((subtask) => {
+					subtask.index += this._state.subtasks.length;
+				});
+				// update subtasks state
+				this._state.subtasks.push(...subtasks);
 
+				// show the new subtasks
 				this._view.webview.postMessage({
 					command: "showSubtasks",
 					subtasks: subtasks,
