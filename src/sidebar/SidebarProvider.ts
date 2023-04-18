@@ -9,9 +9,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	_doc?: vscode.TextDocument;
 	_state: any = {
 		userInput: String,
+		taskInProgress: Boolean,
+		taskState: String,
 		subtasks: Array<Subtask>,
 		subtaskStates: Array<String>,
-		taskState: String,
 		previousSubtaskCount: Number,
 	};
 
@@ -46,7 +47,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-		let taskInProgress = false;
+		this._state.taskInProgress = false;
 		var abortController: AbortController | undefined;
 		var signal: AbortSignal | undefined;
 
@@ -63,16 +64,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 			switch (message.command) {
 				case "submit":
-					if (taskInProgress) {
+					if (this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
 							"A task is already in progress."
 						);
 						return;
 					}
-					taskInProgress = true;
+
 					abortController = new AbortController();
 					signal = abortController.signal;
-					// TODO: update the state (empty subtasks, task state = "started")
+					this._state.taskInProgress = true;
+					this._state.userInput = message.input;
+					this._state.subtasks = [];
 					this.updateTaskState("started");
 
 					try {
@@ -90,17 +93,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						} else {
 							this.updateTaskState("completed");
 						}
-						taskInProgress = false;
+						this._state.taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
 							"Error occurred while running task: " + error
 						);
-						taskInProgress = false;
+						this._state.taskInProgress = false;
 					}
 					break;
 
 				case "cancel-task":
-					if (!taskInProgress) {
+					if (!this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
 							"No task is currently in progress."
 						);
@@ -167,6 +170,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	}
 
 	private updateTaskState(state: String) {
+		this._state.taskState = state;
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "updateTaskState",

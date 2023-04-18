@@ -311,13 +311,3 @@
 		}
 	});
 })();
-
-/*
-_state: any = {
-	userInput: String,
-	subtasks: Array<Subtask>,
-	subtaskStates: Array<String>,
-	taskState: String,
-	previousSubtaskCount: Number,
-};
-*/
