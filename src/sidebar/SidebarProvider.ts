@@ -11,8 +11,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		userInput: String, // done
 		taskInProgress: Boolean, // done
 		taskState: String, // done
-		subtasks: Array<Subtask>,
+		subtasks: Array<Subtask>, //done
 		subtaskStates: Array<String>,
+		previousSubtaskCount: Number,
 	};
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -76,6 +77,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					this._state.taskInProgress = true;
 					this._state.userInput = message.input;
 					this._state.subtasks = [];
+					this._state.previousSubtaskCount = 0;
 					this.updateTaskState("started");
 
 					try {
@@ -134,6 +136,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
+			if (subtask.index > 0) {
+				this._state.subtaskStates[subtask.index - 1] = "completed";
+			}
+			this._state.subtaskStates[subtask.index] = "active";
 			this._view.webview.postMessage({
 				command: "onStartSubtask",
 				subtask: subtask,
@@ -158,6 +164,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				// update subtask indices
 				subtasks.forEach((subtask) => {
 					subtask.index += this._state.subtasks.length;
+					this._state.subtaskStates.push("initial");
 				});
 				// update subtasks state
 				this._state.subtasks.push(...subtasks);
@@ -171,6 +178,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				this._view.webview.onDidReceiveMessage((message) => {
 					if (message.command === "userAction") {
 						signal.onabort = null;
+						if (message.action === "confirm") {
+							this._state.previousSubtaskCount = this._state.subtasks.length;
+						}
 						resolve(message.action);
 						return;
 					}
@@ -189,8 +199,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private onSubtaskError() {
+	private onSubtaskError(index: number) {
 		if (this._view) {
+			this._state.subtaskStates[index] = "error";
 			this._view.webview.postMessage({
 				command: "onSubtaskError",
 			});

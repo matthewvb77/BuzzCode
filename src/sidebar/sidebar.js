@@ -9,6 +9,8 @@
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
+	let previousSubtaskCount = 0;
+
 	/* --------------------------- Accessory Event Listeners --------------------------  */
 
 	window.addEventListener("load", () => {
@@ -24,7 +26,6 @@
 
 	taskSubmitButton.addEventListener("click", () => {
 		const input = userInputBox.value;
-		subtaskCount = 0;
 		vscode.postMessage({ command: "submit", input });
 	});
 
@@ -95,11 +96,9 @@
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
 
-			// Remove subtasks with an index >= previousSubtaskCount
 			while (subtasksContainer.children.length > previousSubtaskCount) {
 				subtasksContainer.removeChild(subtasksContainer.lastChild);
 			}
-			subtaskCount = previousSubtaskCount;
 		}
 
 		buttonsContainer.classList.remove("show-component");
@@ -119,10 +118,10 @@
 		loader.classList.remove("loader-waiting");
 		loader.classList.remove("loader-initial");
 
-		if (state === "loader-active") {
+		if (state === "active") {
 			// The loader is active by default
 		} else {
-			loader.classList.add(state);
+			loader.classList.add("loader-" + state);
 		}
 	}
 
@@ -130,8 +129,9 @@
 		switch (state) {
 			case "started":
 				subtasksContainer.innerHTML = "";
+				previousSubtaskCount = 0;
 
-				changeLoaderState(progressLoader, "loader-active");
+				changeLoaderState(progressLoader, "active");
 				progressText.textContent = "Generating subtasks...";
 				taskCancelButton.classList.add("show-component");
 
@@ -139,24 +139,24 @@
 				break;
 
 			case "waiting":
-				changeLoaderState(progressLoader, "loader-waiting");
-				progressText.textContent = "Please review the subtasks below:";
+				changeLoaderState(progressLoader, "waiting");
+				progressText.textContent = "Awaiting user response...";
 				break;
 
 			case "completed":
-				changeLoaderState(progressLoader, "loader-completed");
+				changeLoaderState(progressLoader, "completed");
 				progressText.textContent = "Task Completed";
 				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "cancelled":
-				changeLoaderState(progressLoader, "loader-cancelled");
+				changeLoaderState(progressLoader, "cancelled");
 				progressText.textContent = "Task Cancelled";
 				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "error":
-				changeLoaderState(progressLoader, "loader-cancelled");
+				changeLoaderState(progressLoader, "cancelled");
 				progressText.textContent = "Error Occurred: Terminating Task";
 				taskCancelButton.classList.remove("show-component");
 				break;
@@ -164,6 +164,84 @@
 			default:
 				throw (error = new Error("Invalid state"));
 		}
+	}
+
+	function showSubtasks(subtasks, subtaskStates) {
+		subtasks.forEach((subtask) => {
+			// create subtask container
+			const listItem = document.createElement("li");
+			listItem.classList.add("subtask-container");
+
+			// create subtask header container
+			const subtaskHeader = document.createElement("div");
+			subtaskHeader.classList.add("subtask-header");
+			listItem.appendChild(subtaskHeader);
+
+			// create subtask loader
+			const subtaskLoader = document.createElement("div");
+			subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
+			subtaskLoader.classList.add("loader");
+
+			changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
+
+			subtaskHeader.appendChild(subtaskLoader);
+
+			// create subtask text
+			const subtaskText = document.createElement("span");
+			subtaskText.classList.add("subtask-text");
+			subtaskText.textContent = getSubtaskSummary(
+				subtask.type,
+				subtask.parameters,
+				"imperative"
+			);
+			subtaskHeader.appendChild(subtaskText);
+
+			// create subtask expand icon
+			const subtaskExpandIcon = document.createElement("span");
+			subtaskExpandIcon.classList.add("subtask-expand-icon");
+			subtaskHeader.appendChild(subtaskExpandIcon);
+
+			// create subtask details container
+			const subtaskDetails = document.createElement("div");
+			subtaskDetails.classList.add("subtask-details");
+
+			// populate subtask details
+			switch (subtask.type) {
+				case "generateFile":
+					subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
+					subtaskDetails.classList.add("warning-text");
+					break;
+
+				case "executeTerminalCommand":
+					const codeBlock = document.createElement("code");
+					codeBlock.textContent = `> ` + subtask.parameters.command;
+					subtaskDetails.appendChild(codeBlock);
+					break;
+
+				case "recurse":
+					const newPromptTextArea = document.createElement("textarea");
+					newPromptTextArea.classList.add("subtask-details-textarea");
+					newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
+					subtaskDetails.appendChild(newPromptTextArea);
+					break;
+
+				case "askUser":
+					subtaskDetails.textContent = `Ask User: ${subtask.parameters.question}`;
+					break;
+
+				default:
+					throw error("Unknown subtask type: " + subtask.type);
+			}
+
+			listItem.appendChild(subtaskDetails);
+
+			// create subtask details
+			listItem.addEventListener("click", () => {
+				listItem.classList.toggle("expanded");
+			});
+
+			subtasksContainer.appendChild(listItem);
+		});
 	}
 
 	/* --------------------------- Primary Message Handler ------------------------- */
@@ -183,13 +261,13 @@
 					const previousLoader = document.getElementById(
 						`subtask-loader-${index - 1}`
 					);
-					changeLoaderState(previousLoader, "loader-completed");
+					changeLoaderState(previousLoader, "completed");
 				}
 
 				const currentLoader = document.getElementById(
 					`subtask-loader-${index}`
 				);
-				changeLoaderState(currentLoader, "loader-active");
+				changeLoaderState(currentLoader, "active");
 
 				progressText.textContent = getSubtaskSummary(
 					type,
@@ -200,107 +278,47 @@
 				break;
 
 			case "showSubtasks":
-				message.subtasks.forEach((subtask) => {
-					// create subtask container
-					const listItem = document.createElement("li");
-					listItem.classList.add("subtask-container");
-
-					// create subtask header container
-					const subtaskHeader = document.createElement("div");
-					subtaskHeader.classList.add("subtask-header");
-					listItem.appendChild(subtaskHeader);
-
-					// create subtask loader
-					const subtaskLoader = document.createElement("div");
-					subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
-					subtaskLoader.classList.add("loader");
-					changeLoaderState(subtaskLoader, "loader-initial");
-					subtaskHeader.appendChild(subtaskLoader);
-
-					// create subtask text
-					const subtaskText = document.createElement("span");
-					subtaskText.classList.add("subtask-text");
-					subtaskText.textContent = getSubtaskSummary(
-						subtask.type,
-						subtask.parameters,
-						"imperative"
-					);
-					subtaskHeader.appendChild(subtaskText);
-
-					// create subtask expand icon
-					const subtaskExpandIcon = document.createElement("span");
-					subtaskExpandIcon.classList.add("subtask-expand-icon");
-					subtaskHeader.appendChild(subtaskExpandIcon);
-
-					// create subtask details container
-					const subtaskDetails = document.createElement("div");
-					subtaskDetails.classList.add("subtask-details");
-
-					// populate subtask details
-					switch (subtask.type) {
-						case "generateFile":
-							subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
-							subtaskDetails.classList.add("warning-text");
-							break;
-
-						case "executeTerminalCommand":
-							const codeBlock = document.createElement("code");
-							codeBlock.textContent = `> ` + subtask.parameters.command;
-							subtaskDetails.appendChild(codeBlock);
-							break;
-
-						case "recurse":
-							const newPromptTextArea = document.createElement("textarea");
-							newPromptTextArea.classList.add("subtask-details-textarea");
-							newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
-							subtaskDetails.appendChild(newPromptTextArea);
-							break;
-
-						case "askUser":
-							subtaskDetails.textContent = `Ask User: ${subtask.parameters.question}`;
-							break;
-
-						default:
-							throw error("Unknown subtask type: " + subtask.type);
-					}
-
-					listItem.appendChild(subtaskDetails);
-
-					// create subtask details
-					listItem.addEventListener("click", () => {
-						listItem.classList.toggle("expanded");
-					});
-
-					subtasksContainer.appendChild(listItem);
-				});
-
+				previousSubtaskCount =
+					document.querySelectorAll(".subtask-container").length;
+				showSubtasks(message.subtasks);
 				buttonsContainer.classList.add("show-component");
-
 				break;
 
 			case "updateTaskState":
 				if (activeSubtaskLoader) {
 					if (message.taskState === "completed") {
-						changeLoaderState(activeSubtaskLoader, "loader-completed");
+						changeLoaderState(activeSubtaskLoader, "completed");
 					} else if (
 						message.taskState === "cancelled" ||
 						message.taskState === "error"
 					) {
-						changeLoaderState(activeSubtaskLoader, "loader-cancelled");
+						changeLoaderState(activeSubtaskLoader, "cancelled");
 					}
 				}
 				updateTaskState(message.taskState);
 				break;
 
 			case "onSubtaskError":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
+				changeLoaderState(activeSubtaskLoader, "cancelled");
 				progressText.textContent = "Error Occurred: Generating next steps";
 
 				break;
 
 			case "rebuild":
 				userInputBox.value = message.state.userInput;
-
+				updateTaskState(message.state.taskState);
+				if (message.state.taskInProgress) {
+					taskCancelButton.classList.add("show-component");
+					progressContainer.classList.add("show-component");
+				}
+				if (
+					message.state.taskState === "waiting" &&
+					!document.querySelector(".subtask-container .loader.loader-waiting")
+				) {
+					buttonsContainer.classList.add("show-component");
+				}
+				previousSubtaskCount = message.state.previousSubtaskCount;
+				showSubtasks(message.state.subtasks, message.state.subtaskStates);
 				break;
 
 			default:
