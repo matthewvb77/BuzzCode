@@ -7,33 +7,43 @@ import { Subtask } from "../AIContainer/recursiveDevelopment";
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
 	_doc?: vscode.TextDocument;
+	_state: any = {
+		userInput: String,
+		subtasks: Array<Subtask>,
+		subtaskStates: Array<String>,
+		taskState: String,
+		previousSubtaskCount: Number,
+	};
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
 
 	/* ------------------ State Persistence Helpers ---------------------  */
 	private messageQueue: Array<any> = [];
 
-	public resolveWebviewView(webviewView: vscode.WebviewView) {
+	private _updateWebview() {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "update",
+				state: this._state,
+			});
+		}
+	}
+
+	public resolveWebviewView(
+		webviewView: vscode.WebviewView,
+		context: vscode.WebviewViewResolveContext,
+		_token: vscode.CancellationToken
+	) {
 		this._view = webviewView;
 
 		webviewView.webview.options = {
-			// Allow scripts in the webview
 			enableScripts: true,
 			localResourceRoots: [this._extensionUri],
 		};
 
 		webviewView.onDidChangeVisibility(() => {
 			if (webviewView.visible) {
-				// ratcheting the message queue to add atomicity
-				while (this.messageQueue.length > 0) {
-					const message = this.messageQueue[0];
-					if (this._view) {
-						this._view.webview.postMessage(message);
-					}
-
-					// wait for response before removing from queue
-					this.messageQueue.shift();
-				}
+				this._updateWebview();
 			}
 		});
 
@@ -55,9 +65,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			}
 
 			switch (message.command) {
-				case "response":
-					break;
-
 				case "submit":
 					if (taskInProgress) {
 						vscode.window.showInformationMessage(
@@ -125,18 +132,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "onStartSubtask",
 				subtask: subtask,
 			});
-		}
-	}
-
-	private postMessageToWebview(message: any) {
-		if (this._view && this._view.visible) {
-			this._view.webview.postMessage(message);
-		} else {
-			this.messageQueue.push(message);
 		}
 	}
 
@@ -153,7 +152,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			signal.onabort = onAbort;
 
 			if (this._view) {
-				this.postMessageToWebview({
+				this._view.webview.postMessage({
 					command: "showSubtasks",
 					subtasks: subtasks,
 				});
@@ -171,7 +170,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskStarted() {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "showTaskStarted",
 			});
 		}
@@ -179,7 +178,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskCompleted() {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "showTaskCompleted",
 			});
 		}
@@ -187,7 +186,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskCancelled() {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "showTaskCancelled",
 			});
 		}
@@ -195,7 +194,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private showTaskError() {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "showTaskError",
 			});
 		}
@@ -203,7 +202,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onSubtaskError() {
 		if (this._view) {
-			this.postMessageToWebview({
+			this._view.webview.postMessage({
 				command: "onSubtaskError",
 			});
 		}

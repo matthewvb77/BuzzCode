@@ -1,4 +1,5 @@
 (function () {
+	/* --------------------------------- Variables ------------------------------------ */
 	const userInputBox = document.getElementById("user-input");
 	const taskSubmitButton = document.getElementById("submit-button");
 	const taskCancelButton = document.getElementById("task-cancel-button");
@@ -8,8 +9,44 @@
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
-	var subtaskCount = 0;
-	var previousSubtaskCount = 0;
+	/* --------------------------- Accessory Event Listeners --------------------------  */
+
+	window.addEventListener("load", () => {
+		document.body.classList.add("body-loaded");
+	});
+
+	userInputBox.addEventListener("keydown", function (event) {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
+			taskSubmitButton.click();
+		}
+	});
+
+	taskSubmitButton.addEventListener("click", () => {
+		const input = userInputBox.value;
+		subtaskCount = 0;
+		vscode.postMessage({ command: "submit", input });
+	});
+
+	taskCancelButton.addEventListener("click", () => {
+		progressLoader.classList.remove("loader-waiting");
+		buttonsContainer.classList.remove("show-component");
+		vscode.postMessage({ command: "cancel-task" });
+	});
+
+	document
+		.getElementById("confirm-button")
+		.addEventListener("click", () => userAction("confirm"));
+	document
+		.getElementById("cancel-button")
+		.addEventListener("click", () => userAction("cancel"));
+	document
+		.getElementById("regenerate-button")
+		.addEventListener("click", () => userAction("regenerate"));
+
+	/* ------------------------------ Helpers ----------------------------
+	- Must be called from within the "2. Act" step of 'message' event listener (to maintian atomicity)
+	*/
 
 	function getSubtaskSummary(type, parameters, tense) {
 		if (!(tense === "ongoing" || tense === "imperative")) {
@@ -54,39 +91,6 @@
 		}
 	}
 
-	window.addEventListener("load", () => {
-		document.body.classList.add("body-loaded");
-	});
-
-	userInputBox.addEventListener("keydown", function (event) {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			taskSubmitButton.click();
-		}
-	});
-
-	taskSubmitButton.addEventListener("click", () => {
-		const input = userInputBox.value;
-		subtaskCount = 0;
-		vscode.postMessage({ command: "submit", input });
-	});
-
-	taskCancelButton.addEventListener("click", () => {
-		progressLoader.classList.remove("loader-waiting");
-		buttonsContainer.classList.remove("show-component");
-		vscode.postMessage({ command: "cancel-task" });
-	});
-
-	document
-		.getElementById("confirm-button")
-		.addEventListener("click", () => userAction("confirm"));
-	document
-		.getElementById("cancel-button")
-		.addEventListener("click", () => userAction("cancel"));
-	document
-		.getElementById("regenerate-button")
-		.addEventListener("click", () => userAction("regenerate"));
-
 	function userAction(action) {
 		progressLoader.classList.remove("loader-waiting");
 
@@ -124,6 +128,8 @@
 		}
 	}
 
+	/* --------------------------- Primary Message Handler ------------------------- */
+
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const activeSubtaskLoader = document.querySelector(
@@ -131,11 +137,6 @@
 		);
 
 		switch (message.command) {
-			case "response":
-				const responseArea = document.getElementById("response-area");
-				responseArea.value = message.text;
-				break;
-
 			case "onStartSubtask":
 				const { index, type, parameters } = message.subtask;
 				const subtaskIndex = previousSubtaskCount + index;
@@ -158,6 +159,7 @@
 					parameters,
 					"ongoing"
 				);
+
 				break;
 
 			case "showSubtasks":
@@ -243,6 +245,7 @@
 				});
 				previousSubtaskCount = subtaskCount;
 				subtaskCount += message.subtasks.length;
+
 				break;
 
 			case "showTaskStarted":
@@ -252,6 +255,7 @@
 				changeLoaderState(progressLoader, "loader-active");
 				taskCancelButton.classList.add("show-component");
 				progressContainer.classList.add("show-component");
+
 				break;
 
 			case "showTaskCompleted":
@@ -259,6 +263,7 @@
 				changeLoaderState(progressLoader, "loader-completed");
 				progressText.textContent = "Task Completed";
 				taskCancelButton.classList.remove("show-component");
+
 				break;
 
 			case "showTaskCancelled":
@@ -273,11 +278,13 @@
 				changeLoaderState(progressLoader, "loader-cancelled");
 				progressText.textContent = "Error Occurred: Terminating Task";
 				taskCancelButton.classList.remove("show-component");
+
 				break;
 
 			case "onSubtaskError":
 				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
 				progressText.textContent = "Error Occurred: Generating next steps";
+
 				break;
 
 			default:
