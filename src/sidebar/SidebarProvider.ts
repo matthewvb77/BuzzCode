@@ -200,6 +200,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private updateTaskState(state: String) {
 		this._state.taskState = state;
+		let newState = "";
+		if (state === "completed") {
+			newState = "completed";
+		} else if (state === "cancelled" || state === "error") {
+			newState = "cancelled";
+		}
+		if (newState) {
+			this._state.subtaskStates = this._state.subtaskStates.map(
+				(state: string) => {
+					if (state === "active") {
+						return "completed";
+					} else {
+						return state;
+					}
+				}
+			);
+		}
+
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "updateTaskState",
