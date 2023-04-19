@@ -8,10 +8,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
 	_doc?: vscode.TextDocument;
 	_state: any = {
-		userInput: String, // done
-		taskInProgress: Boolean, // done
-		taskState: String, // done
-		subtasks: Array<Subtask>, //done
+		userInput: String,
+		taskInProgress: Boolean,
+		taskState: String,
+		subtasks: Array<Subtask>,
 		subtaskStates: Array<String>,
 		previousSubtaskCount: Number,
 	};
@@ -52,6 +52,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		var signal: AbortSignal | undefined;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
+			if (message.command === "userAction") {
+				// ignore, another event listener handles this
+				return;
+			}
 			if (!message.input && message.command !== "cancel-task") {
 				vscode.window.showInformationMessage("No task entered");
 				return;
@@ -121,10 +125,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					abortController.abort();
 					break;
 
-				case "onStartSubtask":
-					this.onStartSubtask(message.subtask);
-					break;
-
 				default:
 					throw new Error("Invalid command");
 			}
@@ -137,7 +137,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
-			if (subtask.index > 0) {
+			if (
+				subtask.index > 0 &&
+				this._state.subtaskStates[subtask.index - 1] === "active"
+			) {
 				this._state.subtaskStates[subtask.index - 1] = "completed";
 			}
 			this._state.subtaskStates[subtask.index] = "active";
@@ -181,6 +184,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						signal.onabort = null;
 						if (message.action === "confirm") {
 							this._state.previousSubtaskCount = this._state.subtasks.length;
+						} else if (message.action === "regenerate") {
+							this._state.subtasks = this._state.subtasks.slice(
+								0,
+								this._state.previousSubtaskCount
+							);
 						}
 						resolve(message.action);
 						return;

@@ -9,7 +9,7 @@
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
-	let previousSubtaskCount = 0;
+	let previousSubtaskCount;
 
 	/* --------------------------- Accessory Event Listeners --------------------------  */
 
@@ -26,6 +26,7 @@
 
 	taskSubmitButton.addEventListener("click", () => {
 		const input = userInputBox.value;
+		previousSubtaskCount = 0;
 		vscode.postMessage({ command: "submit", input });
 	});
 
@@ -35,9 +36,11 @@
 		vscode.postMessage({ command: "cancel-task" });
 	});
 
-	document
-		.getElementById("confirm-button")
-		.addEventListener("click", () => userAction("confirm"));
+	document.getElementById("confirm-button").addEventListener("click", () => {
+		previousSubtaskCount =
+			document.querySelectorAll(".subtask-container").length;
+		userAction("confirm");
+	});
 	document
 		.getElementById("cancel-button")
 		.addEventListener("click", () => userAction("cancel"));
@@ -117,19 +120,15 @@
 		loader.classList.remove("loader-cancelled");
 		loader.classList.remove("loader-waiting");
 		loader.classList.remove("loader-initial");
+		loader.classList.remove("loader-active");
 
-		if (state === "active") {
-			// The loader is active by default
-		} else {
-			loader.classList.add("loader-" + state);
-		}
+		loader.classList.add("loader-" + state);
 	}
 
 	function updateTaskState(state) {
 		switch (state) {
 			case "started":
 				subtasksContainer.innerHTML = "";
-				previousSubtaskCount = 0;
 
 				changeLoaderState(progressLoader, "active");
 				progressText.textContent = "Generating subtasks...";
@@ -182,7 +181,7 @@
 			subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 			subtaskLoader.classList.add("loader");
 
-			if (subtaskStates) {
+			if (subtaskStates.length > 0) {
 				changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
 			} else {
 				changeLoaderState(subtaskLoader, "initial");
@@ -253,7 +252,7 @@
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const activeSubtaskLoader = document.querySelector(
-			".subtask-container .loader:not(.loader-completed):not(.loader-initial):not(.loader-cancelled)"
+			".subtask-container .loader.loader-active"
 		);
 
 		switch (message.command) {
@@ -261,11 +260,14 @@
 				const { index, type, parameters } = message.subtask;
 
 				// if the subtask is not the first one in a recursive call, mark the previous subtask as completed
-				if (index !== 0) {
+				if (index > 0) {
 					const previousLoader = document.getElementById(
 						`subtask-loader-${index - 1}`
 					);
-					changeLoaderState(previousLoader, "completed");
+
+					if (previousLoader.classList.contains("loader-active")) {
+						changeLoaderState(previousLoader, "completed");
+					}
 				}
 
 				const currentLoader = document.getElementById(
@@ -282,8 +284,6 @@
 				break;
 
 			case "showSubtasks":
-				previousSubtaskCount =
-					document.querySelectorAll(".subtask-container").length;
 				showSubtasks(message.subtasks);
 				buttonsContainer.classList.add("show-component");
 				break;
@@ -312,24 +312,34 @@
 			case "onSubtaskError":
 				changeLoaderState(activeSubtaskLoader, "cancelled");
 				progressText.textContent = "Error Occurred: Generating next steps";
-
 				break;
 
 			case "rebuild":
-				userInputBox.value = message.state.userInput;
-				updateTaskState(message.state.taskState);
+				if (message.state.userInput) {
+					userInputBox.value = message.state.userInput;
+				}
+				if (message.state.taskState) {
+					updateTaskState(message.state.taskState);
+				}
 				if (message.state.taskInProgress) {
 					taskCancelButton.classList.add("show-component");
+				}
+				if (message.state.taskInProgress || message.state.subtasks.length > 0) {
 					progressContainer.classList.add("show-component");
 				}
+
 				if (
 					message.state.taskState === "waiting" &&
 					!document.querySelector(".subtask-container .loader.loader-waiting")
 				) {
 					buttonsContainer.classList.add("show-component");
 				}
-				previousSubtaskCount = message.state.previousSubtaskCount;
-				showSubtasks(message.state.subtasks, message.state.subtaskStates);
+				if (message.state.previousSubtaskCount) {
+					previousSubtaskCount = message.state.previousSubtaskCount;
+				}
+				if (message.state.subtasks) {
+					showSubtasks(message.state.subtasks, message.state.subtaskStates);
+				}
 				break;
 
 			default:
