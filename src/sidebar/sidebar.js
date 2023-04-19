@@ -166,7 +166,7 @@
 		}
 	}
 
-	function showSubtasks(subtasks, subtaskStates) {
+	function showSubtasks(subtasks, subtaskStates = []) {
 		subtasks.forEach((subtask) => {
 			// create subtask container
 			const listItem = document.createElement("li");
@@ -182,7 +182,11 @@
 			subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
 			subtaskLoader.classList.add("loader");
 
-			changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
+			if (subtaskStates) {
+				changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
+			} else {
+				changeLoaderState(subtaskLoader, "initial");
+			}
 
 			subtaskHeader.appendChild(subtaskLoader);
 
@@ -296,6 +300,13 @@
 					}
 				}
 				updateTaskState(message.taskState);
+				break;
+
+			case "updateSubtaskState":
+				const subtaskLoader = document.getElementById(
+					`subtask-loader-${message.index}`
+				);
+				changeLoaderState(subtaskLoader, message.subtaskState);
 				break;
 
 			case "onSubtaskError":

@@ -77,6 +77,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					this._state.taskInProgress = true;
 					this._state.userInput = message.input;
 					this._state.subtasks = [];
+					this._state.subtaskStates = [];
 					this._state.previousSubtaskCount = 0;
 					this.updateTaskState("started");
 
@@ -195,6 +196,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			this._view.webview.postMessage({
 				command: "updateTaskState",
 				taskState: state,
+			});
+		}
+	}
+
+	private updtateSubtaskState(index: number, state: String) {
+		this._state.subtaskStates[index] = state;
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "updateSubtaskState",
+				index: index,
+				subtaskState: state,
 			});
 		}
 	}
