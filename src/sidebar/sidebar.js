@@ -98,7 +98,8 @@
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
-
+			console.log("num subtasks: ", subtasksContainer.children.length);
+			console.log("num prev subtasks: ", previousSubtaskCount);
 			while (subtasksContainer.children.length > previousSubtaskCount) {
 				subtasksContainer.removeChild(subtasksContainer.lastChild);
 			}
@@ -336,6 +337,8 @@
 				}
 				if (message.state.previousSubtaskCount) {
 					previousSubtaskCount = message.state.previousSubtaskCount;
+				} else {
+					previousSubtaskCount = 0;
 				}
 				if (message.state.subtasks) {
 					showSubtasks(message.state.subtasks, message.state.subtaskStates);

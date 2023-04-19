@@ -8,6 +8,11 @@ body {
 	height: 100%;
 }
 
+/* body * {
+	margin-top: 5px;
+	margin-bottom: 5px;
+} */
+
 .inline-container {
 	display: flex;
 	align-items: center;
@@ -60,22 +65,25 @@ button:focus {
 button:hover {
 	background-color: #4080b6;
 }
+#submit-button {
+	height: 40px;
+}
+
 #progress-container,
-#buttons-container,
-#task-cancel-button {
+#task-cancel-button,
+#buttons-container {
 	opacity: 0;
 	pointer-events: none;
 }
 
 .body-loaded #progress-container,
-.body-loaded #buttons-container,
 .body-loaded #task-cancel-button {
 	transition: opacity 0.2s ease;
 }
 
 #progress-container.show-component,
-#buttons-container.show-component,
-#task-cancel-button.show-component {
+#task-cancel-button.show-component,
+#buttons-container.show-component {
 	opacity: 1;
 	pointer-events: auto;
 }
@@ -88,7 +96,6 @@ button:hover {
 	width: 100%;
 	height: 100%;
 	border-radius: 4px;
-	margin-top: 20px;
 }
 
 .loader {
@@ -99,8 +106,8 @@ button:hover {
 	border-right: solid #3498db;
 	border-bottom: solid #3498db;
 	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	width: 25px;
+	height: 25px;
 	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
 }
 
@@ -157,8 +164,8 @@ button:hover {
 }
 
 #progress-loader {
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 }
 
 .subtask-text {
