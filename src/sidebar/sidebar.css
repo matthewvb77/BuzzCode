@@ -8,10 +8,10 @@ body {
 	height: 100%;
 }
 
-/* body * {
-	margin-top: 5px;
-	margin-bottom: 5px;
-} */
+body * {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
 
 .inline-container {
 	display: flex;
@@ -102,9 +102,9 @@ button:hover {
 	position: relative;
 	margin-right: 10px;
 	border: 3px solid #3c3c3c;
-	border-top: solid #3498db;
-	border-right: solid #3498db;
-	border-bottom: solid #3498db;
+	border-top-color: #3498db;
+	border-right-color: #3498db;
+	border-bottom-color: #3498db;
 	border-radius: 50%;
 	width: 25px;
 	height: 25px;
@@ -112,24 +112,24 @@ button:hover {
 }
 
 .loader.loader-completed {
-	border: solid #09a03b;
+	border-color: #09a03b;
 	color: #09a03b;
 	animation: none;
 }
 
 .loader.loader-cancelled {
-	border: solid #e03838;
+	border-color: #e03838;
 	color: #e03838;
 	animation: none;
 }
 
 .loader.loader-waiting {
-	border: solid #c59920;
+	border-color: #c59920;
 	color: #c59920;
 	animation: none;
 }
 .loader.loader-initial {
-	border: solid #3498db;
+	border-color: #3498db;
 	color: #3498db;
 	animation: none;
 }
@@ -140,12 +140,12 @@ button:hover {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 900;
 }
 
 #progress-loader::before {
-	font-size: 20px;
+	font-size: 24px;
 }
 
 .loader.loader-completed::before {
@@ -243,6 +243,7 @@ button:hover {
 }
 
 .subtask-details-textarea {
+	background-color: #1e1e1e;
 }
 
 .warning-text {
@@ -266,7 +267,7 @@ button:hover {
 	height: 40px;
 	width: 40px;
 	border-radius: 50%;
-	font-size: 16px;
+	font-size: 20px;
 	font-weight: 900;
 	font-family: "codicon";
 }
