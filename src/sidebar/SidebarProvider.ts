@@ -210,7 +210,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			this._state.subtaskStates = this._state.subtaskStates.map(
 				(state: string) => {
 					if (state === "active") {
-						return "completed";
+						return newState;
 					} else {
 						return state;
 					}
