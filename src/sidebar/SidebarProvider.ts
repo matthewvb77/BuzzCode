@@ -2,37 +2,65 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { queryChatGPT } from "../AIContainer/AIHelpers/queryChatGPT";
 import { Subtask } from "../AIContainer/recursiveDevelopment";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
 	_doc?: vscode.TextDocument;
+	_state: any = {
+		userInput: String,
+		taskInProgress: Boolean,
+		taskState: String,
+		subtasks: Array<Subtask>,
+		subtaskStates: Array<String>,
+		previousSubtaskCount: Number,
+	};
 
 	constructor(private readonly _extensionUri: vscode.Uri) {}
 
-	public resolveWebviewView(webviewView: vscode.WebviewView) {
+	private _rebuildWebview() {
+		if (this._view) {
+			this._view.webview.postMessage({
+				command: "rebuild",
+				state: this._state,
+			});
+		}
+	}
+
+	public resolveWebviewView(
+		webviewView: vscode.WebviewView,
+		context: vscode.WebviewViewResolveContext,
+		_token: vscode.CancellationToken
+	) {
 		this._view = webviewView;
 
 		webviewView.webview.options = {
-			// Allow scripts in the webview
 			enableScripts: true,
-
 			localResourceRoots: [this._extensionUri],
 		};
 
+		webviewView.onDidChangeVisibility(() => {
+			if (webviewView.visible) {
+				this._rebuildWebview();
+			}
+		});
+
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-		let taskInProgress = false;
-		let questionInProgress = false;
+		this._state.taskInProgress = false;
 		var abortController: AbortController | undefined;
 		var signal: AbortSignal | undefined;
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
-			if (!message.input && message.command !== "cancel-task") {
+			if (message.command === "userAction") {
+				// ignore, another event listener handles this
 				return;
 			}
-			if (!hasValidAPIKey() && message.command !== "cancel-task") {
+			if (!message.input && message.command !== "cancel-task") {
+				vscode.window.showInformationMessage("No task entered");
+				return;
+			}
+			if (!hasValidAPIKey()) {
 				vscode.window.showErrorMessage(
 					"Please enter a valid API key in the TestWise settings."
 				);
@@ -40,17 +68,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			}
 
 			switch (message.command) {
-				case "submit-task":
-					if (taskInProgress) {
+				case "submit":
+					if (this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
 							"A task is already in progress."
 						);
 						return;
 					}
-					taskInProgress = true;
+
 					abortController = new AbortController();
 					signal = abortController.signal;
-					this.showTaskStarted();
+					this._state.taskInProgress = true;
+					this._state.userInput = message.input;
+					this._state.subtasks = [];
+					this._state.subtaskStates = [];
+					this._state.previousSubtaskCount = 0;
+					this.updateTaskState("started");
 
 					try {
 						const result = await recursiveDevelopment(
@@ -61,25 +94,26 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							this.onSubtaskError.bind(this)
 						);
 						if (result === "Cancelled") {
-							this.showTaskCancelled();
-						} else if (typeof result === "string") {
-							this.showTaskError();
+							this.updateTaskState("cancelled");
+						} else if (result === "Error") {
+							this.updateTaskState("error");
 						} else {
-							this.showTaskCompleted();
+							this.updateTaskState("completed");
 						}
-						taskInProgress = false;
+						this._state.taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
 							"Error occurred while running task: " + error
 						);
-						taskInProgress = false;
+						this.updateTaskState("error");
+						this._state.taskInProgress = false;
 					}
 					break;
 
 				case "cancel-task":
-					if (!taskInProgress) {
+					if (!this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
-							"No task is currently in progress."
+							"No task is currently in progress, this should not happen."
 						);
 						return;
 					}
@@ -89,45 +123,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 					}
 					abortController.abort();
-					break;
-
-				case "submit-question":
-					if (questionInProgress) {
-						vscode.window.showInformationMessage(
-							"A question is already in progress."
-						);
-						return;
-					}
-					await vscode.window.withProgress(
-						{
-							location: vscode.ProgressLocation.Notification,
-							title: "Generating response...",
-							cancellable: false,
-						},
-						async () => {
-							questionInProgress = true;
-							try {
-								if (!signal) {
-									throw Error("signal is undefined, this should not happen.");
-								}
-								const response = await queryChatGPT(message.input, signal);
-								webviewView.webview.postMessage({
-									command: "response",
-									text: response,
-								});
-								questionInProgress = false;
-							} catch (error) {
-								vscode.window.showErrorMessage(
-									"Error occurred while responding: " + error
-								);
-								questionInProgress = false;
-							}
-						}
-					);
-					break;
-
-				case "onStartSubtask":
-					this.onStartSubtask(message.subtask);
 					break;
 
 				default:
@@ -142,6 +137,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onStartSubtask(subtask: Subtask) {
 		if (this._view) {
+			if (
+				subtask.index > 0 &&
+				this._state.subtaskStates[subtask.index - 1] === "active"
+			) {
+				this._state.subtaskStates[subtask.index - 1] = "completed";
+			}
+			this._state.subtaskStates[subtask.index] = "active";
 			this._view.webview.postMessage({
 				command: "onStartSubtask",
 				subtask: subtask,
@@ -162,6 +164,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			signal.onabort = onAbort;
 
 			if (this._view) {
+				this.updateTaskState("waiting");
+				// update subtask indices
+				subtasks.forEach((subtask) => {
+					subtask.index += this._state.subtasks.length;
+					this._state.subtaskStates.push("initial");
+				});
+				// update subtasks state
+				this._state.subtasks.push(...subtasks);
+
+				// show the new subtasks
 				this._view.webview.postMessage({
 					command: "showSubtasks",
 					subtasks: subtasks,
@@ -170,6 +182,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				this._view.webview.onDidReceiveMessage((message) => {
 					if (message.command === "userAction") {
 						signal.onabort = null;
+						if (message.action === "confirm") {
+							this._state.previousSubtaskCount = this._state.subtasks.length;
+						} else if (message.action === "regenerate") {
+							this._state.subtasks = this._state.subtasks.slice(
+								0,
+								this._state.previousSubtaskCount
+							);
+						}
 						resolve(message.action);
 						return;
 					}
@@ -178,40 +198,48 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
-	private showTaskStarted() {
+	private updateTaskState(state: String) {
+		this._state.taskState = state;
+		let newState = "";
+		if (state === "completed") {
+			newState = "completed";
+		} else if (state === "cancelled" || state === "error") {
+			newState = "cancelled";
+		}
+		if (newState) {
+			this._state.subtaskStates = this._state.subtaskStates.map(
+				(state: string) => {
+					if (state === "active") {
+						return newState;
+					} else {
+						return state;
+					}
+				}
+			);
+		}
+
 		if (this._view) {
 			this._view.webview.postMessage({
-				command: "showTaskStarted",
+				command: "updateTaskState",
+				taskState: state,
 			});
 		}
 	}
 
-	private showTaskCompleted() {
+	private updtateSubtaskState(index: number, state: String) {
+		this._state.subtaskStates[index] = state;
 		if (this._view) {
 			this._view.webview.postMessage({
-				command: "showTaskCompleted",
+				command: "updateSubtaskState",
+				index: index,
+				subtaskState: state,
 			});
 		}
 	}
 
-	private showTaskCancelled() {
+	private onSubtaskError(index: number) {
 		if (this._view) {
-			this._view.webview.postMessage({
-				command: "showTaskCancelled",
-			});
-		}
-	}
-
-	private showTaskError() {
-		if (this._view) {
-			this._view.webview.postMessage({
-				command: "showTaskError",
-			});
-		}
-	}
-
-	private onSubtaskError() {
-		if (this._view) {
+			this._state.subtaskStates[index] = "error";
 			this._view.webview.postMessage({
 				command: "onSubtaskError",
 			});
@@ -256,43 +284,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link rel="stylesheet" href="${codiconStylesheetUri}">
 			</head>
       		<body>
-				<div class="inline-container">
-					<label for="input-type">Input:</label>
-					<select id="input-type">
-						<option value="task">Task</option>
-						<option value="question">Question</option>
-					</select>
-				</div>
-				<div class="tabs-wrapper">
-					<div id="task-tab" class="tab-container">
-						<textarea id="task-user-input" class="user-input" name="task-user-input" placeholder="Give a task..."></textarea>
-						<button id="task-submit-button" class="submit-button">Submit</button>
-						<br>
+				<textarea id="user-input" class="user-input" name="user-input" placeholder="Give a task..."></textarea>
+				<button id="submit-button" class="submit-button">Submit</button>
+				<br>
 
-						<div id="progress-container">
-							<div class="inline-container">
-								<div id="progress-loader" class="loader"></div>
-								<span id="progress-text" class="subtask-text">Generating subtasks...</span>
-								<button id="task-cancel-button" class="codicon codicon-close"></button>
-							</div>
-
-							<div id="subtasks-container"></div>
-
-							<div id="buttons-container" class="inline-container">
-								<button id="confirm-button">Confirm</button>
-								<button id="cancel-button">Cancel</button>
-								<button id="regenerate-button">Regenerate</button>
-							</div>
-						</div>
+				<div id="progress-container">
+					<div class="inline-container">
+						<div id="progress-loader" class="loader"></div>
+						<span id="progress-text" class="subtask-text">Generating subtasks...</span>
+						<button id="task-cancel-button" class="codicon codicon-close"></button>
 					</div>
 
-					<div id="question-tab" class="tab-container">
-						<textarea id="question-user-input" class="user-input" name="user-input" placeholder="Ask a question..."></textarea>
-						<button id="question-submit-button">Submit</button>
-						<br>
+					<div id="subtasks-container"></div>
 
-						<label id="response-label">Response:</label>
-						<textarea id="response-area" name="response-area" placeholder="TestWise will respond..." readonly></textarea>
+					<div id="buttons-container" class="inline-container">
+						<button id="confirm-button">Confirm</button>
+						<button id="cancel-button">Cancel</button>
+						<button id="regenerate-button">Regenerate</button>
 					</div>
 				</div>
 

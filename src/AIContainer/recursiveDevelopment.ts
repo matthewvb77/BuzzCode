@@ -21,7 +21,7 @@ export async function recursiveDevelopment(
 		subtasks: Array<Subtask>,
 		signal: AbortSignal
 	) => Promise<string>,
-	onSubtaskError: () => void
+	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
 	taskDescription = input; // Saves original task description
 	recursionCount = 0;
@@ -42,7 +42,7 @@ async function recursiveDevelopmentHelper(
 		subtasks: Array<Subtask>,
 		signal: AbortSignal
 	) => Promise<string>,
-	onSubtaskError: () => void
+	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
 	recursionCount++;
 	if (recursionCount >= recursionLimit) {
@@ -148,7 +148,7 @@ async function recursiveDevelopmentHelper(
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new subtasks
 
-			onSubtaskError();
+			onSubtaskError(subtask.index);
 
 			return await recursiveDevelopmentHelper(
 				`Here is the original task: ` +

@@ -1,37 +1,54 @@
 (function () {
-	const inputTypeSelect = document.getElementById("input-type");
-	const questionTab = document.getElementById("question-tab");
-	const taskTab = document.getElementById("task-tab");
-	const userTaskInputBox = document.getElementById("task-user-input");
-	const userQuestionInputBox = document.getElementById("question-user-input");
-	const taskSubmitButton = document.getElementById("task-submit-button");
+	/* --------------------------------- Variables ------------------------------------ */
+	const userInputBox = document.getElementById("user-input");
+	const taskSubmitButton = document.getElementById("submit-button");
 	const taskCancelButton = document.getElementById("task-cancel-button");
 	const subtasksContainer = document.getElementById("subtasks-container");
 	const progressContainer = document.getElementById("progress-container");
-	const questionSubmitButton = document.getElementById(
-		"question-submit-button"
-	);
 	const buttonsContainer = document.getElementById("buttons-container");
 	const progressLoader = document.getElementById("progress-loader");
 	const progressText = document.getElementById("progress-text");
 
-	var subtaskCount = 0;
-	var previousSubtaskCount = 0;
+	let previousSubtaskCount;
 
-	function updatePlaceholderAndResponse() {
-		switch (inputTypeSelect.value) {
-			case "task":
-				questionTab.classList.remove("show-component");
-				taskTab.classList.add("show-component");
-				break;
-			case "question":
-				taskTab.classList.remove("show-component");
-				questionTab.classList.add("show-component");
-				break;
-			default:
-				throw new Error("Invalid input type");
+	/* --------------------------- Accessory Event Listeners --------------------------  */
+
+	window.addEventListener("load", () => {
+		document.body.classList.add("body-loaded");
+	});
+
+	userInputBox.addEventListener("keydown", function (event) {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
+			taskSubmitButton.click();
 		}
-	}
+	});
+
+	taskSubmitButton.addEventListener("click", () => {
+		const input = userInputBox.value;
+		previousSubtaskCount = 0;
+		vscode.postMessage({ command: "submit", input });
+	});
+
+	taskCancelButton.addEventListener("click", () => {
+		progressLoader.classList.remove("loader-waiting");
+		buttonsContainer.classList.remove("show-component");
+		vscode.postMessage({ command: "cancel-task" });
+	});
+
+	document.getElementById("confirm-button").addEventListener("click", () => {
+		previousSubtaskCount =
+			document.querySelectorAll(".subtask-container").length;
+		userAction("confirm");
+	});
+	document
+		.getElementById("cancel-button")
+		.addEventListener("click", () => userAction("cancel"));
+	document
+		.getElementById("regenerate-button")
+		.addEventListener("click", () => userAction("regenerate"));
+
+	/* ------------------------------ Helpers --------------------------- */
 
 	function getSubtaskSummary(type, parameters, tense) {
 		if (!(tense === "ongoing" || tense === "imperative")) {
@@ -76,65 +93,16 @@
 		}
 	}
 
-	updatePlaceholderAndResponse();
-	inputTypeSelect.addEventListener("change", updatePlaceholderAndResponse);
-	window.addEventListener("load", () => {
-		document.body.classList.add("body-loaded");
-	});
-
-	userTaskInputBox.addEventListener("keydown", function (event) {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			taskSubmitButton.click();
-		}
-	});
-
-	userQuestionInputBox.addEventListener("keydown", function (event) {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			questionSubmitButton.click();
-		}
-	});
-
-	taskSubmitButton.addEventListener("click", () => {
-		const input = userTaskInputBox.value;
-		subtaskCount = 0;
-		vscode.postMessage({ command: "submit-task", input });
-	});
-
-	questionSubmitButton.addEventListener("click", () => {
-		const input = userQuestionInputBox.value;
-
-		vscode.postMessage({ command: "submit-question", input });
-	});
-
-	taskCancelButton.addEventListener("click", () => {
-		progressLoader.classList.remove("loader-waiting");
-		buttonsContainer.classList.remove("show-component");
-		vscode.postMessage({ command: "cancel-task" });
-	});
-
-	document
-		.getElementById("confirm-button")
-		.addEventListener("click", () => userAction("confirm"));
-	document
-		.getElementById("cancel-button")
-		.addEventListener("click", () => userAction("cancel"));
-	document
-		.getElementById("regenerate-button")
-		.addEventListener("click", () => userAction("regenerate"));
-
 	function userAction(action) {
 		progressLoader.classList.remove("loader-waiting");
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
-
-			// Remove subtasks with an index >= previousSubtaskCount
+			console.log("num subtasks: ", subtasksContainer.children.length);
+			console.log("num prev subtasks: ", previousSubtaskCount);
 			while (subtasksContainer.children.length > previousSubtaskCount) {
 				subtasksContainer.removeChild(subtasksContainer.lastChild);
 			}
-			subtaskCount = previousSubtaskCount;
 		}
 
 		buttonsContainer.classList.remove("show-component");
@@ -147,174 +115,234 @@
 
 	function changeLoaderState(loader, state) {
 		if (!loader) {
-			return;
+			throw (error = new Error("Invalid arguments"));
 		}
 		loader.classList.remove("loader-completed");
 		loader.classList.remove("loader-cancelled");
 		loader.classList.remove("loader-waiting");
 		loader.classList.remove("loader-initial");
+		loader.classList.remove("loader-active");
 
-		if (state === "loader-active") {
-			// The loader is active by default
-		} else {
-			loader.classList.add(state);
+		loader.classList.add("loader-" + state);
+	}
+
+	function updateTaskState(state) {
+		switch (state) {
+			case "started":
+				subtasksContainer.innerHTML = "";
+
+				changeLoaderState(progressLoader, "active");
+				progressText.textContent = "Generating subtasks...";
+				taskCancelButton.classList.add("show-component");
+
+				progressContainer.classList.add("show-component");
+				break;
+
+			case "waiting":
+				changeLoaderState(progressLoader, "waiting");
+				progressText.textContent = "Awaiting user response...";
+				break;
+
+			case "completed":
+				changeLoaderState(progressLoader, "completed");
+				progressText.textContent = "Task Completed";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			case "cancelled":
+				changeLoaderState(progressLoader, "cancelled");
+				progressText.textContent = "Task Cancelled";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			case "error":
+				changeLoaderState(progressLoader, "cancelled");
+				progressText.textContent = "Error Occurred: Terminating Task";
+				taskCancelButton.classList.remove("show-component");
+				break;
+
+			default:
+				throw (error = new Error("Invalid state"));
 		}
 	}
+
+	function showSubtasks(subtasks, subtaskStates = []) {
+		subtasks.forEach((subtask) => {
+			// create subtask container
+			const listItem = document.createElement("li");
+			listItem.classList.add("subtask-container");
+
+			// create subtask header container
+			const subtaskHeader = document.createElement("div");
+			subtaskHeader.classList.add("subtask-header");
+			listItem.appendChild(subtaskHeader);
+
+			// create subtask loader
+			const subtaskLoader = document.createElement("div");
+			subtaskLoader.setAttribute("id", `subtask-loader-${subtask.index}`);
+			subtaskLoader.classList.add("loader");
+
+			if (subtaskStates.length > 0) {
+				changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
+			} else {
+				changeLoaderState(subtaskLoader, "initial");
+			}
+
+			subtaskHeader.appendChild(subtaskLoader);
+
+			// create subtask text
+			const subtaskText = document.createElement("span");
+			subtaskText.classList.add("subtask-text");
+			subtaskText.textContent = getSubtaskSummary(
+				subtask.type,
+				subtask.parameters,
+				"imperative"
+			);
+			subtaskHeader.appendChild(subtaskText);
+
+			// create subtask expand icon
+			const subtaskExpandIcon = document.createElement("span");
+			subtaskExpandIcon.classList.add("subtask-expand-icon");
+			subtaskHeader.appendChild(subtaskExpandIcon);
+
+			// create subtask details container
+			const subtaskDetails = document.createElement("div");
+			subtaskDetails.classList.add("subtask-details");
+
+			// populate subtask details
+			switch (subtask.type) {
+				case "generateFile":
+					subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
+					subtaskDetails.classList.add("warning-text");
+					break;
+
+				case "executeTerminalCommand":
+					const codeBlock = document.createElement("code");
+					codeBlock.textContent = `> ` + subtask.parameters.command;
+					subtaskDetails.appendChild(codeBlock);
+					break;
+
+				case "recurse":
+					const newPromptTextArea = document.createElement("textarea");
+					newPromptTextArea.classList.add("subtask-details-textarea");
+					newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
+					subtaskDetails.appendChild(newPromptTextArea);
+					break;
+
+				case "askUser":
+					subtaskDetails.textContent = `Ask User: ${subtask.parameters.question}`;
+					break;
+
+				default:
+					throw error("Unknown subtask type: " + subtask.type);
+			}
+
+			listItem.appendChild(subtaskDetails);
+
+			// create subtask details
+			listItem.addEventListener("click", () => {
+				listItem.classList.toggle("expanded");
+			});
+
+			subtasksContainer.appendChild(listItem);
+		});
+	}
+
+	/* --------------------------- Primary Message Handler ------------------------- */
 
 	window.addEventListener("message", (event) => {
 		const message = event.data;
 		const activeSubtaskLoader = document.querySelector(
-			".subtask-container .loader:not(.loader-completed):not(.loader-initial):not(.loader-cancelled)"
+			".subtask-container .loader.loader-active"
 		);
 
 		switch (message.command) {
-			case "response":
-				const responseArea = document.getElementById("response-area");
-				responseArea.value = message.text;
-				break;
-
 			case "onStartSubtask":
 				const { index, type, parameters } = message.subtask;
-				const subtaskIndex = previousSubtaskCount + index;
 
 				// if the subtask is not the first one in a recursive call, mark the previous subtask as completed
-				if (index !== 0) {
+				if (index > 0) {
 					const previousLoader = document.getElementById(
-						`subtask-loader-${subtaskIndex - 1}`
+						`subtask-loader-${index - 1}`
 					);
 
-					changeLoaderState(previousLoader, "loader-completed");
+					if (previousLoader.classList.contains("loader-active")) {
+						changeLoaderState(previousLoader, "completed");
+					}
 				}
+
 				const currentLoader = document.getElementById(
-					`subtask-loader-${subtaskIndex}`
+					`subtask-loader-${index}`
 				);
-				changeLoaderState(currentLoader, "loader-active");
+				changeLoaderState(currentLoader, "active");
 
 				progressText.textContent = getSubtaskSummary(
 					type,
 					parameters,
 					"ongoing"
 				);
+
 				break;
 
 			case "showSubtasks":
-				progressText.textContent = "Please review the subtasks below:";
-				changeLoaderState(progressLoader, "loader-waiting");
+				showSubtasks(message.subtasks);
 				buttonsContainer.classList.add("show-component");
+				break;
 
-				message.subtasks.forEach((subtask) => {
-					// if this is a recursive call, add the subtasks to the end of the list
-					const subtaskIndex = subtaskCount + subtask.index;
-
-					// create subtask container
-					const listItem = document.createElement("li");
-					listItem.classList.add("subtask-container");
-
-					// create subtask header container
-					const subtaskHeader = document.createElement("div");
-					subtaskHeader.classList.add("subtask-header");
-					listItem.appendChild(subtaskHeader);
-
-					// create subtask loader
-					const subtaskLoader = document.createElement("div");
-					subtaskLoader.setAttribute("id", `subtask-loader-${subtaskIndex}`);
-					subtaskLoader.classList.add("loader");
-					changeLoaderState(subtaskLoader, "loader-initial");
-					subtaskHeader.appendChild(subtaskLoader);
-
-					// create subtask text
-					const subtaskText = document.createElement("span");
-					subtaskText.classList.add("subtask-text");
-					subtaskText.textContent = getSubtaskSummary(
-						subtask.type,
-						subtask.parameters,
-						"imperative"
-					);
-					subtaskHeader.appendChild(subtaskText);
-
-					// create subtask expand icon
-					const subtaskExpandIcon = document.createElement("span");
-					subtaskExpandIcon.classList.add("subtask-expand-icon");
-					subtaskHeader.appendChild(subtaskExpandIcon);
-
-					// create subtask details container
-					const subtaskDetails = document.createElement("div");
-					subtaskDetails.classList.add("subtask-details");
-
-					// populate subtask details
-					switch (subtask.type) {
-						case "generateFile":
-							subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
-							subtaskDetails.classList.add("warning-text");
-							break;
-
-						case "executeTerminalCommand":
-							const codeBlock = document.createElement("code");
-							codeBlock.textContent = `> ` + subtask.parameters.command;
-							subtaskDetails.appendChild(codeBlock);
-							break;
-
-						case "recurse":
-							const newPromptTextArea = document.createElement("textarea");
-							newPromptTextArea.classList.add("subtask-details-textarea");
-							newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
-							subtaskDetails.appendChild(newPromptTextArea);
-							break;
-
-						case "askUser":
-							subtaskDetails.textContent = `Ask User: ${subtask.parameters.question}`;
-							break;
-
-						default:
-							throw error("Unknown subtask type: " + subtask.type);
+			case "updateTaskState":
+				if (activeSubtaskLoader) {
+					if (message.taskState === "completed") {
+						changeLoaderState(activeSubtaskLoader, "completed");
+					} else if (
+						message.taskState === "cancelled" ||
+						message.taskState === "error"
+					) {
+						changeLoaderState(activeSubtaskLoader, "cancelled");
 					}
-
-					listItem.appendChild(subtaskDetails);
-
-					// create subtask details
-					listItem.addEventListener("click", () => {
-						listItem.classList.toggle("expanded");
-					});
-
-					subtasksContainer.appendChild(listItem);
-				});
-				previousSubtaskCount = subtaskCount;
-				subtaskCount += message.subtasks.length;
+				}
+				updateTaskState(message.taskState);
 				break;
 
-			case "showTaskStarted":
-				subtasksContainer.innerHTML = "";
-				subtaskCount = 0;
-				progressText.textContent = "Generating subtasks...";
-				changeLoaderState(progressLoader, "loader-active");
-				taskCancelButton.classList.add("show-component");
-				progressContainer.classList.add("show-component");
-				break;
-
-			case "showTaskCompleted":
-				changeLoaderState(activeSubtaskLoader, "loader-completed");
-				changeLoaderState(progressLoader, "loader-completed");
-				progressText.textContent = "Task Completed";
-				taskCancelButton.classList.remove("show-component");
-				break;
-
-			case "showTaskCancelled":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				changeLoaderState(progressLoader, "loader-cancelled");
-				progressText.textContent = "Task Cancelled";
-				taskCancelButton.classList.remove("show-component");
-				break;
-
-			case "showTaskError":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
-				changeLoaderState(progressLoader, "loader-cancelled");
-				progressText.textContent = "Error Occurred: Terminating Task";
-				taskCancelButton.classList.remove("show-component");
+			case "updateSubtaskState":
+				const subtaskLoader = document.getElementById(
+					`subtask-loader-${message.index}`
+				);
+				changeLoaderState(subtaskLoader, message.subtaskState);
 				break;
 
 			case "onSubtaskError":
-				changeLoaderState(activeSubtaskLoader, "loader-cancelled");
+				changeLoaderState(activeSubtaskLoader, "cancelled");
 				progressText.textContent = "Error Occurred: Generating next steps";
+				break;
+
+			case "rebuild":
+				if (message.state.userInput) {
+					userInputBox.value = message.state.userInput;
+				}
+				if (message.state.taskState) {
+					updateTaskState(message.state.taskState);
+				}
+				if (message.state.taskInProgress) {
+					taskCancelButton.classList.add("show-component");
+				}
+				if (message.state.taskInProgress || message.state.subtasks.length > 0) {
+					progressContainer.classList.add("show-component");
+				}
+
+				if (
+					message.state.taskState === "waiting" &&
+					!document.querySelector(".subtask-container .loader.loader-waiting")
+				) {
+					buttonsContainer.classList.add("show-component");
+				}
+				if (message.state.previousSubtaskCount) {
+					previousSubtaskCount = message.state.previousSubtaskCount;
+				} else {
+					previousSubtaskCount = 0;
+				}
+				if (message.state.subtasks) {
+					showSubtasks(message.state.subtasks, message.state.subtaskStates);
+				}
 				break;
 
 			default:

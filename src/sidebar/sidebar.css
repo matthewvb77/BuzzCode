@@ -7,21 +7,10 @@ body {
 	flex-direction: column;
 	height: 100%;
 }
-.tabs-wrapper {
-	position: relative;
-	height: 65%;
-	width: 100%;
-}
 
-.tab-container {
-	position: absolute;
-	height: 100%; /* 10px is the margin */
-	width: 100%;
-}
-
-.tab-container * {
-	margin-top: 5px;
-	margin-bottom: 5px;
+body * {
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 
 .inline-container {
@@ -37,11 +26,7 @@ label {
 	vertical-align: middle;
 	margin-right: 8px;
 }
-select:focus {
-	outline: none;
-}
-textarea,
-select {
+textarea {
 	background-color: #3c3c3c;
 	border: 1px solid #3c3c3c;
 	color: #c8c8c8;
@@ -50,11 +35,7 @@ select {
 	outline: none;
 	width: 100%;
 }
-select {
-	height: 32px;
-	font-size: 16px;
-	width: 175px;
-}
+
 textarea:focus {
 	outline: none;
 }
@@ -84,41 +65,25 @@ button:focus {
 button:hover {
 	background-color: #4080b6;
 }
+#submit-button {
+	height: 40px;
+}
 
-#task-tab,
-#question-tab,
 #progress-container,
-#buttons-container,
-#task-cancel-button {
+#task-cancel-button,
+#buttons-container {
 	opacity: 0;
 	pointer-events: none;
 }
 
-#response-label {
-	margin-top: 30px;
-}
-#response-area {
-	height: 50%;
-}
-
-.body-loaded #task-tab,
-.body-loaded #question-tab,
 .body-loaded #progress-container,
-.body-loaded #buttons-container,
 .body-loaded #task-cancel-button {
 	transition: opacity 0.2s ease;
 }
 
-#task-tab.show-component,
-#question-tab.show-component,
 #progress-container.show-component,
-#buttons-container.show-component,
-#task-cancel-button.show-component {
-	opacity: 1;
-	pointer-events: auto;
-}
-
-#question-tab:not(.show-component) ~ #task-tab {
+#task-cancel-button.show-component,
+#buttons-container.show-component {
 	opacity: 1;
 	pointer-events: auto;
 }
@@ -131,41 +96,40 @@ button:hover {
 	width: 100%;
 	height: 100%;
 	border-radius: 4px;
-	margin-top: 20px;
 }
 
 .loader {
 	position: relative;
 	margin-right: 10px;
 	border: 3px solid #3c3c3c;
-	border-top: solid #3498db;
-	border-right: solid #3498db;
-	border-bottom: solid #3498db;
+	border-top-color: #3498db;
+	border-right-color: #3498db;
+	border-bottom-color: #3498db;
 	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	width: 25px;
+	height: 25px;
 	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
 }
 
 .loader.loader-completed {
-	border: solid #09a03b;
+	border-color: #09a03b;
 	color: #09a03b;
 	animation: none;
 }
 
 .loader.loader-cancelled {
-	border: solid #e03838;
+	border-color: #e03838;
 	color: #e03838;
 	animation: none;
 }
 
 .loader.loader-waiting {
-	border: solid #c59920;
+	border-color: #c59920;
 	color: #c59920;
 	animation: none;
 }
 .loader.loader-initial {
-	border: solid #3498db;
+	border-color: #3498db;
 	color: #3498db;
 	animation: none;
 }
@@ -176,12 +140,12 @@ button:hover {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 900;
 }
 
 #progress-loader::before {
-	font-size: 20px;
+	font-size: 24px;
 }
 
 .loader.loader-completed::before {
@@ -200,8 +164,8 @@ button:hover {
 }
 
 #progress-loader {
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 }
 
 .subtask-text {
@@ -279,6 +243,7 @@ button:hover {
 }
 
 .subtask-details-textarea {
+	background-color: #1e1e1e;
 }
 
 .warning-text {
@@ -302,7 +267,7 @@ button:hover {
 	height: 40px;
 	width: 40px;
 	border-radius: 50%;
-	font-size: 16px;
+	font-size: 20px;
 	font-weight: 900;
 	font-family: "codicon";
 }
