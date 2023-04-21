@@ -3,7 +3,7 @@ import { queryChatGPT } from "./AIHelpers/queryChatGPT";
 import { executeTerminalCommand } from "./AIHelpers/executeTerminalCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
-import { initializePrompt, taskPrompt } from "./prompts";
+import { initializePrompt } from "./prompts";
 export interface Subtask {
 	index: number;
 	type: string;
@@ -51,7 +51,7 @@ async function recursiveDevelopmentHelper(
 	}
 
 	var subtasksString: string = await queryChatGPT(
-		initializePrompt + taskPrompt + input,
+		initializePrompt + input,
 		signal
 	);
 
