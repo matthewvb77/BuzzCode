@@ -21,10 +21,21 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			const config = vscode.workspace.getConfiguration("testwise");
-			const apiKey = config.get<string>("apiKey") || "";
-			const maxTokens = config.get<number>("maxTokens") || 100;
-			const temperature = config.get<number>("temperature") || 0.2;
-			const model = config.get<string>("model") || "gpt-3.5-turbo";
+			const apiKey = config.get<string>("apiKey");
+			const maxTokens = config.get<number>("maxTokens");
+			const temperature = config.get<number>("temperature");
+			const model = config.get<string>("model");
+
+			if (
+				apiKey === undefined ||
+				maxTokens === undefined ||
+				temperature === undefined ||
+				model === undefined
+			) {
+				throw new Error(
+					"Undefined configuration value[s], this should not happen."
+				);
+			}
 
 			settingsPanel = vscode.window.createWebviewPanel(
 				"testwiseSettings",
