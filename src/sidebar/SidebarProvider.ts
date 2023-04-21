@@ -163,16 +163,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			};
 			signal.onabort = onAbort;
 
-			if (this._view) {
-				this.updateTaskState("waiting");
-				// update subtask indices
-				subtasks.forEach((subtask) => {
-					subtask.index += this._state.subtasks.length;
-					this._state.subtaskStates.push("initial");
-				});
-				// update subtasks state
-				this._state.subtasks.push(...subtasks);
+			this.updateTaskState("waiting");
+			// update subtask indices
+			subtasks.forEach((subtask) => {
+				subtask.index += this._state.previousSubtaskCount;
+				this._state.subtaskStates.push("initial");
+			});
+			// update subtasks state
+			this._state.subtasks.push(...subtasks);
 
+			if (this._view) {
 				// show the new subtasks
 				this._view.webview.postMessage({
 					command: "showSubtasks",
@@ -238,8 +238,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	}
 
 	private onSubtaskError(index: number) {
+		this._state.subtaskStates[index] = "cancelled";
 		if (this._view) {
-			this._state.subtaskStates[index] = "cancelled";
 			this._view.webview.postMessage({
 				command: "onSubtaskError",
 			});
