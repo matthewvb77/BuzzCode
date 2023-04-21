@@ -239,7 +239,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private onSubtaskError(index: number) {
 		if (this._view) {
-			this._state.subtaskStates[index] = "error";
+			this._state.subtaskStates[index] = "cancelled";
 			this._view.webview.postMessage({
 				command: "onSubtaskError",
 			});
