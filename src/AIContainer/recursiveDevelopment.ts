@@ -157,7 +157,7 @@ async function recursiveDevelopmentHelper(
 					JSON.stringify(subtask) +
 					`\nThe following error occured:\n\n` +
 					error +
-					`\n\nThink about why this error occured and how to fix it.`,
+					`\n\nGenerate a JSON list of subtasks to fix the issue.`,
 				signal,
 				onStartSubtask,
 				onSubtasksReady,
