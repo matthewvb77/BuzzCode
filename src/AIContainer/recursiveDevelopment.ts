@@ -74,7 +74,7 @@ async function recursiveDevelopmentHelper(
 		let reasoning = responseString.replace(jsonRegex, "").trim();
 
 		var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
-		if (subtasks.length - 1 !== subtasks[-1].index) {
+		if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
 			throw Error("Invalid subtask indices.");
 		}
 		if (reasoning) {
