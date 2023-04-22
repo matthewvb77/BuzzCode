@@ -66,7 +66,8 @@ button:hover {
 	background-color: #4080b6;
 }
 #submit-button {
-	height: 40px;
+	height: 35px;
+	min-height: 35px;
 }
 
 #progress-container,
@@ -89,7 +90,8 @@ button:hover {
 }
 
 .user-input {
-	height: 20%;
+	height: 15%;
+	min-height: 15%;
 }
 
 #progress-container {
@@ -108,6 +110,8 @@ button:hover {
 	border-radius: 50%;
 	width: 25px;
 	height: 25px;
+	min-width: 25px;
+	min-height: 25px;
 	animation: spin 1s cubic-bezier(1, 0.5, 0.5, 0.5) infinite;
 }
 
@@ -164,8 +168,10 @@ button:hover {
 }
 
 #progress-loader {
-	width: 40px;
 	height: 40px;
+	width: 40px;
+	min-width: 40px;
+	min-height: 40px;
 }
 
 .subtask-text {
@@ -266,6 +272,8 @@ button:hover {
 	margin-left: auto;
 	height: 40px;
 	width: 40px;
+	min-height: 40px;
+	min-width: 40px;
 	border-radius: 50%;
 	font-size: 20px;
 	font-weight: 900;
