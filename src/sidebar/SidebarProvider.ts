@@ -136,14 +136,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	}
 
 	private onStartSubtask(subtask: Subtask) {
+		if (
+			subtask.index > 0 &&
+			this._state.subtaskStates[subtask.index - 1] === "active"
+		) {
+			this._state.subtaskStates[subtask.index - 1] = "completed";
+		}
+		this._state.subtaskStates[subtask.index] = "active";
 		if (this._view) {
-			if (
-				subtask.index > 0 &&
-				this._state.subtaskStates[subtask.index - 1] === "active"
-			) {
-				this._state.subtaskStates[subtask.index - 1] = "completed";
-			}
-			this._state.subtaskStates[subtask.index] = "active";
 			this._view.webview.postMessage({
 				command: "onStartSubtask",
 				subtask: subtask,

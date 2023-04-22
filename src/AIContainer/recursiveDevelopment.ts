@@ -50,19 +50,35 @@ async function recursiveDevelopmentHelper(
 		return;
 	}
 
-	var subtasksString: string = await queryChatGPT(
+	var responseString: string = await queryChatGPT(
 		initializePrompt + input,
 		signal
 	);
 
-	if (subtasksString === "Cancelled") {
+	if (responseString === "Cancelled") {
 		return "Cancelled";
-	} else if (subtasksString === "Error") {
+	} else if (responseString === "Error") {
 		return "Error";
 	}
 
 	try {
-		var subtasks: Array<Subtask> = JSON.parse(subtasksString).subtasks;
+		// Regular expression to match JSON
+		const jsonRegex = /{[\s\S]*}/;
+
+		// Extract JSON and reasoning strings
+		let jsonStringArray = responseString.match(jsonRegex);
+		if (!jsonStringArray) {
+			throw Error("No JSON found.");
+		}
+		let jsonString = jsonStringArray[0];
+		let reasoning = responseString.replace(jsonRegex, "").trim();
+
+		// Parse JSON
+		var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
+
+		if (reasoning) {
+			vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
+		}
 	} catch (error) {
 		vscode.window.showErrorMessage("ChatGPT returned invalid JSON.");
 		return "Error";

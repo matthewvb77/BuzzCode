@@ -98,8 +98,8 @@
 
 		if (action === "regenerate") {
 			progressText.textContent = "Regenerating subtasks...";
-			console.log("num subtasks: ", subtasksContainer.children.length);
-			console.log("num prev subtasks: ", previousSubtaskCount);
+			// console.log("num subtasks: ", subtasksContainer.children.length);
+			// console.log("num prev subtasks: ", previousSubtaskCount);
 			while (subtasksContainer.children.length > previousSubtaskCount) {
 				subtasksContainer.removeChild(subtasksContainer.lastChild);
 			}
@@ -183,6 +183,12 @@
 			subtaskLoader.classList.add("loader");
 
 			if (subtaskStates.length > 0) {
+				// console.log(
+				// 	"changing subtask " +
+				// 		subtask.index +
+				// 		" to " +
+				// 		subtaskStates[subtask.index]
+				// );
 				changeLoaderState(subtaskLoader, subtaskStates[subtask.index]);
 			} else {
 				changeLoaderState(subtaskLoader, "initial");
@@ -316,16 +322,20 @@
 				break;
 
 			case "rebuild":
+				// console.log("starting rebuild");
 				if (message.state.userInput) {
 					userInputBox.value = message.state.userInput;
 				}
 				if (message.state.taskState) {
+					// console.log("updating task state to " + message.state.taskState);
 					updateTaskState(message.state.taskState);
 				}
 				if (message.state.taskInProgress) {
+					// console.log("task is in progress, show cancel button");
 					taskCancelButton.classList.add("show-component");
 				}
 				if (message.state.taskInProgress || message.state.subtasks.length > 0) {
+					// console.log("showing progress container");
 					progressContainer.classList.add("show-component");
 				}
 
@@ -333,14 +343,21 @@
 					message.state.taskState === "waiting" &&
 					!document.querySelector(".subtask-container .loader.loader-waiting")
 				) {
+					// console.log("showing button container");
 					buttonsContainer.classList.add("show-component");
 				}
 				if (message.state.previousSubtaskCount) {
+					// console.log(
+					// 	"previous subtask count = " + message.state.previousSubtaskCount
+					// );
 					previousSubtaskCount = message.state.previousSubtaskCount;
 				} else {
+					// console.log("previous subtask count = 0");
 					previousSubtaskCount = 0;
 				}
-				if (message.state.subtasks) {
+				if (message.state.subtasks.length !== 0) {
+					// console.log("showing subtasks");
+					// console.log("subtaskStates= " + message.state.subtaskStates);
 					showSubtasks(message.state.subtasks, message.state.subtaskStates);
 				}
 				break;

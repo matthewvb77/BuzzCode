@@ -6,16 +6,27 @@ export async function queryChatGPT(
 	signal: AbortSignal
 ): Promise<string> {
 	/* ----------------- Get Configuration --------------- */
-	const apiKey: string =
-		vscode.workspace.getConfiguration("testwise").get("apiKey") || "";
+	const apiKey = vscode.workspace.getConfiguration("testwise").get("apiKey");
 
-	const model: string =
-		vscode.workspace.getConfiguration("testwise").get("model") ||
-		"gpt-3.5-turbo";
-	const temperature: number =
-		vscode.workspace.getConfiguration("testwise").get("temperature") || 0.2;
-	const maxTokens: number =
-		vscode.workspace.getConfiguration("testwise").get("maxTokens") || 100;
+	const model = vscode.workspace.getConfiguration("testwise").get("model");
+	const temperature = vscode.workspace
+		.getConfiguration("testwise")
+		.get("temperature");
+	const maxTokens = vscode.workspace
+		.getConfiguration("testwise")
+		.get("maxTokens");
+
+	if (
+		apiKey === undefined ||
+		model === undefined ||
+		temperature === undefined ||
+		maxTokens === undefined
+	) {
+		vscode.window.showErrorMessage(
+			"Configuration value is undefined. This should not happen."
+		);
+		return "Error";
+	}
 
 	if (apiKey === "") {
 		vscode.window.showErrorMessage(
