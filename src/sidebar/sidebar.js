@@ -122,6 +122,7 @@
 		loader.classList.remove("loader-waiting");
 		loader.classList.remove("loader-initial");
 		loader.classList.remove("loader-active");
+		loader.classList.remove("loader-blocked");
 
 		loader.classList.add("loader-" + state);
 	}
@@ -318,6 +319,12 @@
 
 			case "onSubtaskError":
 				changeLoaderState(activeSubtaskLoader, "cancelled");
+				let subtaskLoaders = subtasksContainer.querySelectorAll(
+					".subtask-container .loader"
+				);
+				for (let i = message.index + 1; i < subtaskLoaders.length; i++) {
+					changeLoaderState(subtaskLoaders[i], "blocked");
+				}
 				progressText.textContent = "Error Occurred: Generating next steps";
 				break;
 

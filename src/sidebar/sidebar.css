@@ -137,6 +137,11 @@ button:hover {
 	color: #3498db;
 	animation: none;
 }
+.loader.loader-blocked {
+	border-color: #c59920;
+	color: #c59920;
+	animation: none;
+}
 
 .loader::before {
 	content: "";
@@ -165,6 +170,10 @@ button:hover {
 .loader.loader-waiting::before {
 	content: "?";
 	font-size: 14;
+}
+.loader.loader-blocked::before {
+	font-family: "codicon";
+	content: "\eacc"; /* dash */
 }
 
 #progress-loader {
