@@ -73,14 +73,17 @@ async function recursiveDevelopmentHelper(
 		let jsonString = jsonStringArray[0];
 		let reasoning = responseString.replace(jsonRegex, "").trim();
 
-		// Parse JSON
 		var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
-
+		if (subtasks.length - 1 !== subtasks[-1].index) {
+			throw Error("Invalid subtask indices.");
+		}
 		if (reasoning) {
 			vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
 		}
 	} catch (error) {
-		vscode.window.showErrorMessage("ChatGPT returned invalid JSON.");
+		vscode.window.showErrorMessage(
+			"OpenAI API returned invalid JSON. Error: " + error
+		);
 		return "Error";
 	}
 
