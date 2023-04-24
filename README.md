@@ -1,4 +1,4 @@
-# Jade (new interim name)
+# Jade the Jr. Dev
 
 Give Jade any task a Jr. Developer would be able to do!
 
