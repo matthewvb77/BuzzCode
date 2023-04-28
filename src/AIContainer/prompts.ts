@@ -18,6 +18,14 @@ Using the 4 functions above, respond ONLY with a JSON subtask list that can be p
 			"parameters": {
 				"command": "echo hello world"
 			}
+		},
+		{
+			"index": 1,
+			"type": "generateFile",
+			"parameters": {
+				"fileName": "test.txt",
+				"fileContents": "hello world"
+			}
 		}
 	]
 }
