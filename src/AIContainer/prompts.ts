@@ -6,7 +6,7 @@ export const initializePrompt = `You have access to these 4 functions:
 
 Example of a subtask list: {"subtasks": [{"index": 0,"type": "executeTerminalCommand","parameters": {"command": "echo hello world"}},{"index": 1,"type": "generateFile","parameters": {"fileName": "test.txt","fileContents": "hello world"}}]}
 
-Using the 4 functions above, respond ONLY with a JSON subtask list that can be parsed by JSON.parse(response) to solve the following prompt:
+Using the 4 functions above, respond ONLY with a JSON subtask list that can be parsed by the javascript line JSON.parse(response) to solve the following prompt:
 `;
 
 /*
