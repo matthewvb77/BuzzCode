@@ -55,11 +55,10 @@ export async function executeTerminalCommand(
 
 		rl.on("line", (line) => {
 			if (line.trim() === commandEndMarker) {
-				outputChannel.appendLine(`Command end marker found.`);
 				resolve({ error, stdout, stderr });
 				return;
 			} else {
-				outputChannel.appendLine(`Output: ${line}`);
+				outputChannel.appendLine(`${line}`);
 				stdout += line + "\n";
 			}
 		});
@@ -74,6 +73,9 @@ export async function executeTerminalCommand(
 			error = err;
 		});
 
-		terminalProcess.stdin.write(`${command}; echo ${commandEndMarker}\n`);
+		const commandSeparator = process.platform === "win32" ? "&&" : ";";
+		terminalProcess.stdin.write(
+			`${command} ${commandSeparator} echo ${commandEndMarker}\n`
+		);
 	});
 }

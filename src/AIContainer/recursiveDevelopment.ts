@@ -34,8 +34,18 @@ export async function recursiveDevelopment(
 		terminalProcess.kill();
 	}
 
+	const workingDirectory = vscode.workspace.workspaceFolders
+		? vscode.workspace.workspaceFolders[0].uri.fsPath
+		: undefined;
+
+	if (!workingDirectory) {
+		vscode.window.showErrorMessage("No workspace folder open.");
+		return "Error";
+	}
+
 	terminalProcess = cp.spawn(shell, [], {
 		stdio: ["pipe", "pipe", "pipe"],
+		cwd: workingDirectory,
 	});
 
 	const result = await recursiveDevelopmentHelper(
