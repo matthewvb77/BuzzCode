@@ -24,30 +24,26 @@ export async function generateFile(
 		return "Cancelled";
 	}
 
-	const escapedContents = escapeFileContents(contents);
+	const isWindows = process.platform === "win32";
+	const escapedContents = escapeFileContents(contents, isWindows);
 
-	// Send a command to create the file at the terminal's current working directory
-	if (process.platform === "win32") {
-		// For Windows command prompt
-		await executeTerminalCommand(
-			`echo "${escapedContents}" > "${fileName}"`,
-			terminalProcess
-		);
-	} else {
-		// For Unix-like shells
-		await executeTerminalCommand(
-			`echo '${escapedContents}' > '${fileName}'`,
-			terminalProcess,
-			false
-		);
-	}
+	await executeTerminalCommand(
+		`echo ${escapedContents} > ${fileName}`,
+		terminalProcess,
+		false
+	);
 }
 
-function escapeFileContents(contents: string): string {
-	return contents
-		.replace(/\\/g, "\\\\") // Escape backslashes
-		.replace(/"/g, '\\"') // Escape double quotes
-		.replace(/\$/g, "\\$") // Escape dollar signs
-		.replace(/`/g, "\\`") // Escape backticks
-		.replace(/\n/g, "\\n"); // Escape newlines
+function escapeFileContents(contents: string, isWindows: boolean): string {
+	if (isWindows) {
+		contents = contents.replace(/\\/g, "\\\\\\").replace(/"/g, '\\"');
+	} else {
+		contents = contents
+			.replace(/\\/g, "\\\\\\\\")
+			.replace(/'/g, "\\'")
+			.replace(/\$/g, "\\$")
+			.replace(/`/g, "\\`");
+	}
+	contents = contents.replace(/\n/g, "\\n");
+	return contents;
 }
