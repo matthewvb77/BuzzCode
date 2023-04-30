@@ -1,5 +1,6 @@
+const shell = process.platform === "win32" ? "cmd.exe" : "bash";
 export const initializePrompt = `You have access to these 4 functions: 
-1. executeTerminalCommand(command: string)
+1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. generateFile(fileName: string, fileContents: string)
 3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
 

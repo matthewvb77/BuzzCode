@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import { executeTerminalCommand } from "./executeTerminalCommand";
+import * as cp from "child_process";
 
 export async function generateFile(
 	fileName: string | null,
-	contents: string | null
+	contents: string | null,
+	terminalProcess: cp.ChildProcess
 ) {
 	/* ------------------------------- Validate Input --------------------------------- */
 	if (!contents || !fileName) {
@@ -22,15 +24,29 @@ export async function generateFile(
 		return "Cancelled";
 	}
 
-	// Escape double quotes in the file contents
-	const escapedContents = contents.replace(/"/g, '\\"');
+	const escapedContents = escapeFileContents(contents);
 
 	// Send a command to create the file at the terminal's current working directory
 	if (process.platform === "win32") {
 		// For Windows command prompt
-		executeTerminalCommand(`echo "${escapedContents}" > "${fileName}"`, false);
+		await executeTerminalCommand(
+			`echo "${escapedContents}" > "${fileName}"`,
+			terminalProcess
+		);
 	} else {
 		// For Unix-like shells
-		executeTerminalCommand(`echo "${escapedContents}" > "${fileName}"`, false);
+		await executeTerminalCommand(
+			`echo "${escapedContents}" > "${fileName}"`,
+			terminalProcess
+		);
 	}
+}
+
+function escapeFileContents(contents: string): string {
+	return contents
+		.replace(/\\/g, "\\\\") // Escape backslashes
+		.replace(/"/g, '\\"') // Escape double quotes
+		.replace(/\$/g, "\\$") // Escape dollar signs
+		.replace(/`/g, "\\`") // Escape backticks
+		.replace(/\n/g, "\\n"); // Escape newlines
 }
