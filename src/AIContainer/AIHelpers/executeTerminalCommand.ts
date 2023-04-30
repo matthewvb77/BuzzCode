@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as cp from "child_process";
 import * as readline from "readline";
+import { platform } from "os";
 
 export type CommandResult = {
 	error: cp.ExecException | null;
@@ -43,6 +44,7 @@ export async function executeTerminalCommand(
 		let stdout = "";
 		let error: cp.ExecException | null = null;
 		const commandEndMarker = "COMMAND_END_MARKER";
+		const commandErrorMarker = "COMMAND_ERROR_MARKER";
 
 		if (
 			terminalProcess.stdout === null ||
@@ -66,16 +68,12 @@ export async function executeTerminalCommand(
 			if (line.trim() === commandEndMarker) {
 				resolve({ error, stdout, stderr });
 				return;
+			} else if (line.trim() === commandErrorMarker) {
+				resolve({ error: error, stdout, stderr });
+				return;
 			} else {
 				outputChannel.appendLine(`${line}`);
-
-				// Check if the line contains an error keyword
-				const errorKeywords = ["Error", "Failed", "Traceback"];
-				if (errorKeywords.some((keyword) => line.includes(keyword))) {
-					stderr += line + "\n";
-				} else {
-					stdout += line + "\n";
-				}
+				stdout += line.toString();
 			}
 		});
 
@@ -94,9 +92,14 @@ export async function executeTerminalCommand(
 			return;
 		});
 
-		const commandSeparator = process.platform === "win32" ? "&&" : ";";
-		terminalProcess.stdin.write(
-			`${command} ${commandSeparator} echo ${commandEndMarker}\n`
-		);
+		if (platform() === "win32") {
+			terminalProcess.stdin.write(
+				`((${command}) && echo ${commandEndMarker}) || echo ${commandErrorMarker}\n`
+			);
+		} else {
+			terminalProcess.stdin.write(
+				`{ ${command}; echo ${commandEndMarker}; } || echo ${commandErrorMarker}\n`
+			);
+		}
 	});
 }

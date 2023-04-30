@@ -172,6 +172,10 @@ async function recursiveDevelopmentHelper(
 					);
 					if (typeof fileCreationResult === "string") {
 						return "Cancelled";
+					} else if (fileCreationResult.error) {
+						throw fileCreationResult.error;
+					} else if (fileCreationResult.stderr) {
+						throw fileCreationResult.stderr;
 					}
 					break;
 
