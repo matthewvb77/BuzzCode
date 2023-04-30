@@ -10,24 +10,26 @@ export type CommandResult = {
 
 export async function executeTerminalCommand(
 	command: string,
-	terminalProcess: cp.ChildProcess
+	terminalProcess: cp.ChildProcess,
+	warn = true
 ): Promise<CommandResult | "Cancelled"> {
 	return new Promise(async (resolve, reject) => {
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
 		outputChannel.clear();
 		outputChannel.show();
-		outputChannel.appendLine("STARTING COMMAND");
 
-		const userResponse = await vscode.window.showWarningMessage(
-			`Are you sure you want to run the following command: ${command}?`,
-			{ modal: true },
-			"Yes",
-			"No"
-		);
+		if (warn) {
+			const userResponse = await vscode.window.showWarningMessage(
+				`Are you sure you want to run the following command: ${command}?`,
+				{ modal: true },
+				"Yes",
+				"No"
+			);
 
-		if (userResponse === "No" || userResponse === undefined) {
-			resolve("Cancelled");
-			return;
+			if (userResponse === "No" || userResponse === undefined) {
+				resolve("Cancelled");
+				return;
+			}
 		}
 
 		let stderr = "";
@@ -66,11 +68,13 @@ export async function executeTerminalCommand(
 		terminalProcess.stderr.on("data", (data) => {
 			outputChannel.appendLine(`Error output: ${data}`);
 			stderr += data.toString();
+			resolve({ error, stdout, stderr });
 		});
 
 		terminalProcess.on("error", (err) => {
 			outputChannel.appendLine(`Error: ${err.message}`);
 			error = err;
+			resolve({ error, stdout, stderr });
 		});
 
 		const commandSeparator = process.platform === "win32" ? "&&" : ";";

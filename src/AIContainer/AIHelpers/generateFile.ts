@@ -36,8 +36,9 @@ export async function generateFile(
 	} else {
 		// For Unix-like shells
 		await executeTerminalCommand(
-			`echo "${escapedContents}" > "${fileName}"`,
-			terminalProcess
+			`echo '${escapedContents}' > '${fileName}'`,
+			terminalProcess,
+			false
 		);
 	}
 }
