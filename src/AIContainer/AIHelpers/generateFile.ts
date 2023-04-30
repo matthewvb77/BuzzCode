@@ -7,7 +7,8 @@ import * as tmp from "tmp";
 export async function generateFile(
 	fileName: string | null,
 	contents: string | null,
-	terminalProcess: cp.ChildProcess
+	terminalProcess: cp.ChildProcess,
+	signal: AbortSignal
 ) {
 	/* ------------------------------- Validate Input --------------------------------- */
 	if (!contents || !fileName) {
@@ -35,6 +36,7 @@ export async function generateFile(
 	await executeTerminalCommand(
 		`${copyCommand} ${tempFile.name} ${fileName}`,
 		terminalProcess,
+		signal,
 		false
 	);
 

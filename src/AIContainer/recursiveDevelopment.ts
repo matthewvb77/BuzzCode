@@ -148,7 +148,8 @@ async function recursiveDevelopmentHelper(
 					const { command } = parameters;
 					const commandResult = await executeTerminalCommand(
 						command,
-						terminalProcess
+						terminalProcess,
+						signal
 					);
 					if (typeof commandResult === "string") {
 						return "Cancelled";
@@ -162,7 +163,8 @@ async function recursiveDevelopmentHelper(
 					const fileCreationResult = await generateFile(
 						fileName,
 						fileContents,
-						terminalProcess
+						terminalProcess,
+						signal
 					);
 					if (typeof fileCreationResult === "string") {
 						return "Cancelled";

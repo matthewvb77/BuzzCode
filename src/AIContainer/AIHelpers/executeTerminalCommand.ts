@@ -11,9 +11,16 @@ export type CommandResult = {
 export async function executeTerminalCommand(
 	command: string,
 	terminalProcess: cp.ChildProcess,
+	signal: AbortSignal,
 	warn = true
 ): Promise<CommandResult | "Cancelled"> {
 	return new Promise(async (resolve, reject) => {
+		signal.onabort = () => {
+			signal.onabort = null;
+			resolve("Cancelled");
+			return;
+		};
+
 		const outputChannel = vscode.window.createOutputChannel("Test Runner");
 		outputChannel.clear();
 		outputChannel.show();
