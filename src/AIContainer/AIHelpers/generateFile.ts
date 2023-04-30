@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { executeTerminalCommand } from "./executeTerminalCommand";
 import * as cp from "child_process";
+import * as fs from "fs";
+import * as tmp from "tmp";
 
 export async function generateFile(
 	fileName: string | null,
@@ -24,26 +26,18 @@ export async function generateFile(
 		return "Cancelled";
 	}
 
-	const isWindows = process.platform === "win32";
-	const escapedContents = escapeFileContents(contents, isWindows);
+	// Create a temporary file with the contents
+	const tempFile = tmp.fileSync();
+	fs.writeFileSync(tempFile.name, contents);
 
+	// Copy the temporary file to the destination file using the terminal
+	const copyCommand = process.platform === "win32" ? "copy" : "cp";
 	await executeTerminalCommand(
-		`echo ${escapedContents} > ${fileName}`,
+		`${copyCommand} ${tempFile.name} ${fileName}`,
 		terminalProcess,
 		false
 	);
-}
 
-function escapeFileContents(contents: string, isWindows: boolean): string {
-	if (isWindows) {
-		contents = contents.replace(/\\/g, "\\\\\\").replace(/"/g, '\\"');
-	} else {
-		contents = contents
-			.replace(/\\/g, "\\\\\\\\")
-			.replace(/'/g, "\\'")
-			.replace(/\$/g, "\\$")
-			.replace(/`/g, "\\`");
-	}
-	contents = contents.replace(/\n/g, "\\n");
-	return contents;
+	// Clean up the temporary file
+	tempFile.removeCallback();
 }

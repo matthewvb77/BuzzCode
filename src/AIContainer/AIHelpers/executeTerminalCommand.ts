@@ -61,20 +61,25 @@ export async function executeTerminalCommand(
 				return;
 			} else {
 				outputChannel.appendLine(`${line}`);
-				stdout += line + "\n";
+
+				// Check if the line contains an error keyword
+				const errorKeywords = ["Error", "Failed", "Traceback"];
+				if (errorKeywords.some((keyword) => line.includes(keyword))) {
+					stderr += line + "\n";
+				} else {
+					stdout += line + "\n";
+				}
 			}
 		});
 
 		terminalProcess.stderr.on("data", (data) => {
 			outputChannel.appendLine(`Error output: ${data}`);
 			stderr += data.toString();
-			resolve({ error, stdout, stderr });
 		});
 
 		terminalProcess.on("error", (err) => {
 			outputChannel.appendLine(`Error: ${err.message}`);
 			error = err;
-			resolve({ error, stdout, stderr });
 		});
 
 		const commandSeparator = process.platform === "win32" ? "&&" : ";";
