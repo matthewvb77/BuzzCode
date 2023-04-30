@@ -89,6 +89,11 @@ export async function executeTerminalCommand(
 			error = err;
 		});
 
+		terminalProcess.on("close", (code, signal) => {
+			resolve({ error, stdout, stderr });
+			return;
+		});
+
 		const commandSeparator = process.platform === "win32" ? "&&" : ";";
 		terminalProcess.stdin.write(
 			`${command} ${commandSeparator} echo ${commandEndMarker}\n`

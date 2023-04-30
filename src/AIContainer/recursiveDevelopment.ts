@@ -132,9 +132,11 @@ async function recursiveDevelopmentHelper(
 			);
 
 		case "cancel":
+			terminalProcess.kill();
 			return "Cancelled";
 
 		default:
+			terminalProcess.kill();
 			return "Error";
 	}
 
@@ -155,6 +157,8 @@ async function recursiveDevelopmentHelper(
 						return "Cancelled";
 					} else if (commandResult.error) {
 						throw commandResult.error;
+					} else if (commandResult.stderr) {
+						throw commandResult.stderr;
 					}
 					break;
 
@@ -202,6 +206,7 @@ async function recursiveDevelopmentHelper(
 
 				default:
 					console.warn(`Unknown subtask type "${type}"`);
+					terminalProcess.kill();
 					break;
 			}
 		} catch (error) {
