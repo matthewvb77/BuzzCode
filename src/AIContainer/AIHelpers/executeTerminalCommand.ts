@@ -1,17 +1,15 @@
 import * as vscode from "vscode";
-import * as cp from "child_process";
-import * as readline from "readline";
-import { platform } from "os";
+import * as pty from "node-pty";
 
 export type CommandResult = {
-	error: cp.ExecException | null;
+	error: string;
 	stdout: string;
 	stderr: string;
 };
 
 export async function executeTerminalCommand(
 	command: string,
-	terminalProcess: cp.ChildProcess,
+	terminalProcess: pty.IPty,
 	signal: AbortSignal,
 	warn = true
 ): Promise<CommandResult | "Cancelled"> {
@@ -21,10 +19,6 @@ export async function executeTerminalCommand(
 			resolve("Cancelled");
 			return;
 		};
-
-		const outputChannel = vscode.window.createOutputChannel("Test Runner");
-		outputChannel.clear();
-		outputChannel.show();
 
 		if (warn) {
 			const userResponse = await vscode.window.showWarningMessage(
@@ -40,66 +34,47 @@ export async function executeTerminalCommand(
 			}
 		}
 
-		let stderr = "";
-		let stdout = "";
-		let error: cp.ExecException | null = null;
-		const commandEndMarker = "COMMAND_END_MARKER";
-		const commandErrorMarker = "COMMAND_ERROR_MARKER";
+		const endOfCommandDelimiter = "END_OF_COMMAND";
+		let output = "";
 
-		if (
-			terminalProcess.stdout === null ||
-			terminalProcess.stderr === null ||
-			terminalProcess.stdin === null
-		) {
-			outputChannel.appendLine(
-				`Error: Could not attach listeners to terminal process.`
-			);
-			reject("Error: Could not attach listeners to terminal process.");
-			return;
-		}
-
-		const rl = readline.createInterface({
-			input: terminalProcess.stdout,
-			output: undefined,
-			terminal: false,
-		});
-
-		rl.on("line", (line) => {
-			if (line.trim() === commandEndMarker) {
-				resolve({ error, stdout, stderr });
-				return;
-			} else if (line.trim() === commandErrorMarker) {
-				resolve({ error: error, stdout, stderr });
-				return;
-			} else {
-				outputChannel.appendLine(`${line}`);
-				stdout += line.toString();
+		terminalProcess.onData((data) => {
+			output += data;
+			if (output.includes(endOfCommandDelimiter)) {
+				terminal.dispose();
+				resolve({
+					error: "",
+					stdout: output.replace(endOfCommandDelimiter, ""),
+					stderr: "",
+				});
 			}
 		});
 
-		terminalProcess.stderr.on("data", (data) => {
-			outputChannel.appendLine(`Error output: ${data}`);
-			stderr += data.toString();
+		terminalProcess.write(`${command}\r`);
+		terminalProcess.write(`echo ${endOfCommandDelimiter}\r`);
+
+		const writeEmitter = new vscode.EventEmitter<string>();
+
+		const vscodePty: vscode.Pseudoterminal = {
+			onDidWrite: writeEmitter.event,
+			open: () => {
+				writeEmitter.fire("Terminal Opened");
+			},
+			close: () => {
+				terminalProcess.kill();
+				signal.onabort = null;
+				resolve("Cancelled");
+				return;
+			},
+			handleInput: (data: string) => {
+				terminalProcess.write(data);
+			},
+		};
+
+		const terminal = vscode.window.createTerminal({
+			name: "Testwise",
+			pty: vscodePty,
 		});
 
-		terminalProcess.on("error", (err) => {
-			outputChannel.appendLine(`Error: ${err.message}`);
-			error = err;
-		});
-
-		terminalProcess.on("close", (code, signal) => {
-			resolve({ error, stdout, stderr });
-			return;
-		});
-
-		if (platform() === "win32") {
-			terminalProcess.stdin.write(
-				`((${command}) && echo ${commandEndMarker}) || echo ${commandErrorMarker}\n`
-			);
-		} else {
-			terminalProcess.stdin.write(
-				`{ ${command}; echo ${commandEndMarker}; } || echo ${commandErrorMarker}\n`
-			);
-		}
+		terminal.show();
 	});
 }

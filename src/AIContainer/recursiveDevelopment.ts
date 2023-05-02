@@ -4,7 +4,7 @@ import { executeTerminalCommand } from "./AIHelpers/executeTerminalCommand";
 import { askUser } from "./AIHelpers/askUser";
 import { generateFile } from "./AIHelpers/generateFile";
 import { initializePrompt } from "./prompts";
-import * as cp from "child_process";
+import * as pty from "node-pty";
 export interface Subtask {
 	index: number;
 	type: string;
@@ -14,9 +14,9 @@ export interface Subtask {
 var recursionLimit = 10;
 var recursionCount = 0;
 var taskDescription = ``;
-var terminalProcess: cp.ChildProcess | undefined;
+var terminalProcess: pty.IPty | undefined;
 var platform = process.platform;
-var shell = platform === "win32" ? "cmd.exe" : "bash";
+var shell = platform === "win32" ? "powershell.exe" : "bash";
 
 export async function recursiveDevelopment(
 	input: string,
@@ -43,9 +43,10 @@ export async function recursiveDevelopment(
 		return "Error";
 	}
 
-	terminalProcess = cp.spawn(shell, [], {
-		stdio: ["pipe", "pipe", "pipe"],
+	terminalProcess = pty.spawn(shell, [], {
+		name: "xterm-color",
 		cwd: workingDirectory,
+		env: process.env as any,
 	});
 
 	const result = await recursiveDevelopmentHelper(
@@ -63,7 +64,7 @@ export async function recursiveDevelopment(
 
 async function recursiveDevelopmentHelper(
 	input: string,
-	terminalProcess: cp.ChildProcess,
+	terminalProcess: pty.IPty,
 	signal: AbortSignal,
 	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (

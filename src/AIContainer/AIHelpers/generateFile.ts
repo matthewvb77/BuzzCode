@@ -1,14 +1,14 @@
 import * as vscode from "vscode";
 import { executeTerminalCommand } from "./executeTerminalCommand";
-import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import { CommandResult } from "./executeTerminalCommand";
+import * as pty from "node-pty";
 
 export async function generateFile(
 	fileName: string | null,
 	contents: string | null,
-	terminalProcess: cp.ChildProcess,
+	terminalProcess: pty.IPty,
 	signal: AbortSignal
 ): Promise<CommandResult | "Cancelled"> {
 	return new Promise(async (resolve, reject) => {
