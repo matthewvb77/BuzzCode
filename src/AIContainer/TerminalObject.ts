@@ -56,6 +56,7 @@ export class TerminalObject {
 			pty: this.terminalPty,
 		});
 
+		this.terminal.show();
 		this.signal = signal;
 	}
 
@@ -90,6 +91,7 @@ export class TerminalObject {
 
 			this.terminalProcess.stdout?.on("data", (data) => {
 				stdout += data;
+				this.writeEmitter.fire(data);
 
 				if (stdout.includes(endOfCommandDelimiter)) {
 					resolve({
@@ -103,9 +105,11 @@ export class TerminalObject {
 
 			this.terminalProcess.stderr?.on("data", (data) => {
 				stderr += data;
+				this.writeEmitter.fire(data);
 			});
 
 			this.terminalProcess.on("error", (error) => {
+				this.writeEmitter.fire(error.message);
 				resolve({
 					error: error.message,
 					stdout: stdout,
