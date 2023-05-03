@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
+import { shell } from "../settings/configuration";
 
 export type CommandResult = {
 	error: string;
@@ -25,7 +26,6 @@ export class TerminalObject {
 			vscode.window.showErrorMessage("No workspace folder open.");
 			throw new Error("No workspace folder open.");
 		}
-		const shell = process.platform === "win32" ? "powershell.exe" : "bash";
 
 		this.terminalProcess = cp.spawn(shell, [], {
 			cwd: workingDirectory,
@@ -37,10 +37,10 @@ export class TerminalObject {
 		this.terminalPty = {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
-				this.writeEmitter.fire("Testwise Terminal Opened\n");
+				this.writeEmitter.fire("Testwise: TASK STARTED\n");
 			},
 			close: () => {
-				this.writeEmitter.fire("Testwise Terminal Closed\n");
+				this.writeEmitter.fire("Testwise: TASK STOPPED\n");
 			},
 			handleInput: (data: string) => {
 				if (this.terminalProcess === undefined) {

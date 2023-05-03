@@ -1,4 +1,5 @@
-const shell = process.platform === "win32" ? "cmd.exe" : "bash";
+import { shell } from "../settings/configuration";
+
 export const initializePrompt = `You have access to these 4 functions: 
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. generateFile(fileName: string, fileContents: string)
