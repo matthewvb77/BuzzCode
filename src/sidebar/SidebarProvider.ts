@@ -42,7 +42,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
 		webviewView.onDidChangeVisibility(() => {
-			console.log("Visibility changed. document is: ", document);
 			if (webviewView.visible) {
 				this._rebuildWebview();
 			}
