@@ -17,7 +17,10 @@ export class TerminalObject {
 	writeEmitter: vscode.EventEmitter<string>;
 	signal: AbortSignal;
 
+	endOfCommandDelimiter: string | null = null;
+
 	constructor(signal: AbortSignal) {
+		/* ---------------------------------- Constructing ---------------------------------- */
 		const workingDirectory = vscode.workspace.workspaceFolders
 			? vscode.workspace.workspaceFolders[0].uri.fsPath
 			: undefined;
@@ -58,6 +61,50 @@ export class TerminalObject {
 
 		this.terminal.show();
 		this.signal = signal;
+
+		/* ---------------------------------- Event Handlers ---------------------------------- */
+		this.terminalProcess.stdout?.on("data", (data) => {
+			this.writeEmitter.fire(data);
+
+			if (!this.endOfCommandDelimiter) {
+				throw error("No end of command delimiter.");
+			}
+
+			if (data.includes(this.endOfCommandDelimiter)) {
+				const result = {
+					error: "",
+					stdout: data.replace(this.endOfCommandDelimiter, ""),
+					stderr: "",
+				};
+
+				if (this.resolveCommand) {
+					this.resolveCommand(result);
+				}
+				this.endOfCommandDelimiter = null;
+			}
+		});
+
+		// this.terminalProcess.stderr?.on("data", (data) => {
+		// 	this.writeEmitter.fire(data);
+		// 	if (this.commandResolve) {
+		// 		this.commandResolve({
+		// 			error: "",
+		// 			stdout: "",
+		// 			stderr: data,
+		// 		});
+		// 	}
+		// });
+
+		// this.terminalProcess.on("error", (error) => {
+		// 	this.writeEmitter.fire(error.message);
+		// 	if (this.commandResolve) {
+		// 		this.commandResolve({
+		// 			error: error.message,
+		// 			stdout: "",
+		// 			stderr: "",
+		// 		});
+		// 	}
+		// });
 	}
 
 	async executeCommand(
@@ -85,41 +132,16 @@ export class TerminalObject {
 				}
 			}
 
-			const endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
-			let stdout = "";
-			let stderr = "";
+			this.endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
 
-			this.terminalProcess.stdout?.on("data", (data) => {
-				stdout += data;
-				this.writeEmitter.fire(data);
+			return new Promise((resolve, reject) => {
+				this.resolveCommand = resolve;
 
-				if (stdout.includes(endOfCommandDelimiter)) {
-					resolve({
-						error: "",
-						stdout: stdout.replace(endOfCommandDelimiter, ""),
-						stderr: stderr,
-					});
-					return;
-				}
+				this.terminalProcess.stdin?.write(`${command}\r`);
+				this.terminalProcess.stdin?.write(
+					`echo ${this.endOfCommandDelimiter}\r`
+				);
 			});
-
-			this.terminalProcess.stderr?.on("data", (data) => {
-				stderr += data;
-				this.writeEmitter.fire(data);
-			});
-
-			this.terminalProcess.on("error", (error) => {
-				this.writeEmitter.fire(error.message);
-				resolve({
-					error: error.message,
-					stdout: stdout,
-					stderr: stderr,
-				});
-				return;
-			});
-
-			this.terminalProcess.stdin?.write(`${command}\r`);
-			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r`);
 		});
 	}
 
