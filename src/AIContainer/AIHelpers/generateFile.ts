@@ -3,12 +3,12 @@ import { executeTerminalCommand } from "./executeTerminalCommand";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import { CommandResult } from "./executeTerminalCommand";
-import * as pty from "node-pty";
+import * as cp from "child_process";
 
 export async function generateFile(
 	fileName: string | null,
 	contents: string | null,
-	terminalProcess: pty.IPty,
+	terminalProcess: cp.ChildProcess,
 	signal: AbortSignal
 ): Promise<CommandResult | "Cancelled"> {
 	return new Promise(async (resolve, reject) => {

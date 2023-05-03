@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as pty from "node-pty";
+import * as cp from "child_process";
 
 export type CommandResult = {
 	error: string;
@@ -9,7 +9,7 @@ export type CommandResult = {
 
 export async function executeTerminalCommand(
 	command: string,
-	terminalProcess: pty.IPty,
+	terminalProcess: cp.ChildProcess,
 	signal: AbortSignal,
 	warn = true
 ): Promise<CommandResult | "Cancelled"> {
@@ -37,7 +37,7 @@ export async function executeTerminalCommand(
 		const endOfCommandDelimiter = "END_OF_COMMAND";
 		let output = "";
 
-		terminalProcess.onData((data) => {
+		terminalProcess.stdout?.on("data", (data) => {
 			output += data;
 			if (output.includes(endOfCommandDelimiter)) {
 				terminal.dispose();
@@ -49,8 +49,8 @@ export async function executeTerminalCommand(
 			}
 		});
 
-		terminalProcess.write(`${command}\r`);
-		terminalProcess.write(`echo ${endOfCommandDelimiter}\r`);
+		terminalProcess.stdin?.write(`${command}\r`);
+		terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r`);
 
 		const writeEmitter = new vscode.EventEmitter<string>();
 
@@ -66,7 +66,7 @@ export async function executeTerminalCommand(
 				return;
 			},
 			handleInput: (data: string) => {
-				terminalProcess.write(data);
+				terminalProcess.stdin?.write(data);
 			},
 		};
 
