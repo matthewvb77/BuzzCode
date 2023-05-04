@@ -344,6 +344,7 @@
 				if (message.state.taskInProgress && message.state.subtasks) {
 					if (message.state.subtasks.length > 0) {
 						// console.log("showing progress container");
+						showSubtasks(message.state.subtasks, message.state.subtaskStates);
 						progressContainer.classList.add("show-component");
 					}
 				}
@@ -363,11 +364,6 @@
 				} else {
 					// console.log("previous subtask count = 0");
 					previousSubtaskCount = 0;
-				}
-				if (message.state.subtasks.length !== 0) {
-					// console.log("showing subtasks");
-					// console.log("subtaskStates= " + message.state.subtaskStates);
-					showSubtasks(message.state.subtasks, message.state.subtaskStates);
 				}
 				break;
 
