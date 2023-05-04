@@ -17,7 +17,12 @@ export class TerminalObject {
 	writeEmitter: vscode.EventEmitter<string>;
 	signal: AbortSignal;
 
-	endOfCommandDelimiter: string | null = null;
+	currentSubtaskIndex: number | null = null;
+
+	promiseHandlers: Map<
+		number,
+		[(result: CommandResult | "Cancelled") => void, (reason?: any) => void]
+	> = new Map();
 
 	constructor(signal: AbortSignal) {
 		/* ---------------------------------- Constructing ---------------------------------- */
@@ -65,46 +70,55 @@ export class TerminalObject {
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		this.terminalProcess.stdout?.on("data", (data) => {
 			this.writeEmitter.fire(data);
-
-			if (!this.endOfCommandDelimiter) {
-				throw error("No end of command delimiter.");
+			const endOfCommandDelimiter =
+				"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex + "\n";
+			if (!this.currentSubtaskIndex) {
+				throw new Error("No end of command delimiter.");
 			}
 
-			if (data.includes(this.endOfCommandDelimiter)) {
+			if (data.includes(endOfCommandDelimiter)) {
 				const result = {
 					error: "",
-					stdout: data.replace(this.endOfCommandDelimiter, ""),
+					stdout: data.replace(endOfCommandDelimiter, ""),
 					stderr: "",
 				};
 
-				if (this.resolveCommand) {
-					this.resolveCommand(result);
+				const [resolve] =
+					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+				if (resolve) {
+					resolve(result);
+					this.promiseHandlers.delete(this.currentSubtaskIndex);
 				}
-				this.endOfCommandDelimiter = null;
+
+				this.currentSubtaskIndex = null;
 			}
 		});
 
-		// this.terminalProcess.stderr?.on("data", (data) => {
-		// 	this.writeEmitter.fire(data);
-		// 	if (this.commandResolve) {
-		// 		this.commandResolve({
-		// 			error: "",
-		// 			stdout: "",
-		// 			stderr: data,
-		// 		});
-		// 	}
-		// });
+		this.terminalProcess.stderr?.on("data", (data) => {
+			this.writeEmitter.fire(data);
 
-		// this.terminalProcess.on("error", (error) => {
-		// 	this.writeEmitter.fire(error.message);
-		// 	if (this.commandResolve) {
-		// 		this.commandResolve({
-		// 			error: error.message,
-		// 			stdout: "",
-		// 			stderr: "",
-		// 		});
-		// 	}
-		// });
+			if (this.currentSubtaskIndex) {
+				const [, reject] =
+					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+				if (reject) {
+					reject(data.toString());
+					this.promiseHandlers.delete(this.currentSubtaskIndex);
+				}
+			}
+		});
+
+		this.terminalProcess.on("error", (error) => {
+			this.writeEmitter.fire(error.message);
+
+			if (this.currentSubtaskIndex) {
+				const [, reject] =
+					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+				if (reject) {
+					reject(error);
+					this.promiseHandlers.delete(this.currentSubtaskIndex);
+				}
+			}
+		});
 	}
 
 	async executeCommand(
@@ -134,14 +148,8 @@ export class TerminalObject {
 
 			this.endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
 
-			return new Promise((resolve, reject) => {
-				this.resolveCommand = resolve;
-
-				this.terminalProcess.stdin?.write(`${command}\r`);
-				this.terminalProcess.stdin?.write(
-					`echo ${this.endOfCommandDelimiter}\r`
-				);
-			});
+			this.terminalProcess.stdin?.write(`${command}\r`);
+			this.terminalProcess.stdin?.write(`echo ${this.endOfCommandDelimiter}\r`);
 		});
 	}
 
