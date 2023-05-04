@@ -65,7 +65,7 @@ export class TerminalObject {
 					if (line.length === 0) {
 						return;
 					}
-					line = line.substr(0, line.length - 1);
+					line = line.slice(0, -1);
 					this.writeEmitter.fire("\x1b[D"); // move cursor left
 					this.writeEmitter.fire("\x1b[P"); // Delete character
 				}
