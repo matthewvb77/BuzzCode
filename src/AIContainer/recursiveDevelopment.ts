@@ -12,6 +12,7 @@ export interface Subtask {
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
 var taskDescription = ``;
+var terminalObj: TerminalObject | null = null;
 
 export async function recursiveDevelopment(
 	input: string,
@@ -27,7 +28,10 @@ export async function recursiveDevelopment(
 		taskDescription = input; // Saves original task description
 		recursionCount = 0;
 
-		const terminalObj = new TerminalObject(signal);
+		if (terminalObj) {
+			terminalObj.dispose();
+		}
+		terminalObj = new TerminalObject(signal);
 
 		const result = await recursiveDevelopmentHelper(
 			taskDescription,
@@ -38,7 +42,7 @@ export async function recursiveDevelopment(
 			onSubtaskError
 		);
 
-		terminalObj.dispose();
+		// terminalObj.dispose();  dont thing this is necessary
 
 		resolve(result);
 	});

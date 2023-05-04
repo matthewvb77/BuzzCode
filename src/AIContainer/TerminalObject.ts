@@ -69,46 +69,48 @@ export class TerminalObject {
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		this.terminalProcess.stdout?.on("data", (data) => {
-			this.writeEmitter.fire(data);
-			const endOfCommandDelimiter =
-				"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
-			if (this.currentSubtaskIndex === null) {
-				throw new Error("No end of command delimiter.");
-			}
+			const dataString = data.toString();
+			this.writeEmitter.fire(dataString);
 
-			if (data.includes(endOfCommandDelimiter)) {
-				const result = {
-					error: "",
-					stdout: data.replace(endOfCommandDelimiter, ""),
-					stderr: "",
-				};
+			if (this.currentSubtaskIndex !== null) {
+				const endOfCommandDelimiter =
+					"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 
-				const [resolve] =
-					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
-				if (resolve) {
-					resolve(result);
-					this.promiseHandlers.delete(this.currentSubtaskIndex);
+				if (dataString.includes(endOfCommandDelimiter)) {
+					const result = {
+						error: "",
+						stdout: dataString.replace(endOfCommandDelimiter, ""),
+						stderr: "",
+					};
+
+					const [resolve] =
+						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+					if (resolve) {
+						resolve(result);
+						this.promiseHandlers.delete(this.currentSubtaskIndex);
+					}
+
+					this.currentSubtaskIndex = null;
 				}
-
-				this.currentSubtaskIndex = null;
 			}
 		});
 
 		this.terminalProcess.stderr?.on("data", (data) => {
-			this.writeEmitter.fire(data);
+			const dataString = data.toString();
+			this.writeEmitter.fire(dataString + "\n");
 
 			if (this.currentSubtaskIndex) {
 				const [, reject] =
 					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
 				if (reject) {
-					reject(data.toString());
+					reject(dataString);
 					this.promiseHandlers.delete(this.currentSubtaskIndex);
 				}
 			}
 		});
 
 		this.terminalProcess.on("error", (error) => {
-			this.writeEmitter.fire(error.message);
+			this.writeEmitter.fire(error.message + "\n");
 
 			if (this.currentSubtaskIndex) {
 				const [, reject] =
