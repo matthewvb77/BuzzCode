@@ -150,6 +150,8 @@ export class TerminalObject {
 
 			this.terminalProcess.stdin?.write(`${command}\r`);
 			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r`);
+
+			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
 	}
 
