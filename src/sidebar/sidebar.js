@@ -341,9 +341,11 @@
 					// console.log("task is in progress, show cancel button");
 					taskCancelButton.classList.add("show-component");
 				}
-				if (message.state.taskInProgress || message.state.subtasks.length > 0) {
-					// console.log("showing progress container");
-					progressContainer.classList.add("show-component");
+				if (message.state.taskInProgress && message.state.subtasks) {
+					if (message.state.subtasks.length > 0) {
+						// console.log("showing progress container");
+						progressContainer.classList.add("show-component");
+					}
 				}
 
 				if (
