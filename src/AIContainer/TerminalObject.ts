@@ -45,7 +45,9 @@ export class TerminalObject {
 		this.terminalPty = {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
-				this.writeEmitter.fire("Testwise: TASK STARTED\n");
+				this.writeEmitter.fire(
+					"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
+				);
 			},
 			close: () => {
 				this.writeEmitter.fire("Testwise: TASK STOPPED\n");
@@ -59,23 +61,17 @@ export class TerminalObject {
 
 				if (data === "\r") {
 					line = "";
-				}
-
-				// a backspace
-				if (data === "\x7f") {
+				} else if (data === "\x7f") {
 					if (line.length === 0) {
 						return;
 					}
 					line = line.slice(0, -1);
 					this.writeEmitter.fire("\x1b[D"); // move cursor left
 					this.writeEmitter.fire("\x1b[P"); // Delete character
-				}
-
-				if (data !== "\r") {
+				} else {
 					line += data;
 				}
 
-				this.writeEmitter.fire(data);
 				this.terminalProcess.stdin?.write(data);
 			},
 		};
@@ -99,8 +95,6 @@ export class TerminalObject {
 						"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 
 					if (line.includes(endOfCommandDelimiter)) {
-						line = line.replace(endOfCommandDelimiter, "");
-
 						const result = {
 							error: "",
 							stdout: lines.slice(0, index).join("\n"), // Exclude the current line with the delimiter
@@ -120,7 +114,10 @@ export class TerminalObject {
 
 				// Always display the line, even if it contains the delimiter
 				if (line) {
-					this.writeEmitter.fire(line + "\n");
+					this.writeEmitter.fire(line);
+					if (index > 0) {
+						this.writeEmitter.fire("\n");
+					}
 				}
 			});
 		});
