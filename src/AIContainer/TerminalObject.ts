@@ -72,7 +72,7 @@ export class TerminalObject {
 			this.writeEmitter.fire(data);
 			const endOfCommandDelimiter =
 				"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
-			if (!this.currentSubtaskIndex) {
+			if (this.currentSubtaskIndex === null) {
 				throw new Error("No end of command delimiter.");
 			}
 
