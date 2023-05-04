@@ -60,6 +60,7 @@ export class TerminalObject {
 				}
 
 				if (data === "\r") {
+					line = "";
 				} else if (data === "\x7f") {
 					if (line.length === 0) {
 						return;
@@ -85,7 +86,7 @@ export class TerminalObject {
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		this.terminalProcess.stdout?.on("data", (data) => {
-			const dataString = data.toString();
+			const dataString = data.toString(); // TODO: This doesn't work for control characters
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
