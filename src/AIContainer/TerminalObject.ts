@@ -145,11 +145,11 @@ export class TerminalObject {
 					return;
 				}
 			}
-
-			this.endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
+			this.currentSubtaskIndex = subtaskIndex;
+			const endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
 
 			this.terminalProcess.stdin?.write(`${command}\r`);
-			this.terminalProcess.stdin?.write(`echo ${this.endOfCommandDelimiter}\r`);
+			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r`);
 		});
 	}
 
