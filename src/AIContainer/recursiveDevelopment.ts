@@ -31,7 +31,13 @@ export async function recursiveDevelopment(
 		if (terminalObj) {
 			terminalObj.dispose();
 		}
-		terminalObj = new TerminalObject(signal);
+		try {
+			terminalObj = new TerminalObject(signal);
+		} catch (error) {
+			vscode.window.showErrorMessage((error as Error).message);
+			resolve("Error");
+			return;
+		}
 
 		const result = await recursiveDevelopmentHelper(
 			taskDescription,
@@ -205,6 +211,13 @@ async function recursiveDevelopmentHelper(
 				}
 			} catch (error) {
 				// If an error occurs, ask chatGPT for new subtasks
+				vscode.window.showErrorMessage(
+					// TODO: remove this debugging message
+					"An error occured while executing subtask " +
+						subtask.index +
+						". Error: " +
+						error
+				);
 
 				onSubtaskError(subtask.index);
 
