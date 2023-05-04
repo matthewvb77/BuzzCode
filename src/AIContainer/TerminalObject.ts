@@ -60,7 +60,6 @@ export class TerminalObject {
 				}
 
 				if (data === "\r") {
-					line = "";
 				} else if (data === "\x7f") {
 					if (line.length === 0) {
 						return;
@@ -87,77 +86,58 @@ export class TerminalObject {
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		this.terminalProcess.stdout?.on("data", (data) => {
 			const dataString = data.toString();
-			const lines = dataString.split("\n");
 
-			lines.forEach((line: string, index: number) => {
-				if (this.currentSubtaskIndex !== null) {
-					const endOfCommandDelimiter =
-						"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
+			if (this.currentSubtaskIndex !== null) {
+				const endOfCommandDelimiter =
+					"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 
-					if (line.includes(endOfCommandDelimiter)) {
-						const result = {
-							error: "",
-							stdout: lines.slice(0, index).join("\n"), // Exclude the current line with the delimiter
-							stderr: "",
-						};
+				if (dataString.includes(endOfCommandDelimiter)) {
+					const result = {
+						error: "",
+						stdout: dataString,
+						stderr: "",
+					};
 
-						const [resolve] =
-							this.promiseHandlers.get(this.currentSubtaskIndex) || [];
-						if (resolve) {
-							resolve(result);
-							this.promiseHandlers.delete(this.currentSubtaskIndex);
-						}
-
-						this.currentSubtaskIndex = null;
+					const [resolve] =
+						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+					if (resolve) {
+						resolve(result);
+						this.promiseHandlers.delete(this.currentSubtaskIndex);
 					}
-				}
 
-				// Always display the line, even if it contains the delimiter
-				if (line) {
-					this.writeEmitter.fire(line);
-					if (index > 0) {
-						this.writeEmitter.fire("\n");
-					}
+					this.currentSubtaskIndex = null;
 				}
-			});
+			}
+
+			this.writeEmitter.fire(dataString);
 		});
 
 		this.terminalProcess.stderr?.on("data", (data) => {
 			const dataString = data.toString();
-			const lines = dataString.split("\n");
 
-			lines.forEach((line: string, index: number) => {
-				if (this.currentSubtaskIndex !== null) {
-					const endOfCommandDelimiter =
-						"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
+			if (this.currentSubtaskIndex !== null) {
+				const endOfCommandDelimiter =
+					"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 
-					if (line.includes(endOfCommandDelimiter)) {
-						line = line.replace(endOfCommandDelimiter, "");
+				if (dataString.includes(endOfCommandDelimiter)) {
+					const result = {
+						error: "",
+						stdout: dataString,
+						stderr: "",
+					};
 
-						const result = {
-							error: "",
-							stdout: lines.slice(0, index).join("\n"), // Exclude the current line with the delimiter
-							stderr: "",
-						};
-
-						const [resolve] =
-							this.promiseHandlers.get(this.currentSubtaskIndex) || [];
-						if (resolve) {
-							resolve(result);
-							this.promiseHandlers.delete(this.currentSubtaskIndex);
-						}
-
-						this.currentSubtaskIndex = null;
+					const [resolve] =
+						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+					if (resolve) {
+						resolve(result);
+						this.promiseHandlers.delete(this.currentSubtaskIndex);
 					}
-				}
 
-				// Always display the line, even if it contains the delimiter
-				if (line) {
-					console.log(line);
-					this.writeEmitter.fire("TEST ------------------- PLEASE OWRK\n");
-					this.writeEmitter.fire(line + "\n");
+					this.currentSubtaskIndex = null;
 				}
-			});
+			}
+
+			this.writeEmitter.fire(dataString);
 		});
 
 		this.terminalProcess.on("error", (error) => {
