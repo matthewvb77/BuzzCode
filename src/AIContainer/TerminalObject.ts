@@ -71,7 +71,7 @@ export class TerminalObject {
 		this.terminalProcess.stdout?.on("data", (data) => {
 			this.writeEmitter.fire(data);
 			const endOfCommandDelimiter =
-				"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex + "\n";
+				"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 			if (!this.currentSubtaskIndex) {
 				throw new Error("No end of command delimiter.");
 			}
