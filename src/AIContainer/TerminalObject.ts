@@ -41,7 +41,7 @@ export class TerminalObject {
 		});
 
 		this.writeEmitter = new vscode.EventEmitter<string>();
-
+		let line = "";
 		this.terminalPty = {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
@@ -54,6 +54,24 @@ export class TerminalObject {
 				if (this.terminalProcess === undefined) {
 					vscode.window.showErrorMessage("Terminal process is undefined.");
 					return "Error";
+				}
+
+				if (data === "\r") {
+					line = "";
+				}
+
+				// a backspace
+				if (data === "\x7f") {
+					if (line.length === 0) {
+						return;
+					}
+					line = line.substr(0, line.length - 1);
+					this.writeEmitter.fire("\x1b[D"); // move cursor left
+					this.writeEmitter.fire("\x1b[P"); // Delete character
+				}
+
+				if (data !== "\r") {
+					line += data;
 				}
 				this.terminalProcess.stdin?.write(data);
 			},
