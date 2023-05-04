@@ -49,6 +49,7 @@ export class TerminalObject {
 			},
 			close: () => {
 				this.writeEmitter.fire("Testwise: TASK STOPPED\n");
+				this.dispose();
 			},
 			handleInput: (data: string) => {
 				if (this.terminalProcess === undefined) {
@@ -126,18 +127,40 @@ export class TerminalObject {
 
 		this.terminalProcess.stderr?.on("data", (data) => {
 			const dataString = data.toString();
-			this.writeEmitter.fire(dataString + "\n");
+			const lines = dataString.split("\n");
 
-			if (this.currentSubtaskIndex) {
-				const [, reject] =
-					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
-				if (reject) {
-					reject(dataString);
-					this.promiseHandlers.delete(this.currentSubtaskIndex);
+			lines.forEach((line: string, index: number) => {
+				if (this.currentSubtaskIndex !== null) {
+					const endOfCommandDelimiter =
+						"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
+
+					if (line.includes(endOfCommandDelimiter)) {
+						line = line.replace(endOfCommandDelimiter, "");
+
+						const result = {
+							error: "",
+							stdout: lines.slice(0, index).join("\n"), // Exclude the current line with the delimiter
+							stderr: "",
+						};
+
+						const [resolve] =
+							this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+						if (resolve) {
+							resolve(result);
+							this.promiseHandlers.delete(this.currentSubtaskIndex);
+						}
+
+						this.currentSubtaskIndex = null;
+					}
 				}
-			} else {
-				throw new Error("Error occurred outside of a subtask.");
-			}
+
+				// Always display the line, even if it contains the delimiter
+				if (line) {
+					console.log(line);
+					this.writeEmitter.fire("TEST ------------------- PLEASE OWRK\n");
+					this.writeEmitter.fire(line + "\n");
+				}
+			});
 		});
 
 		this.terminalProcess.on("error", (error) => {
