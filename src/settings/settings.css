@@ -16,6 +16,7 @@ select:focus {
 	outline: none;
 }
 input[type="text"],
+input[type="password"],
 input[type="range"],
 select {
 	background-color: #3c3c3c;
