@@ -47,13 +47,14 @@ export class TerminalObject {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
 				this.writeEmitter.fire(
-					"------------------------Testwise: TASK STARTED------------------------\r\n"
+					"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
 				);
 			},
 			close: () => {
+				this.terminalProcess.kill();
 				this.readOnly = true;
 				this.writeEmitter.fire(
-					"\r\n------------------------Testwise: TASK STOPPED------------------------\r\n"
+					"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
 				);
 			},
 			handleInput: (data: string) => {
@@ -208,9 +209,9 @@ export class TerminalObject {
 			this.terminalProcess.stdin?.write(`${command}\n\r`);
 
 			if (shell === "bash") {
-				this.writeEmitter.fire(`echo ${endOfCommandDelimiter}\n\r`);
+				this.writeEmitter.fire(`${endOfCommandDelimiter}`);
 			}
-			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n\r`);
+			this.terminalProcess.stdin?.write(`${endOfCommandDelimiter}`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
