@@ -66,6 +66,7 @@ export class TerminalObject {
 					}
 					this.terminalProcess.stdin?.write(line + "\r\n");
 					line = "";
+					return;
 				} else if (data === "\x7f") {
 					if (line.length === 0) {
 						return;
