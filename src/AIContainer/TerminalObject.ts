@@ -60,6 +60,7 @@ export class TerminalObject {
 				}
 
 				if (data === "\r") {
+					this.terminalProcess.stdin?.write(line + "\r\n"); // TODO: just call executeCommand instead?
 					line = "";
 				} else if (data === "\x7f") {
 					if (line.length === 0) {
@@ -72,7 +73,7 @@ export class TerminalObject {
 					line += data;
 				}
 
-				this.terminalProcess.stdin?.write(data);
+				this.writeEmitter.fire(data);
 			},
 		};
 
@@ -86,7 +87,7 @@ export class TerminalObject {
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		this.terminalProcess.stdout?.on("data", (data) => {
-			const dataString = data.toString(); // TODO: This doesn't work for control characters
+			const dataString = data.toString();
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
@@ -182,8 +183,8 @@ export class TerminalObject {
 			this.currentSubtaskIndex = subtaskIndex;
 			const endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
 
-			this.terminalProcess.stdin?.write(`${command}\r`);
-			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r`);
+			this.terminalProcess.stdin?.write(`${command}\r\n`);
+			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r\n`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
