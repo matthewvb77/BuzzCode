@@ -60,7 +60,11 @@ export class TerminalObject {
 				}
 
 				if (data === "\r") {
-					this.terminalProcess.stdin?.write(line + "\r\n"); // TODO: just call executeCommand instead?
+					for (let i = 0; i < line.length; i++) {
+						this.writeEmitter.fire("\x1b[D"); // move cursor left
+						this.writeEmitter.fire("\x1b[P"); // Delete character
+					}
+					this.terminalProcess.stdin?.write(line + "\r\n");
 					line = "";
 				} else if (data === "\x7f") {
 					if (line.length === 0) {
