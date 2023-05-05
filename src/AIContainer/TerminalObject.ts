@@ -17,6 +17,7 @@ export class TerminalObject {
 	writeEmitter: vscode.EventEmitter<string>;
 	signal: AbortSignal;
 
+	readOnly: boolean = false;
 	currentSubtaskIndex: number | null = null;
 
 	promiseHandlers: Map<
@@ -50,11 +51,16 @@ export class TerminalObject {
 				);
 			},
 			close: () => {
+				this.readOnly = true;
 				this.writeEmitter.fire(
 					"\r\n------------------------Testwise: TASK STOPPED------------------------\r\n"
 				);
 			},
 			handleInput: (data: string) => {
+				if (this.readOnly) {
+					return;
+				}
+
 				if (this.terminalProcess === undefined) {
 					vscode.window.showErrorMessage("Terminal process is undefined.");
 					return "Error";
