@@ -136,13 +136,15 @@ export class TerminalObject {
 
 		this.terminalProcess.stderr?.on("data", (data) => {
 			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
-			const dataString = data.toString().replace(/\n/g, "\n\r");
+			const dataString: string = data.toString().replace(/\n/g, "\n\r");
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
 					"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
 
 				if (dataString.includes(endOfCommandDelimiter)) {
+					this.writeEmitter.fire(dataString);
+
 					const result = {
 						error: "",
 						stdout: dataString,
@@ -157,6 +159,7 @@ export class TerminalObject {
 					}
 
 					this.currentSubtaskIndex = null;
+					return;
 				}
 			}
 			this.writeEmitter.fire(dataString);
