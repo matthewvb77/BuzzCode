@@ -48,6 +48,7 @@ export async function recursiveDevelopment(
 			onSubtaskError
 		);
 
+		terminalObj.terminalPty.close();
 		// terminalObj.dispose();  dont thing this is necessary
 
 		resolve(result);
