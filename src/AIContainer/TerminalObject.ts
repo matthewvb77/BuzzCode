@@ -46,7 +46,7 @@ export class TerminalObject {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
 				this.writeEmitter.fire(
-					"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
+					"------------------------Testwise: TASK STARTED------------------------\r\n"
 				);
 			},
 			close: () => {
@@ -60,9 +60,13 @@ export class TerminalObject {
 				}
 
 				if (data === "\r") {
-					for (let i = 0; i < line.length; i++) {
-						this.writeEmitter.fire("\x1b[D"); // move cursor left
-						this.writeEmitter.fire("\x1b[P"); // Delete character
+					if (shell === "powershell.exe") {
+						for (let i = 0; i < line.length; i++) {
+							this.writeEmitter.fire("\x1b[D"); // move cursor left
+							this.writeEmitter.fire("\x1b[P"); // Delete character
+						}
+					} else {
+						this.writeEmitter.fire("\r\n");
 					}
 					this.terminalProcess.stdin?.write(line + "\r\n");
 					line = "";
@@ -116,7 +120,6 @@ export class TerminalObject {
 					this.currentSubtaskIndex = null;
 				}
 			}
-
 			this.writeEmitter.fire(dataString);
 		});
 
@@ -145,7 +148,6 @@ export class TerminalObject {
 					this.currentSubtaskIndex = null;
 				}
 			}
-
 			this.writeEmitter.fire(dataString);
 		});
 
@@ -190,8 +192,15 @@ export class TerminalObject {
 			this.currentSubtaskIndex = subtaskIndex;
 			const endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
 
-			this.terminalProcess.stdin?.write(`${command}\r\n`);
-			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\r\n`);
+			if (shell === "bash") {
+				this.writeEmitter.fire(`${command}\n\r`);
+			}
+			this.terminalProcess.stdin?.write(`${command}\n\r`);
+
+			if (shell === "bash") {
+				this.writeEmitter.fire(`echo ${endOfCommandDelimiter}\n\r`);
+			}
+			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n\r`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
