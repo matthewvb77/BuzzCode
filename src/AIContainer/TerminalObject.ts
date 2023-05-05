@@ -121,7 +121,8 @@ export class TerminalObject {
 		});
 
 		this.terminalProcess.stderr?.on("data", (data) => {
-			const dataString = data.toString();
+			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
+			const dataString = data.toString().replace(/\n/g, "\n\r");
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
