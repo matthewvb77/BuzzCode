@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import { shell, shellArgs } from "../settings/configuration";
+import { shell } from "../settings/configuration";
 
 export type CommandResult = {
 	error: string;
@@ -36,7 +36,7 @@ export class TerminalObject {
 			throw new Error("No workspace folder open.");
 		}
 
-		this.terminalProcess = cp.spawn(shell, shellArgs, {
+		this.terminalProcess = cp.spawn(shell, [], {
 			cwd: workingDirectory,
 			env: process.env,
 		});
@@ -47,11 +47,8 @@ export class TerminalObject {
 			onDidWrite: this.writeEmitter.event,
 			open: () => {
 				this.writeEmitter.fire(
-					"------------------------Testwise: TASK STARTED------------------------\r\n"
+					"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
 				);
-				if (shell === "powershell.exe") {
-					this.writeEmitter.fire("\r\n");
-				}
 			},
 			close: () => {
 				this.terminalProcess.kill();
@@ -225,13 +222,10 @@ export class TerminalObject {
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
 			if (shell === "bash") {
-				this.writeEmitter.fire(`${command}\n\r`);
+				this.writeEmitter.fire(`bash$ ${command}\n\r`);
 			}
 			this.terminalProcess.stdin?.write(`${command}\n`);
 
-			if (shell === "bash") {
-				this.writeEmitter.fire(`echo ${endOfCommandDelimiter}\n\r`);
-			}
 			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);

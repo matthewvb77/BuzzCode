@@ -7,6 +7,3 @@ export const temperatureStep = 0.1;
 export const temperaturePrecision = 1;
 
 export const shell = process.platform === "win32" ? "powershell.exe" : "bash";
-export const shellArgs =
-	// process.platform === "win32" ? ["-NoExit", "-Command", "-"] : ["-i"];
-	process.platform === "win32" ? [] : ["-i"];
