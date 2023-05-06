@@ -225,7 +225,7 @@ export class TerminalObject {
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
 			if (shell === "bash") {
-				this.writeEmitter.fire(`${command}\n`);
+				this.writeEmitter.fire(`${command}\n\r`);
 			}
 			this.terminalProcess.stdin?.write(`${command}\n`);
 
