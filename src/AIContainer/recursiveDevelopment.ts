@@ -156,8 +156,6 @@ async function recursiveDevelopmentHelper(
 							return;
 						} else if (commandResult.error) {
 							throw commandResult.error;
-						} else if (commandResult.stderr) {
-							throw commandResult.stderr;
 						}
 						break;
 
@@ -173,8 +171,6 @@ async function recursiveDevelopmentHelper(
 							return;
 						} else if (fileCreationResult.error) {
 							throw fileCreationResult.error;
-						} else if (fileCreationResult.stderr) {
-							throw fileCreationResult.stderr;
 						}
 						break;
 
