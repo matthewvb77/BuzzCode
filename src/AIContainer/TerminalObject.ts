@@ -229,6 +229,9 @@ export class TerminalObject {
 			}
 			this.terminalProcess.stdin?.write(`${command}\n`);
 
+			if (shell === "bash") {
+				this.writeEmitter.fire(`echo ${endOfCommandDelimiter}\n\r`);
+			}
 			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
