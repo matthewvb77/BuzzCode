@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import * as merge2 from "merge2";
 import { shell, shellArgs } from "../settings/configuration";
 
 export type CommandResult = {
@@ -17,7 +16,6 @@ export class TerminalObject {
 	terminal: vscode.Terminal;
 	writeEmitter: vscode.EventEmitter<string>;
 	signal: AbortSignal;
-	outputStream: merge2.Merge2Stream | null = null;
 
 	readOnly: boolean = false;
 	currentSubtaskIndex: number | null = null;
@@ -59,7 +57,7 @@ export class TerminalObject {
 				this.terminalProcess.kill();
 				this.readOnly = true;
 				this.writeEmitter.fire(
-					"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
+					"\r\n------------------------Testwise: TASK STOPPED------------------------"
 				);
 			},
 			handleInput: (data: string) => {
@@ -81,7 +79,7 @@ export class TerminalObject {
 					} else {
 						this.writeEmitter.fire("\r\n");
 					}
-					this.terminalProcess.stdin?.write(line + "\r\n");
+					this.terminalProcess.stdin?.write(line + "\n");
 					line = "";
 					return;
 				} else if (data === "\x7f") {
@@ -113,23 +111,56 @@ export class TerminalObject {
 		) {
 			throw new Error("Terminal process stdout or stderr is null.");
 		}
-		this.outputStream = merge2([
-			this.terminalProcess.stdout,
-			this.terminalProcess.stderr,
-		]);
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 		// Merge stdout and stderr into a single stream
 
-		this.outputStream.on("data", (data) => {
+		this.terminalProcess.stdout?.on("data", (data) => {
 			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
 			const dataString: string = data.toString().replace(/\n/g, "\n\r");
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
-					"END_OF_COMMAND_SUBTASK_" + this.currentSubtaskIndex;
+					"----------END_OF_COMMAND_SUBTASK_" +
+					this.currentSubtaskIndex +
+					"----------";
 
-				if (dataString.includes(endOfCommandDelimiter)) {
+				if (dataString.startsWith(endOfCommandDelimiter)) {
+					//TODO: Is this condition enough? Could the delimiter occur anywhere else?
+					this.writeEmitter.fire(dataString);
+
+					const result = {
+						error: "",
+						stdout: dataString,
+						stderr: "",
+					};
+
+					const [resolve] =
+						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+					if (resolve) {
+						resolve(result);
+						this.promiseHandlers.delete(this.currentSubtaskIndex);
+					}
+
+					this.currentSubtaskIndex = null;
+					return;
+				}
+			}
+			this.writeEmitter.fire(dataString);
+		});
+
+		this.terminalProcess.stderr?.on("data", (data) => {
+			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
+			const dataString: string = data.toString().replace(/\n/g, "\n\r");
+
+			if (this.currentSubtaskIndex !== null) {
+				const endOfCommandDelimiter =
+					"----------END_OF_COMMAND_SUBTASK_" +
+					this.currentSubtaskIndex +
+					"----------";
+
+				if (dataString.startsWith(endOfCommandDelimiter)) {
+					//TODO: Is this condition enough? Could the delimiter occur anywhere else?
 					this.writeEmitter.fire(dataString);
 
 					const result = {
@@ -191,16 +222,15 @@ export class TerminalObject {
 				}
 			}
 			this.currentSubtaskIndex = subtaskIndex;
-			const endOfCommandDelimiter = "END_OF_COMMAND_SUBTASK_" + subtaskIndex;
+			const endOfCommandDelimiter =
+				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
 			if (shell === "bash") {
 				this.writeEmitter.fire(`${command}\n\r`);
 			}
-			this.terminalProcess.stdin?.write(`${command}\n\r`);
+			this.terminalProcess.stdin?.write(`${command}\n`);
 
-			this.terminalProcess.stdin?.write(
-				`echo -----------------------${endOfCommandDelimiter}-----------------------\n\r`
-			);
+			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n`);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
