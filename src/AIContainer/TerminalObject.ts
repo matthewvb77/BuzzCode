@@ -57,7 +57,7 @@ export class TerminalObject {
 				this.terminalProcess.kill();
 				this.readOnly = true;
 				this.writeEmitter.fire(
-					"\r\n------------------------Testwise: TASK STOPPED------------------------"
+					"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
 				);
 			},
 			handleInput: (data: string) => {
