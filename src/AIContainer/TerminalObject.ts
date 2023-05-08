@@ -118,7 +118,7 @@ export class TerminalObject {
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 
-		this.outputStream.on("data", (data) => {
+		this.terminalProcess.stdout.on("data", (data) => {
 			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
 			const dataString: string = data.toString().replace(/\n/g, "\n\r");
 
