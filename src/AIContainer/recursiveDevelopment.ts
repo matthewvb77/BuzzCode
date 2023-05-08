@@ -121,7 +121,7 @@ async function recursiveDevelopmentHelper(
 				break;
 
 			case "regenerate":
-				return await recursiveDevelopmentHelper(
+				const result = await recursiveDevelopmentHelper(
 					input,
 					terminalObj,
 					signal,
@@ -129,6 +129,11 @@ async function recursiveDevelopmentHelper(
 					onSubtasksReady,
 					onSubtaskError
 				);
+
+				if (typeof result === "string") {
+					resolve(result);
+					return;
+				}
 
 			case "cancel":
 				resolve("Cancelled");
@@ -176,7 +181,7 @@ async function recursiveDevelopmentHelper(
 
 					case "recurse":
 						const { newPrompt } = parameters;
-						return await recursiveDevelopmentHelper(
+						const result = await recursiveDevelopmentHelper(
 							`Here is the original task: ` +
 								taskDescription +
 								`\n\nThis is a recursive call with the following prompt: ` +
@@ -188,10 +193,15 @@ async function recursiveDevelopmentHelper(
 							onSubtaskError
 						);
 
+						if (typeof result === "string") {
+							resolve(result);
+							return;
+						}
+
 					case "askUser":
 						const { question } = parameters;
 						const userResponse = await askUser(question);
-						return await recursiveDevelopmentHelper(
+						await recursiveDevelopmentHelper(
 							`Here is the original task: ` +
 								taskDescription +
 								`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
@@ -218,7 +228,7 @@ async function recursiveDevelopmentHelper(
 
 				onSubtaskError(subtask.index);
 
-				return await recursiveDevelopmentHelper(
+				const result = await recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
 						`\n\nThis is a recursive call because while this subtask was executed:` +
@@ -232,6 +242,11 @@ async function recursiveDevelopmentHelper(
 					onSubtasksReady,
 					onSubtaskError
 				);
+
+				if (typeof result === "string") {
+					resolve(result);
+					return;
+				}
 			}
 		}
 		resolve();

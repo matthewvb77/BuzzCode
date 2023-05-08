@@ -132,8 +132,9 @@ export class TerminalObject {
 					dataString.includes(endOfCommandDelimiter) &&
 					!dataString.includes("echo " + endOfCommandDelimiter)
 				) {
-					//TODO: Super inefficient. Fix this.
-					this.writeEmitter.fire(dataString);
+					//TODO: Super inefficient. Fix this condition.
+
+					this.writeEmitter.fire(dataString.replace(endOfCommandDelimiter, ""));
 
 					const result = {
 						error: "",
@@ -175,10 +176,12 @@ export class TerminalObject {
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
 		return new Promise(async (resolve, reject) => {
-			this.signal.onabort = () => {
-				resolve("Cancelled");
-				return;
-			};
+			// const onAbort = () => {
+			// 	this.signal.onabort = null;
+			// 	resolve("Cancelled");
+			// 	return;
+			// };
+			// this.signal.onabort = onAbort;
 
 			if (warn) {
 				const userResponse = await vscode.window.showWarningMessage(
