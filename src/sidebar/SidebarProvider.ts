@@ -39,13 +39,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			localResourceRoots: [this._extensionUri],
 		};
 
+		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
 		webviewView.onDidChangeVisibility(() => {
 			if (webviewView.visible) {
 				this._rebuildWebview();
 			}
 		});
-
-		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
 		this._state.taskInProgress = false;
 		var abortController: AbortController | undefined;
