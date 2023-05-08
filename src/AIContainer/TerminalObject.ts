@@ -128,8 +128,11 @@ export class TerminalObject {
 					this.currentSubtaskIndex +
 					"----------";
 
-				if (dataString.startsWith(endOfCommandDelimiter)) {
-					//TODO: Is this condition enough? Could the delimiter occur anywhere else?
+				if (
+					dataString.includes(endOfCommandDelimiter) &&
+					!dataString.includes("echo " + endOfCommandDelimiter)
+				) {
+					//TODO: Super inefficient. Fix this.
 					this.writeEmitter.fire(dataString);
 
 					const result = {
