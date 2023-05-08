@@ -197,9 +197,11 @@ export class TerminalObject {
 			if (shell === "bash") {
 				this.writeEmitter.fire(`bash$ ${command}\n\r`);
 			}
-			this.terminalProcess.stdin?.write(`${command}\n`);
 
-			this.terminalProcess.stdin?.write(`echo ${endOfCommandDelimiter}\n`);
+			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
+			this.terminalProcess.stdin?.write(
+				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
+			);
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 		});
