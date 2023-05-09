@@ -2,12 +2,8 @@ import * as vscode from "vscode";
 import { queryChatGPT } from "./queryChatGPT";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
-import { TerminalObject } from "./TerminalObject";
-export interface Subtask {
-	index: number;
-	type: string;
-	parameters: any;
-}
+import { TerminalObject } from "../objects/terminalObject";
+import { Subtask } from "../objects/subtask";
 
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
@@ -100,6 +96,9 @@ async function recursiveDevelopmentHelper(
 			let reasoning = responseString.replace(jsonRegex, "").trim();
 
 			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
+			subtasks.forEach((subtask) => {
+				subtask.state = "initial";
+			});
 			if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
 				throw Error("Invalid subtask indices.");
 			}

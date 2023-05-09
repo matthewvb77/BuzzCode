@@ -12,4 +12,6 @@ export const acceptableStates: Array<string> = [
 	"cancelled",
 	"error",
 	"blocked",
+	"started",
+	"waiting",
 ];

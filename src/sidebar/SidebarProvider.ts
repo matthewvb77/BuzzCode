@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
 import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
-import { Subtask } from "../AIContainer/recursiveDevelopment";
+import { Subtask, acceptableStates } from "../objects/subtask";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -12,7 +12,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		taskInProgress: Boolean,
 		taskState: String,
 		subtasks: Array<Subtask>,
-		subtaskStates: Array<String>,
 		previousSubtaskCount: Number,
 	};
 
@@ -81,7 +80,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					this._state.taskInProgress = true;
 					this._state.userInput = message.input;
 					this._state.subtasks = [];
-					this._state.subtaskStates = [];
 					this._state.previousSubtaskCount = 0;
 					this.updateTaskState("started");
 
@@ -126,7 +124,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					break;
 
 				default:
-					throw new Error("Invalid command");
+					throw new Error("Invalid command: " + message.command);
 			}
 		});
 	}
@@ -138,11 +136,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	private onStartSubtask(subtask: Subtask) {
 		if (
 			subtask.index > 0 &&
-			this._state.subtaskStates[subtask.index - 1] === "active"
+			this._state.subtasks[subtask.index - 1].state === "active"
 		) {
-			this._state.subtaskStates[subtask.index - 1] = "completed";
+			this._state.subtasks[subtask.index - 1].state = "completed";
 		}
-		this._state.subtaskStates[subtask.index] = "active";
+		this._state.subtasks[subtask.index].state = "active";
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "onStartSubtask",
@@ -158,16 +156,27 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		return new Promise((resolve) => {
 			const onAbort = () => {
 				signal.onabort = null;
-				resolve("cancel");
+				resolve("Cancelled");
 				return;
 			};
 			signal.onabort = onAbort;
 
 			this.updateTaskState("waiting");
+
+			// If subtasks were made by recurse, set recurse subtask to waiting
+			if (this._state.subtasks) {
+				if (
+					this._state.subtasks.length > 0 &&
+					this._state.subtasks[this._state.subtasks.length - 1].state ===
+						"active"
+				) {
+					this._state.subtasks[this._state.subtasks.length - 1].state =
+						"waiting";
+				}
+			}
 			// update subtask indices
 			subtasks.forEach((subtask) => {
 				subtask.index += this._state.previousSubtaskCount;
-				this._state.subtaskStates.push("initial");
 			});
 			// update subtasks state
 			this._state.subtasks.push(...subtasks);
@@ -181,15 +190,48 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 				this._view.webview.onDidReceiveMessage((message) => {
 					if (message.command === "userAction") {
-						signal.onabort = null;
-						if (message.action === "confirm") {
-							this._state.previousSubtaskCount = this._state.subtasks.length;
-						} else if (message.action === "regenerate") {
-							this._state.subtasks = this._state.subtasks.slice(
-								0,
-								this._state.previousSubtaskCount
-							);
+						switch (message.action) {
+							case "confirm":
+								this.updateTaskState("active");
+								// update state for recursion subtask
+								if (this._state.previousSubtaskCount !== 0) {
+									this._state.subtasks[
+										this._state.previousSubtaskCount - 1
+									].state = "completed";
+								}
+
+								this._state.previousSubtaskCount = this._state.subtasks.length;
+								break;
+
+							case "cancel":
+								this.updateTaskState("cancelled");
+								// update state for recursion subtask
+								if (this._state.previousSubtaskCount !== 0) {
+									this._state.subtasks[
+										this._state.previousSubtaskCount - 1
+									].state = "cancelled";
+								}
+								break;
+
+							case "regenerate":
+								this.updateTaskState("active");
+								// update state for recursion subtask
+								if (this._state.previousSubtaskCount !== 0) {
+									this._state.subtasks[
+										this._state.previousSubtaskCount - 1
+									].state = "active";
+								}
+
+								this._state.subtasks = this._state.subtasks.slice(
+									0,
+									this._state.previousSubtaskCount
+								);
+								break;
+
+							default:
+								throw new Error("Invalid action: " + message.action);
 						}
+
 						resolve(message.action);
 						return;
 					}
@@ -198,24 +240,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
-	private updateTaskState(state: String) {
-		this._state.taskState = state;
-		let newState = "";
-		if (state === "completed") {
-			newState = "completed";
-		} else if (state === "cancelled" || state === "error") {
-			newState = "cancelled";
+	/*
+		Acceptable states: completed, cancelled, error, waiting, active, started
+	*/
+	private updateTaskState(state: string) {
+		if (!acceptableStates.includes(state)) {
+			throw new Error("Invalid state: " + state);
 		}
-		if (newState) {
-			this._state.subtaskStates = this._state.subtaskStates.map(
-				(state: string) => {
-					if (state === "active") {
-						return newState;
-					} else {
-						return state;
-					}
+		this._state.taskState = state;
+
+		if (state === "completed" || state === "cancelled" || state === "error") {
+			this._state.subtasks = this._state.subtasks.map((subtask: Subtask) => {
+				if (subtask.state === "active") {
+					subtask.state = state;
 				}
-			);
+
+				return subtask;
+			});
 		}
 
 		if (this._view) {
@@ -227,7 +268,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	}
 
 	// private updtateSubtaskState(index: number, state: String) {
-	// 	this._state.subtaskStates[index] = state;
+	// 	this._state.subtasks[index].state = state;
 	// 	if (this._view) {
 	// 		this._view.webview.postMessage({
 	// 			command: "updateSubtaskState",
@@ -238,10 +279,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	// }
 
 	private onSubtaskError(subtaskIndex: number) {
-		this._state.subtaskStates[subtaskIndex] = "cancelled";
+		this._state.subtasks[subtaskIndex].state = "cancelled";
 
-		for (let i = subtaskIndex + 1; i < this._state.subtaskStates.length; i++) {
-			this._state.subtaskStates[i] = "blocked";
+		for (let i = subtaskIndex + 1; i < this._state.subtasks.length; i++) {
+			this._state.subtasks[i].state = "blocked";
 		}
 
 		if (this._view) {

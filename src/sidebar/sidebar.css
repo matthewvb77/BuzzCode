@@ -127,6 +127,12 @@ button:hover {
 	animation: none;
 }
 
+.loader.loader-error {
+	border-color: #e03838;
+	color: #e03838;
+	animation: none;
+}
+
 .loader.loader-waiting {
 	border-color: #c59920;
 	color: #c59920;
@@ -163,6 +169,11 @@ button:hover {
 }
 
 .loader.loader-cancelled::before {
+	font-family: "codicon";
+	content: "\ea76"; /* close */
+}
+
+.loader.loader-error::before {
 	font-family: "codicon";
 	content: "\ea76"; /* close */
 }
