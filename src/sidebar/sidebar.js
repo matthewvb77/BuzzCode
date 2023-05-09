@@ -163,11 +163,15 @@
 
 			case "active":
 				changeLoaderState(progressLoader, "active");
+				taskCancelButton.classList.add("show-component");
 				break;
 
 			case "waiting":
 				changeLoaderState(progressLoader, "waiting");
 				progressText.textContent = "Awaiting user response...";
+
+				// disable cancel button
+				taskCancelButton.classList.remove("show-component");
 				break;
 
 			case "completed":
