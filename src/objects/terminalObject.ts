@@ -176,13 +176,6 @@ export class TerminalObject {
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
 		return new Promise(async (resolve, reject) => {
-			// const onAbort = () => {
-			// 	this.signal.onabort = null;
-			// 	resolve("Cancelled");
-			// 	return;
-			// };
-			// this.signal.onabort = onAbort;
-
 			if (warn) {
 				const userResponse = await vscode.window.showWarningMessage(
 					`Are you sure you want to run the following command: ${command}?`,
