@@ -133,6 +133,8 @@ async function recursiveDevelopmentHelper(
 					resolve(result);
 					return;
 				}
+				resolve(result);
+				return;
 
 			case "cancel":
 				resolve("Cancelled");

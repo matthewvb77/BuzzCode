@@ -56,7 +56,7 @@ export class TerminalObject {
 				this.terminalProcess.kill();
 				this.readOnly = true;
 				this.writeEmitter.fire(
-					"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
+					"\r\n------------------------Testwise: TASK STOPPED------------------------"
 				);
 			},
 			handleInput: (data: string) => {
@@ -118,7 +118,7 @@ export class TerminalObject {
 
 		/* ---------------------------------- Event Handlers ---------------------------------- */
 
-		this.terminalProcess.stdout.on("data", (data) => {
+		this.outputStream.on("data", (data) => {
 			// Buffer.toString() does not handle control characters like \r. So we replace \n with \n\r
 			const dataString: string = data.toString().replace(/\n/g, "\n\r");
 
@@ -134,7 +134,7 @@ export class TerminalObject {
 				) {
 					//TODO: Super inefficient. Fix this condition.
 
-					this.writeEmitter.fire(dataString.replace(endOfCommandDelimiter, ""));
+					this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
 
 					const result = {
 						error: "",
@@ -152,7 +152,24 @@ export class TerminalObject {
 					this.currentSubtaskIndex = null;
 					return;
 				}
+
+				// check output for error
+				if (containsError(dataString)) {
+					const result = {
+						error: dataString,
+						stdout: "",
+						stderr: "",
+					};
+
+					const [resolve] =
+						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
+					if (resolve) {
+						resolve(result);
+						this.promiseHandlers.delete(this.currentSubtaskIndex);
+					}
+				}
 			}
+
 			this.writeEmitter.fire(dataString);
 		});
 
@@ -198,7 +215,7 @@ export class TerminalObject {
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
 			if (shell === "bash") {
-				this.writeEmitter.fire(`bash$ ${command}\n\r`);
+				this.writeEmitter.fire(`${command}\n\r`);
 			}
 
 			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
@@ -258,4 +275,23 @@ export class TerminalObject {
 		this.terminalProcess.kill();
 		this.terminal.dispose();
 	}
+}
+
+function containsError(message: string): boolean {
+	const errorMessages = [
+		"error",
+		"exception",
+		"failed",
+		"not found",
+		"unable to",
+		"invalid",
+	];
+
+	for (let i = 0; i < errorMessages.length; i++) {
+		if (message.toLowerCase().includes(errorMessages[i])) {
+			return true;
+		}
+	}
+
+	return false;
 }

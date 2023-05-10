@@ -4,6 +4,7 @@ export const initializePrompt = `Your environment is ${process.platform} and you
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. generateFile(fileName: string, fileContents: string)
 3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
+Note: Don't generate or use commands that bypass stdout and stderr. For example, read -p.
 
 Response format:
 {
