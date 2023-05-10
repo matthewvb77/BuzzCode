@@ -168,7 +168,7 @@ export class TerminalObject {
 					terminalProcess?.kill();
 					readOnly = true;
 					writeEmitter?.fire(
-						"\r\n------------------------Testwise: TASK STOPPED------------------------"
+						"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
 					);
 				},
 				handleInput: (data: string) => {
