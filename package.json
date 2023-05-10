@@ -71,6 +71,11 @@
 					"type": "number",
 					"default": 0.2,
 					"description": "Temperature value for the generated code"
+				},
+				"testwise.continuousMode": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to warn before executing terminal commands or generating files"
 				}
 			}
 		}

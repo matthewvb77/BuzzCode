@@ -24,12 +24,14 @@ export function activate(context: vscode.ExtensionContext) {
 			const apiKey = config.get<string>("apiKey");
 			const maxTokens = config.get<number>("maxTokens");
 			const temperature = config.get<number>("temperature");
+			const continuousMode = config.get<boolean>("continuousMode");
 			const model = config.get<string>("model");
 
 			if (
 				apiKey === undefined ||
 				maxTokens === undefined ||
 				temperature === undefined ||
+				continuousMode === undefined ||
 				model === undefined
 			) {
 				throw new Error(
@@ -81,6 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 				model,
 				maxTokens,
 				temperature,
+				continuousMode,
 				settingsPanel.webview.cspSource,
 				tooltipUri,
 				settingsScriptUri,
@@ -125,6 +128,13 @@ export function activate(context: vscode.ExtensionContext) {
 											.update(
 												"temperature",
 												message.temperature,
+												vscode.ConfigurationTarget.Global
+											),
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"continuousMode",
+												message.continuousMode,
 												vscode.ConfigurationTarget.Global
 											),
 									]);

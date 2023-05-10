@@ -99,7 +99,7 @@
 		const apiKey = apiKeyElement.value;
 
 		const modelElement = document.getElementById("model");
-		const model = modelElement ? modelElement.value : "";
+		const model = modelElement.value;
 
 		const maxTokensElement = document.getElementById("maxTokensValue");
 		const maxTokens = parseFloat(maxTokensElement.innerText);
@@ -107,10 +107,20 @@
 		const temperatureElement = document.getElementById("temperatureValue");
 		const temperature = parseFloat(temperatureElement.innerText);
 
+		const continuousModeElement = document.getElementById("continuousMode");
+		const continuousMode = continuousModeElement.value;
+
 		const apiKeyRegExpObj = new RegExp(apiKeyRegExp);
 		const error = apiKeyRegExpObj.test(apiKey) ? "" : "invalidApiKey";
 
-		const settings = { apiKey, model, maxTokens, temperature, error };
+		const settings = {
+			apiKey,
+			model,
+			maxTokens,
+			temperature,
+			continuousMode,
+			error,
+		};
 
 		vscode.postMessage({ command: "saveSettings", ...settings });
 	}

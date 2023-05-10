@@ -14,6 +14,7 @@ export function getSettingsHtml(
 	model: string,
 	maxTokens: number,
 	temperature: number,
+	continuousMode: boolean,
 	cspSource: string,
 	tooltipPNG: Uri,
 	scriptUri: Uri,
@@ -88,6 +89,14 @@ export function getSettingsHtml(
                         <input type="range" id="temperature" name="temperature" min="${temperatureMin}" max="${temperatureMax}" step="${temperatureStep}" value="${temperature}">
                         <span class="range-max">${temperatureMax}</span>
                     </div>
+                </div>
+                <br>
+
+                <div class="setting-container">
+                    <label class="switch">
+                        <input type="checkbox" id="continuousMode" name="continuousMode" value="${continuousMode}">
+                        <span class="slider round"></span>
+                    </label>
                 </div>
                 <br>
 
