@@ -11,11 +11,14 @@ export type CommandResult = {
 	stderr: string;
 };
 
+/*
+	THE "CREATE" STATIC ASYNCHRONOUS FACTORY METHOD MUST BE USED -- NOT THE CONSTRUCTOR.
+*/
 export class TerminalObject {
 	terminalProcess: cp.ChildProcess;
-	terminalPty: vscode.Pseudoterminal;
-	terminal: vscode.Terminal;
-	writeEmitter: vscode.EventEmitter<string>;
+	terminalPty!: vscode.Pseudoterminal;
+	terminal!: vscode.Terminal;
+	writeEmitter!: vscode.EventEmitter<string>;
 	signal: AbortSignal;
 
 	outputStream: merge2.Merge2Stream | null = null;
@@ -27,82 +30,20 @@ export class TerminalObject {
 		[(result: CommandResult | "Cancelled") => void, (reason?: any) => void]
 	> = new Map();
 
-	constructor(signal: AbortSignal) {
-		/* ---------------------------------- Constructing ---------------------------------- */
-		const workingDirectory = vscode.workspace.workspaceFolders
-			? vscode.workspace.workspaceFolders[0].uri.fsPath
-			: undefined;
-
-		if (!workingDirectory) {
-			vscode.window.showErrorMessage("No workspace folder open.");
-			throw new Error("No workspace folder open.");
-		}
-
-		this.terminalProcess = cp.spawn(shell, shellArgs, {
-			cwd: workingDirectory,
-			env: process.env,
-		});
-
-		this.writeEmitter = new vscode.EventEmitter<string>();
-		let line = "";
-		this.terminalPty = {
-			onDidWrite: this.writeEmitter.event,
-			open: () => {
-				this.writeEmitter.fire(
-					"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
-				);
-			},
-			close: () => {
-				this.terminalProcess.kill();
-				this.readOnly = true;
-				this.writeEmitter.fire(
-					"\r\n------------------------Testwise: TASK STOPPED------------------------"
-				);
-			},
-			handleInput: (data: string) => {
-				if (this.readOnly) {
-					return;
-				}
-
-				if (this.terminalProcess === undefined) {
-					vscode.window.showErrorMessage("Terminal process is undefined.");
-					return "Error";
-				}
-
-				if (data === "\r") {
-					if (shell === "powershell.exe") {
-						for (let i = 0; i < line.length; i++) {
-							this.writeEmitter.fire("\x1b[D"); // move cursor left
-							this.writeEmitter.fire("\x1b[P"); // Delete character
-						}
-					} else {
-						this.writeEmitter.fire("\r\n");
-					}
-					this.terminalProcess.stdin?.write(line + "\n");
-					line = "";
-					return;
-				} else if (data === "\x7f") {
-					if (line.length === 0) {
-						return;
-					}
-					line = line.slice(0, -1);
-					this.writeEmitter.fire("\x1b[D"); // move cursor left
-					this.writeEmitter.fire("\x1b[P"); // Delete character
-				} else {
-					line += data;
-				}
-
-				this.writeEmitter.fire(data);
-			},
-		};
-
-		this.terminal = vscode.window.createTerminal({
-			name: "Testwise",
-			pty: this.terminalPty,
-		});
-
-		this.terminal.show();
+	constructor(
+		terminalProcess: cp.ChildProcess,
+		terminalPty: vscode.Pseudoterminal,
+		terminal: vscode.Terminal,
+		writeEmitter: vscode.EventEmitter<string>,
+		signal: AbortSignal,
+		readOnly: boolean
+	) {
+		this.terminalProcess = terminalProcess;
+		this.terminalPty = terminalPty;
+		this.terminal = terminal;
+		this.writeEmitter = writeEmitter;
 		this.signal = signal;
+		this.readOnly = readOnly;
 
 		if (
 			this.terminalProcess.stdout === null ||
@@ -185,6 +126,111 @@ export class TerminalObject {
 				}
 			}
 		});
+	}
+
+	/*
+		Since the PseudoTerminal creation is asynchronous, this factory method is necessary
+	 */
+	static async create(signal: AbortSignal) {
+		var terminalProcess: cp.ChildProcess | undefined;
+		var terminalPty: vscode.Pseudoterminal | undefined;
+		var terminal: vscode.Terminal | undefined;
+		var writeEmitter: vscode.EventEmitter<string> | undefined;
+		var readOnly: boolean = false;
+
+		/* -----------------------ASYNC CREATION ----------------------*/
+		const workingDirectory = vscode.workspace.workspaceFolders
+			? vscode.workspace.workspaceFolders[0].uri.fsPath
+			: undefined;
+
+		if (!workingDirectory) {
+			vscode.window.showErrorMessage("No workspace folder open.");
+			throw new Error("No workspace folder open.");
+		}
+
+		terminalProcess = cp.spawn(shell, shellArgs, {
+			cwd: workingDirectory,
+			env: process.env,
+		});
+
+		var terminalReady = new Promise<void>((resolve) => {
+			writeEmitter = new vscode.EventEmitter<string>();
+			let line = "";
+			terminalPty = {
+				onDidWrite: writeEmitter.event,
+				open: () => {
+					writeEmitter?.fire(
+						"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
+					);
+					resolve();
+				},
+				close: () => {
+					terminalProcess?.kill();
+					readOnly = true;
+					writeEmitter?.fire(
+						"\r\n------------------------Testwise: TASK STOPPED------------------------"
+					);
+				},
+				handleInput: (data: string) => {
+					if (readOnly) {
+						return;
+					}
+
+					if (terminalProcess === undefined) {
+						vscode.window.showErrorMessage("Terminal process is undefined.");
+						return "Error";
+					}
+
+					if (data === "\r") {
+						if (shell === "powershell.exe") {
+							for (let i = 0; i < line.length; i++) {
+								writeEmitter?.fire("\x1b[D"); // move cursor left
+								writeEmitter?.fire("\x1b[P"); // Delete character
+							}
+						} else {
+							writeEmitter?.fire("\r\n");
+						}
+						terminalProcess.stdin?.write(line + "\n");
+						line = "";
+						return;
+					} else if (data === "\x7f") {
+						if (line.length === 0) {
+							return;
+						}
+						line = line.slice(0, -1);
+						writeEmitter?.fire("\x1b[D"); // move cursor left
+						writeEmitter?.fire("\x1b[P"); // Delete character
+					} else {
+						line += data;
+					}
+
+					writeEmitter?.fire(data);
+				},
+			};
+
+			terminal = vscode.window.createTerminal({
+				name: "Testwise",
+				pty: terminalPty,
+			});
+
+			terminal.show();
+		});
+
+		await terminalReady;
+
+		/* -----------------------CONSTRUCTOR ----------------------*/
+		if (!terminalProcess || !terminalPty || !terminal || !writeEmitter) {
+			throw new Error("Terminal creation failed. Critical components missing.");
+		}
+		const terminalObject = new TerminalObject(
+			terminalProcess,
+			terminalPty,
+			terminal,
+			writeEmitter,
+			signal,
+			readOnly
+		);
+		return terminalObject;
 	}
 
 	async executeCommand(

@@ -28,7 +28,7 @@ export async function recursiveDevelopment(
 			terminalObj.dispose();
 		}
 		try {
-			terminalObj = new TerminalObject(signal);
+			terminalObj = await TerminalObject.create(signal);
 		} catch (error) {
 			vscode.window.showErrorMessage((error as Error).message);
 			resolve("Error");
