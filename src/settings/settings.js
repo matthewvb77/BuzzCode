@@ -110,7 +110,7 @@
 		const temperature = parseFloat(temperatureElement.innerText);
 
 		const continuousModeElement = document.getElementById("continuousMode");
-		const continuousMode = continuousModeElement.value;
+		const continuousMode = continuousModeElement.checked;
 
 		const apiKeyRegExpObj = new RegExp(apiKeyRegExp);
 		const error = apiKeyRegExpObj.test(apiKey) ? "" : "invalidApiKey";

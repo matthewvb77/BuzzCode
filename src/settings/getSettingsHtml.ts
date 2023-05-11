@@ -94,9 +94,10 @@ export function getSettingsHtml(
 
                 <div class="setting-container">
                     <label class="switch">
-                        <input type="checkbox" id="continuousMode" name="continuousMode" value="${
-													continuousMode ? "on" : "off"
-												}">
+                        <input type="checkbox" id="continuousMode" name="continuousMode" ${
+													continuousMode ? "checked" : ""
+												}
+	}>
                         <span class="slider round"></span>
                     </label>
                 </div>
