@@ -238,6 +238,14 @@ export class TerminalObject {
 		subtaskIndex: number,
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
+		const continuousMode = vscode.workspace
+			.getConfiguration("testwise")
+			.get("continuousMode");
+
+		if (continuousMode) {
+			warn = false;
+		}
+
 		return new Promise(async (resolve, reject) => {
 			this.signal.onabort = () => {
 				resolve("Cancelled");
@@ -284,14 +292,20 @@ export class TerminalObject {
 				return;
 			};
 
-			const overwrite = await vscode.window.showWarningMessage(
-				`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
-				{ modal: true },
-				"Yes"
-			);
-			if (overwrite !== "Yes") {
-				resolve("Cancelled");
-				return;
+			const continuousMode = vscode.workspace
+				.getConfiguration("testwise")
+				.get("continuousMode");
+
+			if (!continuousMode) {
+				const overwrite = await vscode.window.showWarningMessage(
+					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
+					{ modal: true },
+					"Yes"
+				);
+				if (overwrite !== "Yes") {
+					resolve("Cancelled");
+					return;
+				}
 			}
 
 			// Create a temporary file with the contents
