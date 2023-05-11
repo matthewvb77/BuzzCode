@@ -44,8 +44,9 @@ export async function recursiveDevelopment(
 			onSubtaskError
 		);
 
+		// TODO: Replace this with a better solution to having everything print in chronological order
+		await new Promise((resolve) => setTimeout(resolve, 100));
 		terminalObj.terminalPty.close();
-		// terminalObj.dispose();  dont thing this is necessary
 
 		resolve(result);
 	});

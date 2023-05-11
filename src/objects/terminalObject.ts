@@ -269,7 +269,11 @@ export class TerminalObject {
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
 			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
+
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
+
+			// TODO: Find a proper way to make stderr and stdout output in chronological order
+			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			this.terminalProcess.stdin?.write(
 				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
