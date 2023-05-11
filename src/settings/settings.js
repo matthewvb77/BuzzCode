@@ -33,13 +33,15 @@
 		const temperatureSlider = document.getElementById("temperature");
 		const maxTokensValue = document.getElementById("maxTokensValue");
 		const temperatureValue = document.getElementById("temperatureValue");
+		const continuousMode = document.getElementById("continuousMode");
 
 		// update the slider values and handle editable value container
 		if (
 			maxTokensSlider &&
 			temperatureSlider &&
 			maxTokensValue &&
-			temperatureValue
+			temperatureValue &&
+			continuousMode
 		) {
 			maxTokensSlider.addEventListener("input", () =>
 				updateSliderValue("maxTokens", "maxTokensValue")
