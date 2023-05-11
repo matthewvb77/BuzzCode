@@ -9,3 +9,5 @@ export const temperaturePrecision = 1;
 export const shell = process.platform === "win32" ? "powershell.exe" : "bash";
 export const shellArgs =
 	process.platform === "win32" ? ["-NoLogo", "-NoExit"] : ["-i"];
+
+export const delay = 5; // 5 ms delay between each command so stderr and stdout output in chronological order

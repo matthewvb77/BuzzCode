@@ -4,6 +4,7 @@ import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
 import { TerminalObject } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
+import { delay } from "../settings/configuration";
 
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
@@ -45,7 +46,7 @@ export async function recursiveDevelopment(
 		);
 
 		// TODO: Replace this with a better solution to having everything print in chronological order
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		await new Promise((resolve) => setTimeout(resolve, delay));
 		terminalObj.terminalPty.close();
 
 		resolve(result);

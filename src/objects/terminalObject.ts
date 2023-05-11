@@ -3,7 +3,7 @@ import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import * as merge2 from "merge2";
-import { shell, shellArgs } from "../settings/configuration";
+import { shell, shellArgs, delay } from "../settings/configuration";
 
 export type CommandResult = {
 	error: string;
@@ -273,7 +273,7 @@ export class TerminalObject {
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 
 			// TODO: Find a proper way to make stderr and stdout output in chronological order
-			await new Promise((resolve) => setTimeout(resolve, 100));
+			await new Promise((resolve) => setTimeout(resolve, delay));
 
 			this.terminalProcess.stdin?.write(
 				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
