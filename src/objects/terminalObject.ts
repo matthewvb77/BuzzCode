@@ -268,16 +268,16 @@ export class TerminalObject {
 			const endOfCommandDelimiter =
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
-			if (shell === "bash") {
-				this.writeEmitter.fire(`${command}\n\r`);
-			}
-
 			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
+			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
+
 			this.terminalProcess.stdin?.write(
 				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
 			);
 
-			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
+			if (shell === "bash") {
+				this.writeEmitter.fire(`${command}\n\r`);
+			}
 		});
 	}
 
