@@ -96,18 +96,19 @@ export function getSettingsHtml(
                 <br>
 
                 <div class="setting-container">
-                    <div class="tooltip">
-                        <span class="tooltip tooltip-warning"></span>
-                        <span class="tooltiptext">Disables ALL WARNINGS. Use at own risk.</span>
+                    <div class="inline-align">
+                        <div class="tooltip">
+                            <span class="tooltip tooltip-warning"></span>
+                            <span class="tooltiptext">Disables ALL WARNINGS. Use at own risk.</span>
+                        </div>
+                        <label for="continuousMode">Continuous Mode:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="continuousMode" name="continuousMode" ${
+															continuousMode ? "checked" : ""
+														}>
+                            <span class="slider round"></span>
+                        </label>
                     </div>
-                    <label for="continuousMode">Continuous Mode:</label>
-                    <label class="switch">
-                        <input type="checkbox" id="continuousMode" name="continuousMode" ${
-													continuousMode ? "checked" : ""
-												}
-	}>
-                        <span class="slider round"></span>
-                    </label>
                 </div>
                 <br>
 

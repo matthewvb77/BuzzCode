@@ -82,15 +82,14 @@ input[type="range"]::-moz-range-track {
 	font-size: 14px;
 	padding: 6px;
 }
-
 .setting-container {
 	padding: 4px;
 }
-.setting {
+.inline-align {
 	flex: 1;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	flex-direction: row;
+	align-items: center;
 }
 .note {
 	font-size: 16px;
@@ -173,6 +172,7 @@ button:hover {
 	display: inline-block;
 	width: 60px;
 	height: 34px;
+	margin-left: 10px;
 }
 
 /* Hide default HTML checkbox */
@@ -191,8 +191,6 @@ button:hover {
 	right: 0;
 	bottom: 0;
 	background-color: #ccc;
-	-webkit-transition: 0.4s;
-	transition: 0.4s;
 }
 
 .slider:before {
@@ -208,11 +206,11 @@ button:hover {
 }
 
 input:checked + .slider {
-	background-color: #2196f3;
+	background-color: #569cd6;
 }
 
 input:focus + .slider {
-	box-shadow: 0 0 1px #2196f3;
+	box-shadow: 0 0 1px #569cd6;
 }
 
 input:checked + .slider:before {
