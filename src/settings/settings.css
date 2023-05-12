@@ -190,7 +190,7 @@ button:hover {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: #ccc;
+	background-color: #5a5a5a;
 }
 
 .slider:before {
@@ -200,7 +200,7 @@ button:hover {
 	width: 26px;
 	left: 4px;
 	bottom: 4px;
-	background-color: white;
+	background-color: #c8c8c8;
 	-webkit-transition: 0.4s;
 	transition: 0.4s;
 }
