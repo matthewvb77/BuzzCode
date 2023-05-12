@@ -82,6 +82,7 @@ input[type="range"]::-moz-range-track {
 	font-size: 14px;
 	padding: 6px;
 }
+
 .setting-container {
 	padding: 4px;
 }
@@ -101,6 +102,20 @@ input[type="range"]::-moz-range-track {
 	display: inline-block;
 	vertical-align: middle;
 	margin-right: 3px;
+}
+.tooltip-warning::before {
+	font-size: 24px;
+	font-weight: 700;
+	font-family: "codicon";
+	color: #e03838;
+	content: "\ea6c";
+}
+.tooltip-info::before {
+	font-size: 24px;
+	font-weight: 700;
+	font-family: "codicon";
+	color: #569cd6;
+	content: "\ea74";
 }
 .tooltip .tooltiptext {
 	visibility: hidden;
