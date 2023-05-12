@@ -47,19 +47,17 @@ export function activate(context: vscode.ExtensionContext) {
 					enableScripts: true,
 					retainContextWhenHidden: true,
 					localResourceRoots: [
-						vscode.Uri.joinPath(context.extensionUri, "resources"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "settings"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "sidebar"),
+						vscode.Uri.joinPath(
+							context.extensionUri,
+							"node_modules",
+							"vscode-codicons",
+							"dist"
+						),
 					],
 				}
 			);
-
-			const tooltipPath = vscode.Uri.joinPath(
-				context.extensionUri,
-				"resources",
-				"tooltip.png"
-			);
-			const tooltipUri = settingsPanel.webview.asWebviewUri(tooltipPath);
 
 			const settingsScriptPath = vscode.Uri.joinPath(
 				context.extensionUri,
@@ -70,13 +68,24 @@ export function activate(context: vscode.ExtensionContext) {
 			const settingsScriptUri =
 				settingsPanel.webview.asWebviewUri(settingsScriptPath);
 
-			const stylePath = vscode.Uri.joinPath(
-				context.extensionUri,
-				"src",
-				"settings",
-				"settings.css"
+			const styleUri = settingsPanel.webview.asWebviewUri(
+				vscode.Uri.joinPath(
+					context.extensionUri,
+					"src",
+					"settings",
+					"settings.css"
+				)
 			);
-			const styleUri = settingsPanel.webview.asWebviewUri(stylePath);
+
+			const codiconUri = settingsPanel.webview.asWebviewUri(
+				vscode.Uri.joinPath(
+					context.extensionUri,
+					"node_modules",
+					"vscode-codicons",
+					"dist",
+					"codicon.css"
+				)
+			);
 
 			settingsPanel.webview.html = getSettingsHtml(
 				apiKey,
@@ -85,9 +94,9 @@ export function activate(context: vscode.ExtensionContext) {
 				temperature,
 				continuousMode,
 				settingsPanel.webview.cspSource,
-				tooltipUri,
 				settingsScriptUri,
-				styleUri
+				styleUri,
+				codiconUri
 			);
 
 			settingsPanel.webview.onDidReceiveMessage(
