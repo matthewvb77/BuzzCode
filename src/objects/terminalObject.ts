@@ -3,7 +3,7 @@ import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import * as merge2 from "merge2";
-import { shell, shellArgs } from "../settings/configuration";
+import { shell, shellArgs, delay } from "../settings/configuration";
 
 export type CommandResult = {
 	error: string;
@@ -238,6 +238,14 @@ export class TerminalObject {
 		subtaskIndex: number,
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
+		const continuousMode = vscode.workspace
+			.getConfiguration("testwise")
+			.get("continuousMode");
+
+		if (continuousMode) {
+			warn = false;
+		}
+
 		return new Promise(async (resolve, reject) => {
 			this.signal.onabort = () => {
 				resolve("Cancelled");
@@ -260,16 +268,22 @@ export class TerminalObject {
 			const endOfCommandDelimiter =
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
+			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
+
+			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
+
+			// TODO: Find a proper way to make stderr and stdout output in chronological order
 			if (shell === "bash") {
-				this.writeEmitter.fire(`${command}\n\r`);
+				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
-			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
 			this.terminalProcess.stdin?.write(
 				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
 			);
 
-			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
+			if (shell === "bash") {
+				this.writeEmitter.fire(`${command}\n\r`);
+			}
 		});
 	}
 
@@ -284,14 +298,20 @@ export class TerminalObject {
 				return;
 			};
 
-			const overwrite = await vscode.window.showWarningMessage(
-				`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
-				{ modal: true },
-				"Yes"
-			);
-			if (overwrite !== "Yes") {
-				resolve("Cancelled");
-				return;
+			const continuousMode = vscode.workspace
+				.getConfiguration("testwise")
+				.get("continuousMode");
+
+			if (!continuousMode) {
+				const overwrite = await vscode.window.showWarningMessage(
+					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
+					{ modal: true },
+					"Yes"
+				);
+				if (overwrite !== "Yes") {
+					resolve("Cancelled");
+					return;
+				}
 			}
 
 			// Create a temporary file with the contents

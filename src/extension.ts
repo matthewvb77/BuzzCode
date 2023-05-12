@@ -24,12 +24,14 @@ export function activate(context: vscode.ExtensionContext) {
 			const apiKey = config.get<string>("apiKey");
 			const maxTokens = config.get<number>("maxTokens");
 			const temperature = config.get<number>("temperature");
+			const continuousMode = config.get<boolean>("continuousMode");
 			const model = config.get<string>("model");
 
 			if (
 				apiKey === undefined ||
 				maxTokens === undefined ||
 				temperature === undefined ||
+				continuousMode === undefined ||
 				model === undefined
 			) {
 				throw new Error(
@@ -45,19 +47,17 @@ export function activate(context: vscode.ExtensionContext) {
 					enableScripts: true,
 					retainContextWhenHidden: true,
 					localResourceRoots: [
-						vscode.Uri.joinPath(context.extensionUri, "resources"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "settings"),
 						vscode.Uri.joinPath(context.extensionUri, "src", "sidebar"),
+						vscode.Uri.joinPath(
+							context.extensionUri,
+							"node_modules",
+							"vscode-codicons",
+							"dist"
+						),
 					],
 				}
 			);
-
-			const tooltipPath = vscode.Uri.joinPath(
-				context.extensionUri,
-				"resources",
-				"tooltip.png"
-			);
-			const tooltipUri = settingsPanel.webview.asWebviewUri(tooltipPath);
 
 			const settingsScriptPath = vscode.Uri.joinPath(
 				context.extensionUri,
@@ -68,23 +68,35 @@ export function activate(context: vscode.ExtensionContext) {
 			const settingsScriptUri =
 				settingsPanel.webview.asWebviewUri(settingsScriptPath);
 
-			const stylePath = vscode.Uri.joinPath(
-				context.extensionUri,
-				"src",
-				"settings",
-				"settings.css"
+			const styleUri = settingsPanel.webview.asWebviewUri(
+				vscode.Uri.joinPath(
+					context.extensionUri,
+					"src",
+					"settings",
+					"settings.css"
+				)
 			);
-			const styleUri = settingsPanel.webview.asWebviewUri(stylePath);
+
+			const codiconUri = settingsPanel.webview.asWebviewUri(
+				vscode.Uri.joinPath(
+					context.extensionUri,
+					"node_modules",
+					"vscode-codicons",
+					"dist",
+					"codicon.css"
+				)
+			);
 
 			settingsPanel.webview.html = getSettingsHtml(
 				apiKey,
 				model,
 				maxTokens,
 				temperature,
+				continuousMode,
 				settingsPanel.webview.cspSource,
-				tooltipUri,
 				settingsScriptUri,
-				styleUri
+				styleUri,
+				codiconUri
 			);
 
 			settingsPanel.webview.onDidReceiveMessage(
@@ -125,6 +137,13 @@ export function activate(context: vscode.ExtensionContext) {
 											.update(
 												"temperature",
 												message.temperature,
+												vscode.ConfigurationTarget.Global
+											),
+										vscode.workspace
+											.getConfiguration("testwise")
+											.update(
+												"continuousMode",
+												message.continuousMode,
 												vscode.ConfigurationTarget.Global
 											),
 									]);

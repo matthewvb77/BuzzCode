@@ -4,6 +4,7 @@ import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
 import { TerminalObject } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
+import { delay, shell } from "../settings/configuration";
 
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
@@ -44,8 +45,11 @@ export async function recursiveDevelopment(
 			onSubtaskError
 		);
 
+		// TODO: Replace this with better fix to issue: stderr and stdout aren't flushed in perfect chronological order
+		if (shell === "bash") {
+			await new Promise((resolve) => setTimeout(resolve, delay));
+		}
 		terminalObj.terminalPty.close();
-		// terminalObj.dispose();  dont thing this is necessary
 
 		resolve(result);
 	});
