@@ -51,7 +51,9 @@ export function getSettingsHtml(
                     </div>
                     <label for="model">Model:</label>
                     <select id="model" name="model">
-                        <option value="gpt-4">GPT 4 (Smart)</option>
+                        <option value="gpt-4" ${
+													model === "gpt-4" ? "selected" : ""
+												}>GPT 4 (Smart)</option>
                         <option value="gpt-3.5-turbo" ${
 													model === "gpt-3.5-turbo" ? "selected" : ""
 												}>GPT 3.5 Turbo (Fast)</option>
@@ -96,7 +98,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="tooltip">
                         <span class="tooltip tooltip-warning"></span>
-                        <span class="tooltiptext">You can get your API key from <a href="https://platform.openai.com/account/api-keys" >OpenAI</a></span>
+                        <span class="tooltiptext">Disables ALL WARNINGS. Use at own risk.</span>
                     </div>
                     <label for="continuousMode">Continuous Mode:</label>
                     <label class="switch">
