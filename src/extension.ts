@@ -101,7 +101,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 			settingsPanel.webview.onDidReceiveMessage(
 				async (message) => {
-					console.log("Received message from webview:", message);
 					switch (message.command) {
 						case "saveSettings":
 							try {
@@ -153,9 +152,8 @@ export function activate(context: vscode.ExtensionContext) {
 								}
 							} catch (error) {
 								vscode.window.showErrorMessage(
-									"Error saving TestWise settings."
+									"Error saving TestWise settings: " + error
 								);
-								console.error("Error updating settings:", error);
 							}
 							break;
 

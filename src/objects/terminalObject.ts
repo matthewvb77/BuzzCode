@@ -118,10 +118,15 @@ export class TerminalObject {
 			this.writeEmitter.fire(error.message + "\n");
 
 			if (this.currentSubtaskIndex) {
-				const [, reject] =
+				const [resolve] =
 					this.promiseHandlers.get(this.currentSubtaskIndex) || [];
-				if (reject) {
-					reject(error);
+				if (resolve) {
+					const result = {
+						error: error.message,
+						stdout: "",
+						stderr: "",
+					};
+					resolve(result);
 					this.promiseHandlers.delete(this.currentSubtaskIndex);
 				}
 			}

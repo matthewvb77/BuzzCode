@@ -22,17 +22,14 @@ export async function queryChatGPT(
 		temperature === undefined ||
 		maxTokens === undefined
 	) {
-		vscode.window.showErrorMessage(
-			"Configuration value is undefined. This should not happen."
-		);
-		return "Error";
+		return "Error: Undefined configuration value";
 	}
 
 	if (apiKey === "") {
 		vscode.window.showErrorMessage(
 			"Please set the API key in TestWise settings."
 		);
-		return "Error";
+		return "Error: No API key";
 	}
 
 	/* -------------- Query OpenAI using Axios ------------------ */
@@ -59,14 +56,13 @@ export async function queryChatGPT(
 		if (response.status === 200 && response.data.choices[0].message) {
 			return response.data.choices[0].message.content;
 		} else {
-			console.log(`error: ${response.statusText}`);
-			return "Error";
+			return "Error: " + response.statusText;
 		}
 	} catch (error) {
 		if (axios.isCancel(error)) {
 			return "Cancelled";
 		} else {
-			return "Error";
+			return "Error: " + error;
 		}
 	}
 }

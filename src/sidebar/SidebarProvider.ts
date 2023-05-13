@@ -93,8 +93,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						if (result === "Cancelled") {
 							this.updateTaskState("cancelled");
-						} else if (result === "Error") {
+						} else if (result && result.startsWith("Error")) {
 							this.updateTaskState("error");
+							vscode.window.showErrorMessage(result);
 						} else {
 							this.updateTaskState("completed");
 						}
@@ -124,7 +125,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					break;
 
 				default:
-					throw new Error("Invalid command: " + message.command);
+					throw Error("Invalid command: " + message.command);
 			}
 		});
 	}
@@ -229,7 +230,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								break;
 
 							default:
-								throw new Error("Invalid action: " + message.action);
+								throw Error("Invalid action: " + message.action);
 						}
 
 						resolve(message.action);
@@ -245,7 +246,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	*/
 	private updateTaskState(state: string) {
 		if (!acceptableStates.includes(state)) {
-			throw new Error("Invalid state: " + state);
+			throw Error("Invalid state: " + state);
 		}
 		this._state.taskState = state;
 
