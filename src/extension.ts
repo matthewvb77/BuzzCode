@@ -158,6 +158,23 @@ export function activate(context: vscode.ExtensionContext) {
 								console.error("Error updating settings:", error);
 							}
 							break;
+
+						case "showWarning":
+							vscode.window
+								.showWarningMessage(message.text, { modal: true }, "Yes")
+								.then((selection) => {
+									settingsPanel?.webview.postMessage({
+										command: "warningResponse",
+										response: selection,
+									});
+								});
+							break;
+
+						default:
+							throw new Error(
+								"Unknown command received from settings page: " +
+									message.command
+							);
 					}
 				},
 				undefined,

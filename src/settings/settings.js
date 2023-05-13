@@ -56,6 +56,32 @@
 			temperatureValue.addEventListener("blur", (event) =>
 				handleEditableValueInput(event, "temperature", "temperatureValue")
 			);
+
+			continuousMode.addEventListener("change", (event) => {
+				if (event.target.checked) {
+					vscode.postMessage({
+						command: "showWarning",
+						text: "This will disable ALL WARNINGS. Use with caution. Are you sure you want to do this?",
+					});
+				}
+			});
+
+			window.addEventListener("message", (event) => {
+				const message = event.data;
+
+				switch (message.command) {
+					case "warningResponse":
+						if (message.response === "Yes") {
+							continuousMode.checked = true;
+						} else {
+							continuousMode.checked = false;
+						}
+						break;
+
+					default:
+						throw new Error(`Unknown message: ${message.command}`);
+				}
+			});
 		}
 
 		// Prevent non-numeric input
