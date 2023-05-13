@@ -31,8 +31,7 @@ export async function recursiveDevelopment(
 		try {
 			terminalObj = await TerminalObject.create(signal);
 		} catch (error) {
-			vscode.window.showErrorMessage((error as Error).message);
-			resolve("Error");
+			resolve("Error: " + error);
 			return;
 		}
 
@@ -69,8 +68,7 @@ async function recursiveDevelopmentHelper(
 	return new Promise(async (resolve, reject) => {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
-			vscode.window.showErrorMessage("Recursion limit reached.");
-			resolve("Error");
+			resolve("Error: Recursion limit reached");
 			return;
 		}
 
@@ -82,8 +80,8 @@ async function recursiveDevelopmentHelper(
 		if (responseString === "Cancelled") {
 			resolve("Cancelled");
 			return;
-		} else if (responseString === "Error") {
-			resolve("Error");
+		} else if (responseString.startsWith("Error")) {
+			resolve(responseString);
 			return;
 		}
 
@@ -110,10 +108,8 @@ async function recursiveDevelopmentHelper(
 				vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
 			}
 		} catch (error) {
-			vscode.window.showErrorMessage(
-				"OpenAI API returned invalid JSON. Error: " + error
-			);
-			resolve("Error");
+			// TODO: attempt to fix json automatically
+			resolve("Error: Invalid JSON. " + error);
 			return;
 		}
 
@@ -145,7 +141,7 @@ async function recursiveDevelopmentHelper(
 				return;
 
 			default:
-				resolve("Error");
+				resolve("Error: Invalid user action.");
 				return;
 		}
 
@@ -219,15 +215,15 @@ async function recursiveDevelopmentHelper(
 						);
 
 					default:
-						throw Error(`Unknown subtask type "${type}"`);
+						throw Error(`Error: Unknown subtask type "${type}"`);
 				}
 			} catch (error) {
 				// If an error occurs, ask chatGPT for new subtasks
 				vscode.window.showErrorMessage(
 					// TODO: remove this debugging message
-					"An error occured while executing subtask " +
+					"Error occured while executing subtask " +
 						subtask.index +
-						". Error: " +
+						".\n Error: " +
 						error
 				);
 
