@@ -6,18 +6,18 @@ export async function queryChatGPT(
 	signal: AbortSignal
 ): Promise<string> {
 	/* ----------------- Get Configuration --------------- */
-	const apiKey = vscode.workspace.getConfiguration("testwise").get("apiKey");
+	const openaiApiKey = vscode.workspace
+		.getConfiguration("testwise")
+		.get("openaiApiKey");
 
 	const model = vscode.workspace.getConfiguration("testwise").get("model");
 	const temperature = vscode.workspace
 		.getConfiguration("testwise")
 		.get("temperature");
-	const maxTokens = vscode.workspace
-		.getConfiguration("testwise")
-		.get("maxTokens");
+	const maxTokens = 0; // TODO: Calulate this based on the length of the prompt and the model
 
 	if (
-		apiKey === undefined ||
+		openaiApiKey === undefined ||
 		model === undefined ||
 		temperature === undefined ||
 		maxTokens === undefined
@@ -25,7 +25,7 @@ export async function queryChatGPT(
 		return "Error: Undefined configuration value";
 	}
 
-	if (apiKey === "") {
+	if (openaiApiKey === "") {
 		vscode.window.showErrorMessage(
 			"Please set the API key in TestWise settings."
 		);
@@ -45,7 +45,7 @@ export async function queryChatGPT(
 			{
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${apiKey}`,
+					Authorization: `Bearer ${openaiApiKey}`,
 				},
 				cancelToken: new axios.CancelToken((c) =>
 					signal.addEventListener("abort", () => c("Request cancelled"))

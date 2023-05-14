@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
-import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
+import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
 import { Subtask, acceptableStates } from "../objects/subtask";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -59,7 +59,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				vscode.window.showInformationMessage("No task entered");
 				return;
 			}
-			if (!hasValidAPIKey()) {
+			if (!hasValidOpenaiApiKey()) {
 				vscode.window.showErrorMessage(
 					"Please enter a valid API key in the TestWise settings."
 				);

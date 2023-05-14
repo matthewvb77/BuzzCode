@@ -1,5 +1,5 @@
 (function () {
-	const apiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
+	const openaiApiKeyRegExp = "^$|^sk-[a-zA-Z0-9]+$";
 
 	function updateSliderValue(sliderId, displayId) {
 		const slider = document.getElementById(sliderId);
@@ -29,30 +29,16 @@
 
 	function initializeEventListeners() {
 		const form = document.getElementById("settingsForm");
-		const maxTokensSlider = document.getElementById("maxTokens");
 		const temperatureSlider = document.getElementById("temperature");
-		const maxTokensValue = document.getElementById("maxTokensValue");
 		const temperatureValue = document.getElementById("temperatureValue");
 		const continuousMode = document.getElementById("continuousMode");
 
 		// update the slider values and handle editable value container
-		if (
-			maxTokensSlider &&
-			temperatureSlider &&
-			maxTokensValue &&
-			temperatureValue &&
-			continuousMode
-		) {
-			maxTokensSlider.addEventListener("input", () =>
-				updateSliderValue("maxTokens", "maxTokensValue")
-			);
+		if (temperatureSlider && temperatureValue && continuousMode) {
 			temperatureSlider.addEventListener("input", () =>
 				updateSliderValue("temperature", "temperatureValue")
 			);
 
-			maxTokensValue.addEventListener("blur", (event) =>
-				handleEditableValueInput(event, "maxTokens", "maxTokensValue")
-			);
 			temperatureValue.addEventListener("blur", (event) =>
 				handleEditableValueInput(event, "temperature", "temperatureValue")
 			);
@@ -85,9 +71,6 @@
 		}
 
 		// Prevent non-numeric input
-		maxTokensValue.addEventListener("keydown", (event) =>
-			handleNumericInput(event, "maxTokens", "maxTokensValue")
-		);
 		temperatureValue.addEventListener("keydown", (event) =>
 			handleNumericInput(event, "temperature", "temperatureValue")
 		);
@@ -119,18 +102,15 @@
 	function handleSubmit(event) {
 		event.preventDefault();
 
-		const apiKeyElement = document.getElementById("apiKey");
-		if (!apiKeyElement) {
-			return; // Bail if apiKeyElement is null
+		const openaiApiKeyElement = document.getElementById("openaiApiKey");
+		if (!openaiApiKeyElement) {
+			return; // Bail if openaiApiKeyElement is null
 		}
 
-		const apiKey = apiKeyElement.value;
+		const openaiApiKey = openaiApiKeyElement.value;
 
 		const modelElement = document.getElementById("model");
 		const model = modelElement.value;
-
-		const maxTokensElement = document.getElementById("maxTokensValue");
-		const maxTokens = parseFloat(maxTokensElement.innerText);
 
 		const temperatureElement = document.getElementById("temperatureValue");
 		const temperature = parseFloat(temperatureElement.innerText);
@@ -138,13 +118,14 @@
 		const continuousModeElement = document.getElementById("continuousMode");
 		const continuousMode = continuousModeElement.checked;
 
-		const apiKeyRegExpObj = new RegExp(apiKeyRegExp);
-		const error = apiKeyRegExpObj.test(apiKey) ? "" : "invalidApiKey";
+		const openaiApiKeyRegExpObj = new RegExp(openaiApiKeyRegExp);
+		const error = openaiApiKeyRegExpObj.test(openaiApiKey)
+			? ""
+			: "invalidOpenaiApiKey";
 
 		const settings = {
-			apiKey,
+			openaiApiKey,
 			model,
-			maxTokens,
 			temperature,
 			continuousMode,
 			error,

@@ -21,15 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			const config = vscode.workspace.getConfiguration("testwise");
-			const apiKey = config.get<string>("apiKey");
-			const maxTokens = config.get<number>("maxTokens");
+			const openaiApiKey = config.get<string>("openaiApiKey");
 			const temperature = config.get<number>("temperature");
 			const continuousMode = config.get<boolean>("continuousMode");
 			const model = config.get<string>("model");
 
 			if (
-				apiKey === undefined ||
-				maxTokens === undefined ||
+				openaiApiKey === undefined ||
 				temperature === undefined ||
 				continuousMode === undefined ||
 				model === undefined
@@ -88,9 +86,8 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 
 			settingsPanel.webview.html = getSettingsHtml(
-				apiKey,
+				openaiApiKey,
 				model,
-				maxTokens,
 				temperature,
 				continuousMode,
 				settingsPanel.webview.cspSource,
@@ -104,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
 					switch (message.command) {
 						case "saveSettings":
 							try {
-								if (message.error === "invalidApiKey") {
+								if (message.error === "invalidOpenaiApiKey") {
 									vscode.window.showErrorMessage(
 										"Invalid API key, please try again."
 									);
@@ -113,8 +110,8 @@ export function activate(context: vscode.ExtensionContext) {
 										vscode.workspace
 											.getConfiguration("testwise")
 											.update(
-												"apiKey",
-												message.apiKey,
+												"openaiApiKey",
+												message.openaiApiKey,
 												vscode.ConfigurationTarget.Global
 											),
 										vscode.workspace
@@ -122,13 +119,6 @@ export function activate(context: vscode.ExtensionContext) {
 											.update(
 												"model",
 												message.model,
-												vscode.ConfigurationTarget.Global
-											),
-										vscode.workspace
-											.getConfiguration("testwise")
-											.update(
-												"maxTokens",
-												message.maxTokens,
 												vscode.ConfigurationTarget.Global
 											),
 										vscode.workspace

@@ -1,7 +1,5 @@
 import { Uri } from "vscode";
 import {
-	maxTokensMax,
-	maxTokensMin,
 	temperatureMin,
 	temperatureMax,
 	temperaturePrecision,
@@ -10,9 +8,8 @@ import {
 import { getNonce } from "../helpers/getNonce";
 
 export function getSettingsHtml(
-	apiKey: string,
+	openaiApiKey: string,
 	model: string,
-	maxTokens: number,
 	temperature: number,
 	continuousMode: boolean,
 	cspSource: string,
@@ -39,8 +36,8 @@ export function getSettingsHtml(
                     <span class="tooltip tooltip-info"></span>
                     <span class="tooltiptext">You can get your API key from <a href="https://platform.openai.com/account/api-keys" >OpenAI</a></span>
                   </div>
-                  <label for="apiKey">API Key:</label>
-                  <input type="password" id="apiKey" name="apiKey" value="${apiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                  <label for="openaiApiKey">API Key:</label>
+                  <input type="password" id="openaiApiKey" name="openaiApiKey" value="${openaiApiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
 
@@ -58,21 +55,6 @@ export function getSettingsHtml(
 													model === "gpt-3.5-turbo" ? "selected" : ""
 												}>GPT 3.5 Turbo (Fast)</option>
                     </select>
-                </div>
-                <br>
-            
-                <div class="setting-container">
-                    <div class="value-container-parent">
-                        <div class="tooltip">
-                        <span class="tooltip-info"></span>
-                        <span class="tooltiptext">Maximum number of tokens in OpenAI query (includes prompt and response). One token is 3-4 characters</span>
-                        </div>
-                        <label class="value-container-child-title" for="maxTokens">Max Tokens:</label>
-                        <span class="value-container-child-value" id="maxTokensValue" contenteditable="true">${maxTokens}</span>
-                    </div>
-                    <span class="range-min">${maxTokensMin}</span>
-                    <input type="range" id="maxTokens" name="maxTokens" min="${maxTokensMin}" max="${maxTokensMax}" value="${maxTokens}">
-                    <span class="range-max">${maxTokensMax}</span>
                 </div>
                 <br>
 
