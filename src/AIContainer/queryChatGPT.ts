@@ -36,9 +36,9 @@ export async function queryChatGPT(
 	}
 
 	const charsPerToken = 4;
-	const marginOfError = 0.8;
+	const marginOfError = 0.2;
 	const maxTokens =
-		(contextLength - prompt.length / charsPerToken) * marginOfError;
+		(contextLength - prompt.length / charsPerToken) * (1 - marginOfError);
 
 	if (
 		openaiApiKey === undefined ||
