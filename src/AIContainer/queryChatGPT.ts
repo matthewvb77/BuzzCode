@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import axios from "axios";
+import {
+	contextLengthGpt3Point5,
+	contextLengthGpt4,
+} from "../settings/configuration";
 
 export async function queryChatGPT(
 	prompt: string,
@@ -14,7 +18,27 @@ export async function queryChatGPT(
 	const temperature = vscode.workspace
 		.getConfiguration("testwise")
 		.get("temperature");
-	const maxTokens = 0; // TODO: Calulate this based on the length of the prompt and the model
+
+	let contextLength: number | undefined;
+
+	// "The token count of your prompt plus max_tokens cannot exceed the model’s context length."
+	switch (model) {
+		case "gpt-3.5-turbo":
+			contextLength = contextLengthGpt3Point5;
+			break;
+
+		case "gpt-4":
+			contextLength = contextLengthGpt4;
+			break;
+
+		default:
+			throw Error("Invalid model: " + model);
+	}
+
+	const charsPerToken = 4;
+	const marginOfError = 0.8;
+	const maxTokens =
+		(contextLength - prompt.length / charsPerToken) * marginOfError;
 
 	if (
 		openaiApiKey === undefined ||
