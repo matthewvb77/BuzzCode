@@ -36,7 +36,7 @@ export function getSettingsHtml(
                     <span class="tooltip tooltip-info"></span>
                     <span class="tooltiptext">You can get your API key from <a href="https://platform.openai.com/account/api-keys" >OpenAI</a></span>
                   </div>
-                  <label for="openaiApiKey">API Key:</label>
+                  <label for="openaiApiKey">OpenAI API Key:</label>
                   <input type="password" id="openaiApiKey" name="openaiApiKey" value="${openaiApiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
                 <br>
