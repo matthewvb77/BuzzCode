@@ -268,17 +268,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	// private updtateSubtaskState(index: number, state: String) {
-	// 	this._state.subtasks[index].state = state;
-	// 	if (this._view) {
-	// 		this._view.webview.postMessage({
-	// 			command: "updateSubtaskState",
-	// 			index: index,
-	// 			subtaskState: state,
-	// 		});
-	// 	}
-	// }
-
 	private onSubtaskError(subtaskIndex: number) {
 		this._state.subtasks[subtaskIndex].state = "cancelled";
 
