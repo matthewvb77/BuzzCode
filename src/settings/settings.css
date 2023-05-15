@@ -128,7 +128,7 @@ input[type="range"]::-moz-range-track {
 	z-index: 1;
 	font-size: 14px;
 	border: 1px solid #569cd6;
-	bottom: 150%;
+	bottom: 135%;
 	margin-left: -30px;
 }
 
@@ -141,7 +141,7 @@ input[type="range"]::-moz-range-track {
 	position: absolute;
 	top: 100%; /* At the bottom of the tooltip */
 	left: 7%;
-	margin-left: -6px;
+	margin-left: -12px;
 	border-width: 8px;
 	border-style: solid;
 	border-color: #569cd6 transparent transparent transparent;

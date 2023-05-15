@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
-import { hasValidAPIKey } from "../helpers/hasValidAPIKey";
+import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
 import { Subtask, acceptableStates } from "../objects/subtask";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -59,7 +59,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				vscode.window.showInformationMessage("No task entered");
 				return;
 			}
-			if (!hasValidAPIKey()) {
+			if (!hasValidOpenaiApiKey()) {
 				vscode.window.showErrorMessage(
 					"Please enter a valid API key in the TestWise settings."
 				);
@@ -267,17 +267,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			});
 		}
 	}
-
-	// private updtateSubtaskState(index: number, state: String) {
-	// 	this._state.subtasks[index].state = state;
-	// 	if (this._view) {
-	// 		this._view.webview.postMessage({
-	// 			command: "updateSubtaskState",
-	// 			index: index,
-	// 			subtaskState: state,
-	// 		});
-	// 	}
-	// }
 
 	private onSubtaskError(subtaskIndex: number) {
 		this._state.subtasks[subtaskIndex].state = "cancelled";

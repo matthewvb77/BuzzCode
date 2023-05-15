@@ -239,8 +239,10 @@
 			// populate subtask details
 			switch (subtask.type) {
 				case "generateFile":
-					subtaskDetails.textContent = `Warning: this could overwrite an existing file.`;
-					subtaskDetails.classList.add("warning-text");
+					const fileContentsTextArea = document.createElement("textarea");
+					fileContentsTextArea.classList.add("subtask-details-textarea");
+					fileContentsTextArea.textContent = `${subtask.parameters.fileContents}`;
+					subtaskDetails.appendChild(fileContentsTextArea);
 					break;
 
 				case "executeTerminalCommand":

@@ -52,7 +52,7 @@
 		"configuration": {
 			"title": "TestWise",
 			"properties": {
-				"testwise.apiKey": {
+				"testwise.openaiApiKey": {
 					"type": "string",
 					"default": "",
 					"description": "GitHub Copilot API key"
@@ -61,11 +61,6 @@
 					"type": "string",
 					"default": "gpt-3.5-turbo",
 					"description": "Name of the OpenAI Model to use"
-				},
-				"testwise.maxTokens": {
-					"type": "number",
-					"default": 100,
-					"description": "Maximum number of tokens for the generated code"
 				},
 				"testwise.temperature": {
 					"type": "number",
