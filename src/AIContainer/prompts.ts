@@ -1,9 +1,10 @@
 import { shell } from "../settings/configuration";
 
-export const initializePrompt = `Your environment is ${process.platform} and you have access to these 4 functions: 
+export const initializePrompt = `Your environment is ${process.platform} and you have access to these 3 functions: 
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. makeFile(name: string, contents: string)
 3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
+Don't use commands that bypass stderr and stdout, like "read -p".
 
 Response format:
 {
