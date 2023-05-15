@@ -1,10 +1,9 @@
 import { shell } from "../settings/configuration";
 
-export const initializePrompt = `The user's environment is ${process.platform} and you have access to these 3 commands: 
+export const initializePrompt = `Your environment is ${process.platform} and you have access to these 3 functions: 
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. makeFile(name: string, contents: string)
-3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
-Don't execute or generate shell commands that bypass stderr and stdout, like "read -p".
+3. recurse(newPrompt: string) --> recurse is called automatically upon a failed test or error
 
 Response format:
 {
@@ -16,6 +15,14 @@ Response format:
 				"command": "echo hello world"
 			}
 		},
+		{
+			"index": 1,
+			"type": "makeFile",
+			"parameters": {
+				"name": "test.txt",
+				"contents": "hello world"
+			}
+		}
 	]
 }
 

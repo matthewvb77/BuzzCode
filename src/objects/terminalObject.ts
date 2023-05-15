@@ -273,7 +273,7 @@ export class TerminalObject {
 			const endOfCommandDelimiter =
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
-			const commandSeparator = shell === "powershell.exe" ? ";" : "&&";
+			const commandSeparator = shell === "powershell.exe" ? "&&" : ";";
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 
