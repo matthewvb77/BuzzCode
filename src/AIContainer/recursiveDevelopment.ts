@@ -165,11 +165,11 @@ async function recursiveDevelopmentHelper(
 						}
 						break;
 
-					case "generateFile":
-						const { fileName, fileContents } = parameters;
-						const fileCreationResult = await terminalObj.generateFile(
-							fileName,
-							fileContents,
+					case "makeFile":
+						const { name, contents } = parameters;
+						const fileCreationResult = await terminalObj.makeFile(
+							name,
+							contents,
 							subtask.index
 						);
 						if (typeof fileCreationResult === "string") {

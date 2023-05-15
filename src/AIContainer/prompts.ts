@@ -2,7 +2,7 @@ import { shell } from "../settings/configuration";
 
 export const initializePrompt = `Your environment is ${process.platform} and you have access to these 4 functions: 
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
-2. generateFile(fileName: string, fileContents: string)
+2. makeFile(name: string, contents: string)
 3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
 
 Response format:

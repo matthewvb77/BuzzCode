@@ -292,8 +292,8 @@ export class TerminalObject {
 		});
 	}
 
-	async generateFile(
-		fileName: string,
+	async makeFile(
+		name: string,
 		contents: string,
 		subtaskIndex: number
 	): Promise<CommandResult | "Cancelled"> {
@@ -309,7 +309,7 @@ export class TerminalObject {
 
 			if (!continuousMode) {
 				const overwrite = await vscode.window.showWarningMessage(
-					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
+					`If '${name}' already exists, this action will overwrite it. Do you want to proceed?`,
 					{ modal: true },
 					"Yes"
 				);
@@ -327,7 +327,7 @@ export class TerminalObject {
 			const copyCommand = process.platform === "win32" ? "copy /Y" : "cp -f";
 
 			const result = await this.executeCommand(
-				`${copyCommand} ${tempFile.name} ${fileName}`,
+				`${copyCommand} ${tempFile.name} ${name}`,
 				subtaskIndex,
 				false
 			);
