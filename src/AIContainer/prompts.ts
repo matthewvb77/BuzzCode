@@ -1,10 +1,10 @@
 import { shell } from "../settings/configuration";
 
-export const initializePrompt = `Your environment is ${process.platform} and you have access to these 3 functions: 
+export const initializePrompt = `The user's environment is ${process.platform} and you have access to these 3 commands: 
 1. executeTerminalCommand(command: string) --> shell type is ${shell}
 2. makeFile(name: string, contents: string)
 3. recurse(newPrompt: string) --> Upon any error or test failure, this will happen automatically.
-Don't use commands that bypass stderr and stdout, like "read -p".
+Don't execute or generate shell commands that bypass stderr and stdout, like "read -p".
 
 Response format:
 {
@@ -19,7 +19,7 @@ Response format:
 	]
 }
 
-Using the 3 functions and following the response format above, respond with a JSON subtask list that can be parsed by the javascript line JSON.parse(response) to solve the following prompt:
+Using the 3 functions and response format above, respond with a JSON subtask list that can be parsed by the javascript line "JSON.parse(response)" to solve the following prompt:
 `;
 
 /*
