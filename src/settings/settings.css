@@ -113,14 +113,14 @@ input[type="range"]::-moz-range-track {
 	font-weight: 700;
 	font-family: "codicon";
 	color: #e03838;
-	content: "\ea6c";
+	content: "\ea6c"; /* warning */
 }
 .tooltip-info::before {
 	font-size: 24px;
 	font-weight: 700;
 	font-family: "codicon";
 	color: #569cd6;
-	content: "\ea74";
+	content: "\ea74"; /* info */
 }
 .tooltip .tooltiptext {
 	visibility: hidden;

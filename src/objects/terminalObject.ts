@@ -243,7 +243,7 @@ export class TerminalObject {
 		subtaskIndex: number,
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
-		const continuousMode = vscode.workspace
+		const continuousMode: boolean | undefined = vscode.workspace
 			.getConfiguration("testwise")
 			.get("continuousMode");
 
