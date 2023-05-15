@@ -293,7 +293,7 @@ export class TerminalObject {
 		});
 	}
 
-	async makeFile(
+	async generateFile(
 		name: string,
 		contents: string,
 		subtaskIndex: number

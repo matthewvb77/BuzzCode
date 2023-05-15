@@ -168,9 +168,9 @@ async function recursiveDevelopmentHelper(
 						}
 						break;
 
-					case "makeFile":
+					case "generateFile":
 						const { name, contents } = parameters;
-						const fileCreationResult = await terminalObj.makeFile(
+						const fileCreationResult = await terminalObj.generateFile(
 							name,
 							contents,
 							subtask.index
