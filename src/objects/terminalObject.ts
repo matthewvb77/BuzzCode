@@ -356,6 +356,7 @@ function containsError(message: string): boolean {
 		"not found",
 		"unable to",
 		"invalid",
+		"fatal",
 	];
 
 	for (let i = 0; i < errorMessages.length; i++) {

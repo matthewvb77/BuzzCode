@@ -223,7 +223,7 @@ async function recursiveDevelopmentHelper(
 					// TODO: remove this debugging message
 					"Error occured while executing subtask " +
 						subtask.index +
-						".\n Error: " +
+						".\n" +
 						error
 				);
 
