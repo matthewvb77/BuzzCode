@@ -73,7 +73,7 @@ async function recursiveDevelopmentHelper(
 		}
 
 		var responseString: string = await queryChatGPT(
-			initializePrompt + input,
+			initializePrompt + input + "\n\nJSON subtask list:",
 			signal
 		);
 
@@ -95,7 +95,10 @@ async function recursiveDevelopmentHelper(
 				throw Error("No JSON found.");
 			}
 			let jsonString = jsonStringArray[0];
-			let reasoning = responseString.replace(jsonRegex, "").trim();
+			let reasoning = responseString
+				.replace(jsonRegex, "")
+				.trim()
+				.split("Response: ")[0];
 
 			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
 			subtasks.forEach((subtask) => {
@@ -109,7 +112,7 @@ async function recursiveDevelopmentHelper(
 			}
 		} catch (error) {
 			// TODO: attempt to fix json automatically
-			resolve("Error: Invalid JSON. " + error);
+			resolve("Error: Invalid JSON. \n" + error);
 			return;
 		}
 
