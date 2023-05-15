@@ -294,8 +294,8 @@ export class TerminalObject {
 	}
 
 	async generateFile(
-		name: string,
-		contents: string,
+		fileName: string,
+		fileContents: string,
 		subtaskIndex: number
 	): Promise<CommandResult | "Cancelled"> {
 		return new Promise(async (resolve, reject) => {
@@ -310,7 +310,7 @@ export class TerminalObject {
 
 			if (!continuousMode) {
 				const overwrite = await vscode.window.showWarningMessage(
-					`If '${name}' already exists, this action will overwrite it. Do you want to proceed?`,
+					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
 					{ modal: true },
 					"Yes"
 				);
@@ -322,13 +322,13 @@ export class TerminalObject {
 
 			// Create a temporary file with the contents
 			const tempFile = tmp.fileSync();
-			fs.writeFileSync(tempFile.name, contents);
+			fs.writeFileSync(tempFile.name, fileContents);
 
 			// Copy the temporary file to the destination file using the terminal
 			const copyCommand = process.platform === "win32" ? "copy /Y" : "cp -f";
 
 			const result = await this.executeCommand(
-				`${copyCommand} ${tempFile.name} ${name}`,
+				`${copyCommand} ${tempFile.name} ${fileName}`,
 				subtaskIndex,
 				false
 			);
