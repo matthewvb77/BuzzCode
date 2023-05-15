@@ -325,10 +325,16 @@ export class TerminalObject {
 			fs.writeFileSync(tempFile.name, fileContents);
 
 			// Copy the temporary file to the destination file using the terminal
-			const copyCommand = process.platform === "win32" ? "copy /Y" : "cp -f";
+			let copyCommand: string;
+
+			if (process.platform === "win32") {
+				copyCommand = `Copy-Item -Path ${tempFile.name} -Destination ${fileName} -Force`;
+			} else {
+				copyCommand = `cp -f ${tempFile.name} ${fileName}`;
+			}
 
 			const result = await this.executeCommand(
-				`${copyCommand} ${tempFile.name} ${fileName}`,
+				copyCommand,
 				subtaskIndex,
 				false
 			);
