@@ -74,8 +74,11 @@ export class TerminalObject {
 					!dataString.includes("echo " + endOfCommandDelimiter)
 				) {
 					//TODO: Super inefficient. Fix this condition.
-
-					this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
+					if (shell === "bash") {
+						this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
+					} else {
+						this.writeEmitter.fire(dataString);
+					}
 
 					const result = {
 						error: "",
@@ -273,8 +276,6 @@ export class TerminalObject {
 			const endOfCommandDelimiter =
 				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
 
-			const commandSeparator = shell === "powershell.exe" ? "&&" : ";";
-
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 
 			// TODO: Find a proper way to make stderr and stdout output in chronological order
@@ -283,7 +284,7 @@ export class TerminalObject {
 			}
 
 			this.terminalProcess.stdin?.write(
-				`${command} ${commandSeparator} echo ${endOfCommandDelimiter}\n`
+				`${command} ; echo ${endOfCommandDelimiter}\n`
 			);
 
 			if (shell === "bash") {
