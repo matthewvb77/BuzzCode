@@ -76,6 +76,12 @@ input[type="range"]::-moz-range-track {
 	display: inline-block;
 	background-color: #3c3c3c;
 	padding: 4px 8px;
+	min-width: 25px;
+}
+.default {
+	margin-left: 20px;
+	color: #888;
+	font-size: 14px;
 }
 .range-min,
 .range-max {

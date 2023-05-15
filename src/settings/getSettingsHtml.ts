@@ -68,6 +68,7 @@ export function getSettingsHtml(
                         <span class="value-container-child-value" id="temperatureValue" contenteditable="true">${Number(
 													temperature
 												).toFixed(temperaturePrecision)}</span>
+                        <span class="default">RECOMMENDED: 0.2</span>
                     </div>
                     <div class="input-container">
                         <span class="range-min">${temperatureMin}</span>
