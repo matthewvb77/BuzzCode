@@ -20,14 +20,6 @@ Using the 3 functions and response format above, respond with a JSON subtask lis
 			"parameters": {
 				"command": "echo hello world"
 			}
-		},
-		{
-			"index": 1,
-			"type": "generateFile",
-			"parameters": {
-				"fileName": "test.txt",
-				"fileContents": "hello world"
-			}
 		}
 	]
 }
