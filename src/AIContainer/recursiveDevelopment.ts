@@ -238,7 +238,7 @@ async function recursiveDevelopmentHelper(
 						`\n\nThis is a recursive call because while this subtask was executed:` +
 						JSON.stringify(subtask) +
 						`\nThe following error occured:\n\n` +
-						(error as Error).message +
+						error +
 						`\n\nGenerate a JSON list of subtasks to fix the issue.`,
 					terminalObj,
 					signal,
