@@ -65,9 +65,7 @@ export class TerminalObject {
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
-					"----------END_OF_COMMAND_SUBTASK_" +
-					this.currentSubtaskIndex +
-					"----------";
+					"SUBTASK_" + this.currentSubtaskIndex + "_END";
 
 				if (
 					dataString.includes(endOfCommandDelimiter) &&
@@ -273,8 +271,7 @@ export class TerminalObject {
 				}
 			}
 			this.currentSubtaskIndex = subtaskIndex;
-			const endOfCommandDelimiter =
-				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
+			const endOfCommandDelimiter = "SUBTASK_" + subtaskIndex + "_END";
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 
