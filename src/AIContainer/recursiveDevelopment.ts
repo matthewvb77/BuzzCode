@@ -31,7 +31,7 @@ export async function recursiveDevelopment(
 		try {
 			terminalObj = await TerminalObject.create(signal);
 		} catch (error) {
-			resolve("Error: " + error);
+			resolve("Error: " + (error as Error).message);
 			return;
 		}
 
@@ -112,7 +112,7 @@ async function recursiveDevelopmentHelper(
 			}
 		} catch (error) {
 			// TODO: attempt to fix json automatically
-			resolve("Error: Invalid JSON. \n" + error);
+			resolve("Error: Invalid JSON. \n" + (error as Error).message);
 			return;
 		}
 
@@ -227,7 +227,7 @@ async function recursiveDevelopmentHelper(
 					"Error occured while executing subtask " +
 						subtask.index +
 						".\n" +
-						error
+						(error as Error).message
 				);
 
 				onSubtaskError(subtask.index);
@@ -238,7 +238,7 @@ async function recursiveDevelopmentHelper(
 						`\n\nThis is a recursive call because while this subtask was executed:` +
 						JSON.stringify(subtask) +
 						`\nThe following error occured:\n\n` +
-						error +
+						(error as Error).message +
 						`\n\nGenerate a JSON list of subtasks to fix the issue.`,
 					terminalObj,
 					signal,

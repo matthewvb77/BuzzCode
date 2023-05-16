@@ -280,12 +280,13 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
+			const sanitizedCommand = sanitizeCommand(command);
 			this.terminalProcess.stdin?.write(
-				`${command} ; echo ${endOfCommandDelimiter}\n`
+				`${sanitizedCommand} ; echo ${endOfCommandDelimiter}\n`
 			);
 
 			if (shell === "bash") {
-				this.writeEmitter.fire(`${command}\n\r`);
+				this.writeEmitter.fire(`${sanitizedCommand}\n\r`);
 			}
 		});
 	}
@@ -370,4 +371,25 @@ function containsError(message: string): boolean {
 	}
 
 	return false;
+}
+
+function sanitizeCommand(command: string): string {
+	let result = "";
+	let singleQuoteCount = 0;
+
+	for (let i = 0; i < command.length; i++) {
+		if (command[i] === "'") {
+			singleQuoteCount++;
+			// Replace a single quote with an escaped single quote only when it's not paired
+			if (singleQuoteCount % 2 === 0) {
+				result += "'";
+			} else {
+				result += "\\'";
+			}
+		} else {
+			result += command[i];
+		}
+	}
+
+	return result;
 }
