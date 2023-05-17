@@ -162,6 +162,7 @@ export class TerminalObject {
 		var terminalReady = new Promise<void>((resolve) => {
 			writeEmitter = new vscode.EventEmitter<string>();
 			let line = "";
+			let cursorPos = 0;
 			terminalPty = {
 				onDidWrite: writeEmitter.event,
 				open: () => {
@@ -198,19 +199,42 @@ export class TerminalObject {
 						}
 						terminalProcess.stdin?.write(line + "\n");
 						line = "";
+						cursorPos = 0;
 						return;
 					} else if (data === "\x7f") {
-						if (line.length === 0) {
-							return;
+						if (cursorPos > 0) {
+							line = line.slice(0, cursorPos - 1) + line.slice(cursorPos);
+							cursorPos--;
+							writeEmitter?.fire("\x1b[D"); // move cursor left
+							writeEmitter?.fire("\x1b[P"); // Delete character
 						}
-						line = line.slice(0, -1);
-						writeEmitter?.fire("\x1b[D"); // move cursor left
-						writeEmitter?.fire("\x1b[P"); // Delete character
+					} else if (data === "\x1b[A" || data === "\x1b[B") {
+						// ignore up and down arrow keys
+						return;
+					} else if (data === "\x1b[D") {
+						// Handle left arrow key
+						if (cursorPos > 0) {
+							cursorPos--;
+							writeEmitter?.fire("\x1b[D"); // move cursor left
+						}
+					} else if (data === "\x1b[C") {
+						// Handle right arrow key
+						if (cursorPos < line.length) {
+							cursorPos++;
+							writeEmitter?.fire("\x1b[C"); // move cursor right
+						}
 					} else {
-						line += data;
+						line = line.slice(0, cursorPos) + data + line.slice(cursorPos);
+						cursorPos += data.length;
+						writeEmitter?.fire(
+							data +
+								line.slice(cursorPos) +
+								"\x1b[" +
+								line.slice(cursorPos).length +
+								"D"
+						);
+						writeEmitter?.fire("\x1b[C"); // move cursor right
 					}
-
-					writeEmitter?.fire(data);
 				},
 			};
 
