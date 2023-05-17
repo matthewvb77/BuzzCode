@@ -101,14 +101,9 @@ async function recursiveDevelopmentHelper(
 				.trim()
 				.split("Response: ")[0];
 
-			const fixedJsonString = correctJson(jsonString);
+			jsonString = correctJson(jsonString);
 
-			var subtasks: Array<Subtask> = JSON.parse(fixedJsonString).subtasks;
-
-			// TODO: Remove this test line!
-			if (jsonString !== fixedJsonString) {
-				console.log("Fixed JSON!");
-			}
+			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
 
 			subtasks.forEach((subtask) => {
 				subtask.state = "initial";
@@ -243,8 +238,8 @@ async function recursiveDevelopmentHelper(
 				const result = await recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
-						`\n\nThis is a recursive call because while this subtask was executed:` +
-						JSON.stringify(subtask) +
+						`\n\nThis is a recursive call because while subtask ${subtask.index} was executed from this list:` +
+						JSON.stringify(subtasks) +
 						`\nThe following error occured:\n\n` +
 						error +
 						`\n\nGenerate a JSON list of subtasks to fix the issue.`,

@@ -72,6 +72,7 @@ export function correctJson(jsonToLoad: string): string {
 		JSON.parse(jsonToLoad);
 		return jsonToLoad;
 	} catch (error) {
+		console.log("Caught JSON parse error, attempting to fix...");
 		console.error("JSON parse error", error);
 		const errorMessage = (error as Error).message;
 
