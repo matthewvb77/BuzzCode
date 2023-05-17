@@ -184,7 +184,7 @@ export class TerminalObject {
 
 					if (terminalProcess === undefined) {
 						vscode.window.showErrorMessage("Terminal process is undefined.");
-						return "Error";
+						throw Error("Terminal process is undefined.");
 					}
 
 					if (data === "\r") {
