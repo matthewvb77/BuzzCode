@@ -312,7 +312,7 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
-			command = balanceQuotes(command);
+			command = await balanceQuotes(command);
 
 			this.terminalProcess.stdin?.write(
 				`${command} ; echo ${endOfCommandDelimiter}\n`
@@ -406,18 +406,57 @@ function containsError(message: string): boolean {
 	return false;
 }
 
-function balanceQuotes(str: string): string {
-	let singleQuoteCount = str.split("'").length - 1;
-	let doubleQuoteCount = str.split('"').length - 1;
+async function balanceQuotes(str: string): Promise<string> {
+	return new Promise(async (resolve, reject) => {
+		let singleQuoteCount = str.split("'").length - 1;
+		let doubleQuoteCount = str.split('"').length - 1;
 
-	if (singleQuoteCount % 2 === 1) {
-		str += "'";
-	}
+		if (singleQuoteCount % 2 === 1) {
+			await vscode.window
+				.showWarningMessage(
+					"Unbalanced single quotes",
+					{ modal: true },
+					"Escape the last single quote",
+					"Add one to the end of the command"
+				)
+				.then((response) => {
+					if (response === "Escape the last single quote") {
+						for (let i = str.length - 1; i >= 0; i--) {
+							if (str[i] === "'") {
+								str = str.slice(0, i) + "\\" + str.slice(i);
+								break;
+							}
+						}
+					} else if (response === "Add one to the end of the command") {
+						str += "'";
+					}
+				});
+		}
 
-	if (doubleQuoteCount % 2 === 1) {
-		str += '"';
-	}
-	return str;
+		if (doubleQuoteCount % 2 === 1) {
+			await vscode.window
+				.showWarningMessage(
+					"Unbalanced double quotes",
+					{ modal: true },
+					"Escape the last double quote",
+					"Add one to the end of the command"
+				)
+				.then((response) => {
+					if (response === "Escape the last double quote") {
+						for (let i = str.length - 1; i >= 0; i--) {
+							if (str[i] === '"') {
+								str = str.slice(0, i) + "\\" + str.slice(i);
+								break;
+							}
+						}
+					} else if (response === "Add one to the end of the command") {
+						str += '"';
+					}
+				});
+		}
+		resolve(str);
+		return;
+	});
 }
 
 function parseErrorMessage(errorString: string): string {

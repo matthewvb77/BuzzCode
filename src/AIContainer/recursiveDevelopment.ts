@@ -101,9 +101,15 @@ async function recursiveDevelopmentHelper(
 				.trim()
 				.split("Response: ")[0];
 
-			jsonString = correctJson(jsonString);
+			const fixedJsonString = correctJson(jsonString);
 
-			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
+			var subtasks: Array<Subtask> = JSON.parse(fixedJsonString).subtasks;
+
+			// TODO: Remove this test line!
+			if (jsonString !== fixedJsonString) {
+				console.log("Fixed JSON!");
+			}
+
 			subtasks.forEach((subtask) => {
 				subtask.state = "initial";
 			});
@@ -114,7 +120,6 @@ async function recursiveDevelopmentHelper(
 				vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
 			}
 		} catch (error) {
-			// TODO: attempt to fix json automatically
 			resolve("Error: Invalid JSON. \n" + (error as Error).message);
 			return;
 		}
