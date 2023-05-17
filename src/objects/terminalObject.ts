@@ -98,7 +98,7 @@ export class TerminalObject {
 				// check output for error
 				if (containsError(dataString)) {
 					const result = {
-						error: dataString,
+						error: parseErrorMessage(dataString),
 						stdout: "",
 						stderr: "",
 					};
@@ -386,4 +386,14 @@ function balanceQuotes(str: string): string {
 		str += '"';
 	}
 	return str;
+}
+
+function parseErrorMessage(errorString: string): string {
+	let start = errorString.indexOf("\n\r\n\r") + 4; // find the start of the error message
+	let end = errorString.indexOf("\n\r", start); // find the end of the error message
+	if (start < 0 || end < 0) {
+		// if either index is not found
+		return errorString;
+	}
+	return errorString.substring(start, end); // return the error message
 }
