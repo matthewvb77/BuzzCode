@@ -5,6 +5,7 @@ import { initializePrompt } from "./prompts";
 import { TerminalObject } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
+import { correctJson } from "../helpers/jsonFixGeneral";
 
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
@@ -99,6 +100,8 @@ async function recursiveDevelopmentHelper(
 				.replace(jsonRegex, "")
 				.trim()
 				.split("Response: ")[0];
+
+			jsonString = correctJson(jsonString);
 
 			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
 			subtasks.forEach((subtask) => {

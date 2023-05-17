@@ -66,7 +66,7 @@ function addQuotesToPropertyNames(jsonString: string): string {
 	}
 }
 
-function correctJson(jsonToLoad: string): string {
+export function correctJson(jsonToLoad: string): string {
 	try {
 		console.log("json", jsonToLoad);
 		JSON.parse(jsonToLoad);
