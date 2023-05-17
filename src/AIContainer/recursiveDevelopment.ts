@@ -238,11 +238,11 @@ async function recursiveDevelopmentHelper(
 				const result = await recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
-						`\n\nThis is a recursive call because while subtask ${subtask.index} was executed from this list:` +
+						`\nDuring the execution of this subtask list:\n` +
 						JSON.stringify(subtasks) +
-						`\nThe following error occured:\n\n` +
+						`\nThe following error occured:\n` +
 						error +
-						`\n\nGenerate a JSON list of subtasks to fix the issue.`,
+						`\n\nGenerate a JSON list of subtasks to fix the issue.\nJSON subtask list: `,
 					terminalObj,
 					signal,
 					onStartSubtask,
