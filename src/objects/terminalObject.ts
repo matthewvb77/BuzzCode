@@ -71,7 +71,7 @@ export class TerminalObject {
 					dataString.includes(endOfCommandDelimiter) &&
 					!dataString.includes("echo " + endOfCommandDelimiter)
 				) {
-					//TODO: Super inefficient. Fix this condition.
+					//TODO: Inefficient. Fix this condition.
 					if (shell === "bash") {
 						this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
 					} else {
@@ -280,6 +280,8 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
+			command = balanceQuotes(command);
+
 			this.terminalProcess.stdin?.write(
 				`${command} ; echo ${endOfCommandDelimiter}\n`
 			);
@@ -370,4 +372,18 @@ function containsError(message: string): boolean {
 	}
 
 	return false;
+}
+
+function balanceQuotes(str: string): string {
+	let singleQuoteCount = str.split("'").length - 1;
+	let doubleQuoteCount = str.split('"').length - 1;
+
+	if (singleQuoteCount % 2 === 1) {
+		str += "'";
+	}
+
+	if (doubleQuoteCount % 2 === 1) {
+		str += '"';
+	}
+	return str;
 }
