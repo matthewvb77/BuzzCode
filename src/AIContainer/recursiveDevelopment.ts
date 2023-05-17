@@ -167,7 +167,7 @@ async function recursiveDevelopmentHelper(
 							resolve("Cancelled");
 							return;
 						} else if (commandResult.error) {
-							throw commandResult.error;
+							throw Error(commandResult.error);
 						}
 						break;
 
