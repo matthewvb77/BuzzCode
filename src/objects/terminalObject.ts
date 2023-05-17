@@ -188,6 +188,8 @@ export class TerminalObject {
 						throw Error("Terminal process is undefined.");
 					}
 
+					const charCode = data.charCodeAt(0);
+
 					if (data === "\r") {
 						if (shell === "powershell.exe") {
 							for (let i = 0; i < line.length; i++) {
@@ -223,6 +225,12 @@ export class TerminalObject {
 							cursorPos++;
 							writeEmitter?.fire("\x1b[C"); // move cursor right
 						}
+					} else if (
+						charCode >= 0 &&
+						charCode <= 31 &&
+						charCode !== 13 &&
+						charCode !== 27
+					) {
 					} else {
 						line = line.slice(0, cursorPos) + data + line.slice(cursorPos);
 						cursorPos += data.length;
@@ -230,7 +238,7 @@ export class TerminalObject {
 							data +
 								line.slice(cursorPos) +
 								"\x1b[" +
-								line.slice(cursorPos).length +
+								(line.slice(cursorPos).length + 1) +
 								"D"
 						);
 						writeEmitter?.fire("\x1b[C"); // move cursor right
