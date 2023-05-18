@@ -4,7 +4,7 @@ type JSONCorrectionResult = {
 };
 
 function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
-	while (errorMessage.startsWith("Invalid \\escape")) {
+	while (errorMessage.startsWith("Bad escaped character")) {
 		const badEscapeLocation = extractCharPosition(errorMessage);
 		jsonToLoad =
 			jsonToLoad.slice(0, badEscapeLocation) +

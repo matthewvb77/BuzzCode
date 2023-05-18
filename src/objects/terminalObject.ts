@@ -413,8 +413,8 @@ async function balanceQuotes(str: string): Promise<string> {
 
 		if (singleQuoteCount % 2 === 1) {
 			await vscode.window
-				.showWarningMessage(
-					"Unbalanced single quotes",
+				.showInformationMessage(
+					"Unbalanced single quotes on command: \n> " + str,
 					{ modal: true },
 					"Escape the last single quote",
 					"Add one to the end of the command"
@@ -435,8 +435,8 @@ async function balanceQuotes(str: string): Promise<string> {
 
 		if (doubleQuoteCount % 2 === 1) {
 			await vscode.window
-				.showWarningMessage(
-					"Unbalanced double quotes",
+				.showInformationMessage(
+					"Unbalanced double quotes on command: \n> " + str,
 					{ modal: true },
 					"Escape the last double quote",
 					"Add one to the end of the command"
