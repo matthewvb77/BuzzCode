@@ -4,7 +4,7 @@ type JSONCorrectionResult = {
 };
 
 function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
-	while (errorMessage.startsWith("Invalid \\escape")) {
+	while (errorMessage.startsWith("Bad escaped character")) {
 		const badEscapeLocation = extractCharPosition(errorMessage);
 		jsonToLoad =
 			jsonToLoad.slice(0, badEscapeLocation) +
@@ -66,12 +66,13 @@ function addQuotesToPropertyNames(jsonString: string): string {
 	}
 }
 
-function correctJson(jsonToLoad: string): string {
+export function correctJson(jsonToLoad: string): string {
 	try {
-		console.log("json", jsonToLoad);
+		// console.log("json", jsonToLoad);
 		JSON.parse(jsonToLoad);
 		return jsonToLoad;
 	} catch (error) {
+		console.log("Caught JSON parse error, attempting to fix...");
 		console.error("JSON parse error", error);
 		const errorMessage = (error as Error).message;
 

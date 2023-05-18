@@ -102,7 +102,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						this._state.taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
-							"Error occurred while running task: " + error
+							"Error occurred while running task: " + (error as Error).message
 						);
 						this.updateTaskState("error");
 						this._state.taskInProgress = false;

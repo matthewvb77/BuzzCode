@@ -5,6 +5,7 @@ import { initializePrompt } from "./prompts";
 import { TerminalObject } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
+import { correctJson } from "../helpers/jsonFixGeneral";
 
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
@@ -31,7 +32,7 @@ export async function recursiveDevelopment(
 		try {
 			terminalObj = await TerminalObject.create(signal);
 		} catch (error) {
-			resolve("Error: " + error);
+			resolve("Error: " + (error as Error).message);
 			return;
 		}
 
@@ -100,7 +101,10 @@ async function recursiveDevelopmentHelper(
 				.trim()
 				.split("Response: ")[0];
 
+			jsonString = correctJson(jsonString);
+
 			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
+
 			subtasks.forEach((subtask) => {
 				subtask.state = "initial";
 			});
@@ -111,8 +115,7 @@ async function recursiveDevelopmentHelper(
 				vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
 			}
 		} catch (error) {
-			// TODO: attempt to fix json automatically
-			resolve("Error: Invalid JSON. \n" + error);
+			resolve("Error: Invalid JSON. \n" + (error as Error).message);
 			return;
 		}
 
@@ -164,15 +167,15 @@ async function recursiveDevelopmentHelper(
 							resolve("Cancelled");
 							return;
 						} else if (commandResult.error) {
-							throw commandResult.error;
+							throw Error(commandResult.error);
 						}
 						break;
 
-					case "makeFile":
-						const { name, contents } = parameters;
-						const fileCreationResult = await terminalObj.makeFile(
-							name,
-							contents,
+					case "generateFile":
+						const { fileName, fileContents } = parameters;
+						const fileCreationResult = await terminalObj.generateFile(
+							fileName,
+							fileContents,
 							subtask.index
 						);
 						if (typeof fileCreationResult === "string") {
@@ -227,7 +230,7 @@ async function recursiveDevelopmentHelper(
 					"Error occured while executing subtask " +
 						subtask.index +
 						".\n" +
-						error
+						(error as Error).message
 				);
 
 				onSubtaskError(subtask.index);
@@ -235,11 +238,11 @@ async function recursiveDevelopmentHelper(
 				const result = await recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
-						`\n\nThis is a recursive call because while this subtask was executed:` +
-						JSON.stringify(subtask) +
-						`\nThe following error occured:\n\n` +
+						`\nDuring the execution of this subtask list:\n` +
+						JSON.stringify(subtasks) +
+						`\nThe following error occured:\n` +
 						error +
-						`\n\nGenerate a JSON list of subtasks to fix the issue.`,
+						`\n\nGenerate a JSON list of subtasks to fix the issue.\nJSON subtask list: `,
 					terminalObj,
 					signal,
 					onStartSubtask,

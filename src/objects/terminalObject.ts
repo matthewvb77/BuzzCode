@@ -65,15 +65,13 @@ export class TerminalObject {
 
 			if (this.currentSubtaskIndex !== null) {
 				const endOfCommandDelimiter =
-					"----------END_OF_COMMAND_SUBTASK_" +
-					this.currentSubtaskIndex +
-					"----------";
+					"SUBTASK_" + this.currentSubtaskIndex + "_END";
 
 				if (
 					dataString.includes(endOfCommandDelimiter) &&
 					!dataString.includes("echo " + endOfCommandDelimiter)
 				) {
-					//TODO: Super inefficient. Fix this condition.
+					//TODO: Inefficient. Fix this condition.
 					if (shell === "bash") {
 						this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
 					} else {
@@ -100,7 +98,7 @@ export class TerminalObject {
 				// check output for error
 				if (containsError(dataString)) {
 					const result = {
-						error: dataString,
+						error: parseErrorMessage(dataString),
 						stdout: "",
 						stderr: "",
 					};
@@ -164,6 +162,7 @@ export class TerminalObject {
 		var terminalReady = new Promise<void>((resolve) => {
 			writeEmitter = new vscode.EventEmitter<string>();
 			let line = "";
+			let cursorPos = 0;
 			terminalPty = {
 				onDidWrite: writeEmitter.event,
 				open: () => {
@@ -186,8 +185,10 @@ export class TerminalObject {
 
 					if (terminalProcess === undefined) {
 						vscode.window.showErrorMessage("Terminal process is undefined.");
-						return "Error";
+						throw Error("Terminal process is undefined.");
 					}
+
+					const charCode = data.charCodeAt(0);
 
 					if (data === "\r") {
 						if (shell === "powershell.exe") {
@@ -200,19 +201,48 @@ export class TerminalObject {
 						}
 						terminalProcess.stdin?.write(line + "\n");
 						line = "";
+						cursorPos = 0;
 						return;
 					} else if (data === "\x7f") {
-						if (line.length === 0) {
-							return;
+						if (cursorPos > 0) {
+							line = line.slice(0, cursorPos - 1) + line.slice(cursorPos);
+							cursorPos--;
+							writeEmitter?.fire("\x1b[D"); // move cursor left
+							writeEmitter?.fire("\x1b[P"); // Delete character
 						}
-						line = line.slice(0, -1);
-						writeEmitter?.fire("\x1b[D"); // move cursor left
-						writeEmitter?.fire("\x1b[P"); // Delete character
+					} else if (data === "\x1b[A" || data === "\x1b[B") {
+						// ignore up and down arrow keys
+						return;
+					} else if (data === "\x1b[D") {
+						// Handle left arrow key
+						if (cursorPos > 0) {
+							cursorPos--;
+							writeEmitter?.fire("\x1b[D"); // move cursor left
+						}
+					} else if (data === "\x1b[C") {
+						// Handle right arrow key
+						if (cursorPos < line.length) {
+							cursorPos++;
+							writeEmitter?.fire("\x1b[C"); // move cursor right
+						}
+					} else if (
+						charCode >= 0 &&
+						charCode <= 31 &&
+						charCode !== 13 &&
+						charCode !== 27
+					) {
 					} else {
-						line += data;
+						line = line.slice(0, cursorPos) + data + line.slice(cursorPos);
+						cursorPos += data.length;
+						writeEmitter?.fire(
+							data +
+								line.slice(cursorPos) +
+								"\x1b[" +
+								(line.slice(cursorPos).length + 1) +
+								"D"
+						);
+						writeEmitter?.fire("\x1b[C"); // move cursor right
 					}
-
-					writeEmitter?.fire(data);
 				},
 			};
 
@@ -273,8 +303,7 @@ export class TerminalObject {
 				}
 			}
 			this.currentSubtaskIndex = subtaskIndex;
-			const endOfCommandDelimiter =
-				"----------END_OF_COMMAND_SUBTASK_" + subtaskIndex + "----------";
+			const endOfCommandDelimiter = "SUBTASK_" + subtaskIndex + "_END";
 
 			this.promiseHandlers.set(subtaskIndex, [resolve, reject]);
 
@@ -282,6 +311,8 @@ export class TerminalObject {
 			if (shell === "bash") {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
+
+			command = await balanceQuotes(command);
 
 			this.terminalProcess.stdin?.write(
 				`${command} ; echo ${endOfCommandDelimiter}\n`
@@ -293,9 +324,9 @@ export class TerminalObject {
 		});
 	}
 
-	async makeFile(
-		name: string,
-		contents: string,
+	async generateFile(
+		fileName: string,
+		fileContents: string,
 		subtaskIndex: number
 	): Promise<CommandResult | "Cancelled"> {
 		return new Promise(async (resolve, reject) => {
@@ -310,7 +341,7 @@ export class TerminalObject {
 
 			if (!continuousMode) {
 				const overwrite = await vscode.window.showWarningMessage(
-					`If '${name}' already exists, this action will overwrite it. Do you want to proceed?`,
+					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
 					{ modal: true },
 					"Yes"
 				);
@@ -322,13 +353,19 @@ export class TerminalObject {
 
 			// Create a temporary file with the contents
 			const tempFile = tmp.fileSync();
-			fs.writeFileSync(tempFile.name, contents);
+			fs.writeFileSync(tempFile.name, fileContents);
 
 			// Copy the temporary file to the destination file using the terminal
-			const copyCommand = process.platform === "win32" ? "copy /Y" : "cp -f";
+			let copyCommand: string;
+
+			if (process.platform === "win32") {
+				copyCommand = `Copy-Item -Path ${tempFile.name} -Destination ${fileName} -Force`;
+			} else {
+				copyCommand = `cp -f ${tempFile.name} ${fileName}`;
+			}
 
 			const result = await this.executeCommand(
-				`${copyCommand} ${tempFile.name} ${name}`,
+				copyCommand,
 				subtaskIndex,
 				false
 			);
@@ -367,4 +404,67 @@ function containsError(message: string): boolean {
 	}
 
 	return false;
+}
+
+async function balanceQuotes(str: string): Promise<string> {
+	return new Promise(async (resolve, reject) => {
+		let singleQuoteCount = str.split("'").length - 1;
+		let doubleQuoteCount = str.split('"').length - 1;
+
+		if (singleQuoteCount % 2 === 1) {
+			await vscode.window
+				.showInformationMessage(
+					"Unbalanced single quotes on command: \n> " + str,
+					{ modal: true },
+					"Escape the last single quote",
+					"Add one to the end of the command"
+				)
+				.then((response) => {
+					if (response === "Escape the last single quote") {
+						for (let i = str.length - 1; i >= 0; i--) {
+							if (str[i] === "'") {
+								str = str.slice(0, i) + "\\" + str.slice(i);
+								break;
+							}
+						}
+					} else if (response === "Add one to the end of the command") {
+						str += "'";
+					}
+				});
+		}
+
+		if (doubleQuoteCount % 2 === 1) {
+			await vscode.window
+				.showInformationMessage(
+					"Unbalanced double quotes on command: \n> " + str,
+					{ modal: true },
+					"Escape the last double quote",
+					"Add one to the end of the command"
+				)
+				.then((response) => {
+					if (response === "Escape the last double quote") {
+						for (let i = str.length - 1; i >= 0; i--) {
+							if (str[i] === '"') {
+								str = str.slice(0, i) + "\\" + str.slice(i);
+								break;
+							}
+						}
+					} else if (response === "Add one to the end of the command") {
+						str += '"';
+					}
+				});
+		}
+		resolve(str);
+		return;
+	});
+}
+
+function parseErrorMessage(errorString: string): string {
+	let start = errorString.indexOf("\n\r\n\r") + 4; // find the start of the error message
+	let end = errorString.indexOf("\n\r", start); // find the end of the error message
+	if (start < 0 || end < 0) {
+		// if either index is not found
+		return errorString;
+	}
+	return errorString.substring(start, end); // return the error message
 }

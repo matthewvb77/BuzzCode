@@ -142,7 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
 								}
 							} catch (error) {
 								vscode.window.showErrorMessage(
-									"Error saving TestWise settings: " + error
+									"Error saving TestWise settings: " + (error as Error).message
 								);
 							}
 							break;

@@ -272,6 +272,8 @@ button:hover {
 
 .subtask-details-textarea {
 	background-color: #1e1e1e;
+	max-width: 100%;
+	height: 80px;
 }
 
 .warning-text {

@@ -361,13 +361,14 @@
 					updateTaskState(message.state.taskState);
 				}
 				if (message.state.taskInProgress) {
-					taskCancelButton.classList.add("show-component");
-				}
-				if (message.state.subtasks) {
-					if (message.state.subtasks.length > 0) {
-						showSubtasks(message.state.subtasks);
-						progressContainer.classList.add("show-component");
+					progressContainer.classList.add("show-component");
+
+					if (message.state.taskState !== "waiting") {
+						taskCancelButton.classList.add("show-component");
 					}
+				}
+				if (message.state.subtasks && message.state.subtasks.length > 0) {
+					showSubtasks(message.state.subtasks);
 				}
 
 				if (message.state.taskState === "waiting") {
