@@ -76,7 +76,7 @@ export function correctJson(jsonToLoad: string): string {
 		console.error("JSON parse error", error);
 		const errorMessage = (error as Error).message;
 
-		if (errorMessage.startsWith("Invalid \\escape")) {
+		if (errorMessage.startsWith("Bad escaped character")) {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
 
