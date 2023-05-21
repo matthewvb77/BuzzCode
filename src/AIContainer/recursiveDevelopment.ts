@@ -10,6 +10,7 @@ import { correctJson } from "../helpers/jsonFixGeneral";
 var recursionLimit = 100; // Not important until continuous mode is implemented
 var recursionCount = 0;
 var taskDescription = ``;
+var terminalOutput: Array<string> = [];
 var terminalObj: TerminalObject | null = null;
 
 export async function recursiveDevelopment(
@@ -25,6 +26,7 @@ export async function recursiveDevelopment(
 	return new Promise(async (resolve, reject) => {
 		taskDescription = input; // Saves original task description
 		recursionCount = 0;
+		terminalOutput = [];
 
 		if (terminalObj) {
 			terminalObj.dispose();
@@ -163,6 +165,9 @@ async function recursiveDevelopmentHelper(
 							command,
 							subtask.index
 						);
+						terminalOutput.push(
+							"Command: " + command + "\n" + "Output: " + commandResult
+						);
 						if (typeof commandResult === "string") {
 							resolve("Cancelled");
 							return;
@@ -191,8 +196,11 @@ async function recursiveDevelopmentHelper(
 						const result = await recursiveDevelopmentHelper(
 							`Here is the original task: ` +
 								taskDescription +
-								`\n\nThis is a recursive call with the following prompt: ` +
-								newPrompt,
+								`\nThis is a recursive call with the following prompt: ` +
+								newPrompt +
+								`\nHere is the output of the past terminal commands: \n` +
+								terminalOutput +
+								`\nGenerate a JSON list of next steps to take.\nJSON subtask list: `,
 							terminalObj,
 							signal,
 							onStartSubtask,
