@@ -395,6 +395,7 @@ function containsError(message: string): boolean {
 		"unable to",
 		"invalid",
 		"fatal",
+		"errno",
 	];
 
 	for (let i = 0; i < errorMessages.length; i++) {
