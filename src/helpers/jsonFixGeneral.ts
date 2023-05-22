@@ -35,8 +35,8 @@ function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
 	while (errorMessage.startsWith("Bad escaped character")) {
 		const badEscapeLocation = extractCharPosition(errorMessage);
 		jsonToLoad =
-			jsonToLoad.slice(0, badEscapeLocation) +
-			jsonToLoad.slice(badEscapeLocation + 1);
+			jsonToLoad.slice(0, badEscapeLocation - 1) +
+			jsonToLoad.slice(badEscapeLocation);
 
 		try {
 			JSON.parse(jsonToLoad);
@@ -51,7 +51,7 @@ function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
 
 function extractCharPosition(errorMessage: string): number {
 	// Extract character position from error message
-	const match = errorMessage.match(/char (\d+)/);
+	const match = errorMessage.match(/position (\d+)/);
 	if (match) {
 		return parseInt(match[1]);
 	}
@@ -108,11 +108,7 @@ export function correctJson(jsonToLoad: string): string {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
 
-		if (
-			errorMessage.startsWith(
-				"Expecting property name enclosed in double quotes"
-			)
-		) {
+		if (errorMessage.startsWith("Expected property name or '}' in JSON")) {
 			jsonToLoad = addQuotesToPropertyNames(jsonToLoad);
 			try {
 				JSON.parse(jsonToLoad);
