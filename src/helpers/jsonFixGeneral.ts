@@ -85,7 +85,6 @@ function addQuotesToPropertyNames(jsonString: string): string {
 		/(\w+):/g,
 		(_, propertyName) => `"${propertyName}":`
 	);
-
 	try {
 		JSON.parse(correctedJsonString);
 		return correctedJsonString;
@@ -108,7 +107,10 @@ export function correctJson(jsonToLoad: string): string {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
 
-		if (errorMessage.startsWith("Expected property name or '}' in JSON")) {
+		if (
+			errorMessage.startsWith("Expected property name or '}' in JSON") ||
+			errorMessage.startsWith("Unexpected token ")
+		) {
 			jsonToLoad = addQuotesToPropertyNames(jsonToLoad);
 			try {
 				JSON.parse(jsonToLoad);
