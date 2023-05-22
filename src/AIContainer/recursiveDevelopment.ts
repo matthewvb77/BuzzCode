@@ -93,7 +93,12 @@ async function recursiveDevelopmentHelper(
 			const jsonRegex = /{[\s\S]*}/;
 
 			// Extract JSON and reasoning strings
-			let jsonStringArray = responseString.match(jsonRegex);
+			var jsonStringArray: Array<string> | null = null;
+			try {
+				jsonStringArray = responseString.match(jsonRegex);
+			} catch (error) {
+				jsonStringArray = correctJson(responseString).match(jsonRegex);
+			}
 			if (!jsonStringArray) {
 				throw Error("No JSON found.");
 			}
