@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/*
+	I (Matthew Van Brummelen) HAVE MADE CHANGES TO THIS CODE.
+*/
+
 type JSONCorrectionResult = {
 	json: string;
 	error: Error | null;
