@@ -26,6 +26,8 @@ SOFTWARE.
 	I (Matthew Van Brummelen) HAVE MADE CHANGES TO THIS CODE.
 */
 
+import { shell } from "../settings/configuration";
+
 type JSONCorrectionResult = {
 	json: string;
 	error: Error | null;
@@ -95,8 +97,6 @@ function addQuotesToPropertyNames(jsonString: string): string {
 
 export function correctJson(jsonToLoad: string): string {
 	try {
-		// escape single quotes
-		jsonToLoad = jsonToLoad.replace(/'/g, "\\\\'");
 		JSON.parse(jsonToLoad);
 		return jsonToLoad;
 	} catch (error) {
