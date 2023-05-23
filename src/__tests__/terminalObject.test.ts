@@ -50,13 +50,17 @@ describe("TerminalObject", () => {
 
 			// Verify the file has been created and has the correct contents
 			fs.readFile(fileName, "utf8", (err, data) => {
-				if (err) throw err;
+				if (err) {
+					throw err;
+				}
 				assert.strictEqual(data, fileContents);
 			});
 
 			// Clean up the generated file after testing
 			fs.unlink(fileName, (err) => {
-				if (err) throw err;
+				if (err) {
+					throw err;
+				}
 			});
 		});
 	});
