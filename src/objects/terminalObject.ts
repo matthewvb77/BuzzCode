@@ -67,11 +67,12 @@ export class TerminalObject {
 				const endOfCommandDelimiter =
 					"SUBTASK_" + this.currentSubtaskIndex + "_END";
 
-				if (
-					dataString.includes(endOfCommandDelimiter) &&
-					!dataString.includes("echo " + endOfCommandDelimiter)
-				) {
-					//TODO: Inefficient. Fix this condition.
+				// match "endOfCommandDelimiter", but not "echo endOfCommandDelimiter"
+				const delimiterRegex = new RegExp(
+					`(?<!echo\\s)${endOfCommandDelimiter}`,
+					"g"
+				);
+				if (delimiterRegex.test(dataString)) {
 					if (shell === "bash") {
 						this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
 					} else {
