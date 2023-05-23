@@ -316,7 +316,7 @@ export class TerminalObject {
 			// escape unescaped single quotes
 			if (shell === "bash" && /(?<!\\)'/.test(command)) {
 				command = command.replace(/'/g, "\\'");
-			} else if (/(?<!`)'/g.test(command)) {
+			} else if (shell === "powershell.exe" && /(?<!`)'/g.test(command)) {
 				command = command.replace(/'/g, "`'");
 			}
 
