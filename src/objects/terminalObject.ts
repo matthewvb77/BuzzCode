@@ -313,13 +313,6 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
-			// escape unescaped single quotes
-			if (shell === "bash" && /(?<!\\)'/.test(command)) {
-				command = command.replace(/'/g, "\\'");
-			} else if (shell === "powershell.exe" && /(?<!`)'/g.test(command)) {
-				command = command.replace(/'/g, "`'");
-			}
-
 			this.terminalProcess.stdin?.write(
 				`${command} ; echo ${endOfCommandDelimiter}\n`
 			);
