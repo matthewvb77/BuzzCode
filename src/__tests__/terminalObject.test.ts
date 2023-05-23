@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
+import * as fs from "fs";
 
 describe("TerminalObject", () => {
 	let abortController: AbortController;
@@ -46,7 +47,17 @@ describe("TerminalObject", () => {
 				(result as CommandResult).stdout.includes(fileName),
 				true
 			);
-			// Further checks should verify the file has been created and has the correct contents
+
+			// Verify the file has been created and has the correct contents
+			fs.readFile(fileName, "utf8", (err, data) => {
+				if (err) throw err;
+				assert.strictEqual(data, fileContents);
+			});
+
+			// Clean up the generated file after testing
+			fs.unlink(fileName, (err) => {
+				if (err) throw err;
+			});
 		});
 	});
 
