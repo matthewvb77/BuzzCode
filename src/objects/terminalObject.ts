@@ -312,9 +312,10 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
-			if (shell === "bash") {
+			// escape unescaped single quotes
+			if (shell === "bash" && /(?<!\\)'/.test(command)) {
 				command = command.replace(/'/g, "\\'");
-			} else {
+			} else if (/(?<!`)'/g.test(command)) {
 				command = command.replace(/'/g, "`'");
 			}
 
