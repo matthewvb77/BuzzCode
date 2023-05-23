@@ -239,7 +239,6 @@ async function recursiveDevelopmentHelper(
 			} catch (error) {
 				// If an error occurs, ask chatGPT for new subtasks
 				vscode.window.showErrorMessage(
-					// TODO: remove this debugging message
 					"Error occured while executing subtask " +
 						subtask.index +
 						".\n" +
