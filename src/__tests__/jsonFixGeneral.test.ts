@@ -6,10 +6,9 @@ describe("JSON Correction", () => {
 		const result = correctJson(validJson);
 		expect(result).toBe(validJson);
 	});
-	// TODO: Fix this
 	it("should fix bad escaped characters", () => {
-		const invalidJson = `{"name":"John's"}`;
-		const expectedJson = `{"name":"John\'s"}`;
+		const invalidJson = `{"name":"Jo\\hn"}`;
+		const expectedJson = `{"name":"John"}`;
 		const result = correctJson(invalidJson);
 		expect(result).toBe(expectedJson);
 	});
