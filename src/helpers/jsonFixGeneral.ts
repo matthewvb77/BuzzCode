@@ -95,7 +95,8 @@ function addQuotesToPropertyNames(jsonString: string): string {
 
 export function correctJson(jsonToLoad: string): string {
 	try {
-		// console.log("json", jsonToLoad);
+		// escape single quotes
+		jsonToLoad = jsonToLoad.replace(/'/g, "\\\\'");
 		JSON.parse(jsonToLoad);
 		return jsonToLoad;
 	} catch (error) {
@@ -107,10 +108,7 @@ export function correctJson(jsonToLoad: string): string {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
 
-		if (
-			errorMessage.startsWith("Expected property name or '}' in JSON") ||
-			errorMessage.startsWith("Unexpected token ")
-		) {
+		if (/[^\\"}]\s*\w+\s*:/g.test(jsonToLoad)) {
 			jsonToLoad = addQuotesToPropertyNames(jsonToLoad);
 			try {
 				JSON.parse(jsonToLoad);
