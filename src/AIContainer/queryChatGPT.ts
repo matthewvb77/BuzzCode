@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import axios from "axios";
+import { AxiosError } from "axios";
 import {
 	contextLengthGpt3Point5,
 	contextLengthGpt4,
@@ -87,7 +88,20 @@ export async function queryChatGPT(
 		if (axios.isCancel(error)) {
 			return "Cancelled";
 		} else {
-			return "Error: " + error;
+			if ((error as AxiosError).response) {
+				// The error is an AxiosError
+				const axiosError = error as AxiosError;
+				const statusCode = axiosError.response?.status;
+				if (statusCode === 401) {
+					return "Error: Axios code 401 - Invalid API key";
+				} else if (statusCode === 429) {
+					return "Error: Axios code 429 - Rate limit exceeded";
+				} else {
+					return "Error: " + error;
+				}
+			} else {
+				return "Error: " + error;
+			}
 		}
 	}
 }
