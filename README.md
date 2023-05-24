@@ -44,10 +44,4 @@ We're looking forward to hearing from you and improving **Jr Developer In Your I
 
 This extension is powered by [OpenAI's GPT-4](https://openai.com/research/). The logo was designed using an owl to symbolize the wisdom and learning aspect of AI.
 
-## License
-
-MIT
-
----
-
 Happy coding! 🦉
