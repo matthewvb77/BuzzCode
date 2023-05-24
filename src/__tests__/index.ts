@@ -1,2 +1,2 @@
-import "./jsonFixGeneral.test";
-import "./terminalObject.test";
+require("./jsonFixGeneral.test");
+require("./terminalObject.test");
