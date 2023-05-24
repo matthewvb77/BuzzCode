@@ -5,10 +5,10 @@ export const initializePrompt = `Your environment is ${process.platform} and you
 2. generateFile(fileName: string, fileContents: string)
 3. recurse(newPrompt: string) --> original goal and output from terminalCommands will be included automatically. Recurse will also happen automatically upon an error or failure.
 
-Response format:
+Response example:
 {"subtasks":[{"index":0,"type":"executeTerminalCommand","parameters":{"command":"echo hello world"}}]}
 
-Using the 3 functions and response format above, respond with a JSON subtask list that can be parsed by the javascript line "JSON.parse(response)" to solve the following prompt:
+Using the 3 functions above, respond with a JSON subtask list that can be parsed by the javascript line "JSON.parse(response)" to solve the following prompt:
 `;
 
 /*
