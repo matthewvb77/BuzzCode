@@ -19,6 +19,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 	private _rebuildWebview() {
 		if (this._view) {
+			vscode.window.showInformationMessage(
+				"OpenAI API rate limit exceeded. Please wait a few secondes and try again.\n" +
+					"NOTE: OpenAI free tier is limited to 3 RPM (requests per minute)."
+			);
 			this._view.webview.postMessage({
 				command: "rebuild",
 				state: this._state,
@@ -95,6 +99,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							this.updateTaskState("cancelled");
 						} else if (result && result.startsWith("Error")) {
 							this.updateTaskState("error");
+							if (result === "Error: Axios code 429 - Rate limit exceeded") {
+								vscode.window.showInformationMessage(
+									"OpenAI API rate limit exceeded. Please wait a few secondes and try again.\n" +
+										"NOTE: OpenAI free tier is limited to 3 RPM (requests per minute)."
+								);
+							}
 							vscode.window.showErrorMessage(result);
 						} else {
 							this.updateTaskState("completed");
