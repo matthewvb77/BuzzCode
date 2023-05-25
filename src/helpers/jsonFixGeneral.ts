@@ -1,3 +1,33 @@
+/*
+MIT License
+
+Copyright (c) 2023 Toran Bruce Richards
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/*
+	I (Matthew Van Brummelen) HAVE MADE CHANGES TO THIS CODE.
+*/
+
+import { shell } from "../settings/configuration";
+
 type JSONCorrectionResult = {
 	json: string;
 	error: Error | null;
@@ -7,8 +37,8 @@ function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
 	while (errorMessage.startsWith("Bad escaped character")) {
 		const badEscapeLocation = extractCharPosition(errorMessage);
 		jsonToLoad =
-			jsonToLoad.slice(0, badEscapeLocation) +
-			jsonToLoad.slice(badEscapeLocation + 1);
+			jsonToLoad.slice(0, badEscapeLocation - 1) +
+			jsonToLoad.slice(badEscapeLocation);
 
 		try {
 			JSON.parse(jsonToLoad);
@@ -23,7 +53,7 @@ function fixInvalidEscape(jsonToLoad: string, errorMessage: string): string {
 
 function extractCharPosition(errorMessage: string): number {
 	// Extract character position from error message
-	const match = errorMessage.match(/char (\d+)/);
+	const match = errorMessage.match(/position (\d+)/);
 	if (match) {
 		return parseInt(match[1]);
 	}
@@ -57,7 +87,6 @@ function addQuotesToPropertyNames(jsonString: string): string {
 		/(\w+):/g,
 		(_, propertyName) => `"${propertyName}":`
 	);
-
 	try {
 		JSON.parse(correctedJsonString);
 		return correctedJsonString;
@@ -68,7 +97,6 @@ function addQuotesToPropertyNames(jsonString: string): string {
 
 export function correctJson(jsonToLoad: string): string {
 	try {
-		// console.log("json", jsonToLoad);
 		JSON.parse(jsonToLoad);
 		return jsonToLoad;
 	} catch (error) {
@@ -80,11 +108,7 @@ export function correctJson(jsonToLoad: string): string {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
 
-		if (
-			errorMessage.startsWith(
-				"Expecting property name enclosed in double quotes"
-			)
-		) {
+		if (/[^\\"}]\s*\w+\s*:/g.test(jsonToLoad)) {
 			jsonToLoad = addQuotesToPropertyNames(jsonToLoad);
 			try {
 				JSON.parse(jsonToLoad);

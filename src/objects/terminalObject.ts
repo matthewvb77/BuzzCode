@@ -67,11 +67,12 @@ export class TerminalObject {
 				const endOfCommandDelimiter =
 					"SUBTASK_" + this.currentSubtaskIndex + "_END";
 
-				if (
-					dataString.includes(endOfCommandDelimiter) &&
-					!dataString.includes("echo " + endOfCommandDelimiter)
-				) {
-					//TODO: Inefficient. Fix this condition.
+				// match "endOfCommandDelimiter", but not "echo endOfCommandDelimiter"
+				const delimiterRegex = new RegExp(
+					`(?<!echo\\s)${endOfCommandDelimiter}`,
+					"g"
+				);
+				if (delimiterRegex.test(dataString)) {
 					if (shell === "bash") {
 						this.writeEmitter.fire(dataString.split(endOfCommandDelimiter)[0]);
 					} else {
@@ -312,8 +313,6 @@ export class TerminalObject {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 			}
 
-			command = await balanceQuotes(command);
-
 			this.terminalProcess.stdin?.write(
 				`${command} ; echo ${endOfCommandDelimiter}\n`
 			);
@@ -405,59 +404,6 @@ function containsError(message: string): boolean {
 	}
 
 	return false;
-}
-
-async function balanceQuotes(str: string): Promise<string> {
-	return new Promise(async (resolve, reject) => {
-		let singleQuoteCount = str.split("'").length - 1;
-		let doubleQuoteCount = str.split('"').length - 1;
-
-		if (singleQuoteCount % 2 === 1) {
-			await vscode.window
-				.showInformationMessage(
-					"Unbalanced single quotes on command: \n> " + str,
-					{ modal: true },
-					"Escape the last single quote",
-					"Add one to the end of the command"
-				)
-				.then((response) => {
-					if (response === "Escape the last single quote") {
-						for (let i = str.length - 1; i >= 0; i--) {
-							if (str[i] === "'") {
-								str = str.slice(0, i) + "\\" + str.slice(i);
-								break;
-							}
-						}
-					} else if (response === "Add one to the end of the command") {
-						str += "'";
-					}
-				});
-		}
-
-		if (doubleQuoteCount % 2 === 1) {
-			await vscode.window
-				.showInformationMessage(
-					"Unbalanced double quotes on command: \n> " + str,
-					{ modal: true },
-					"Escape the last double quote",
-					"Add one to the end of the command"
-				)
-				.then((response) => {
-					if (response === "Escape the last double quote") {
-						for (let i = str.length - 1; i >= 0; i--) {
-							if (str[i] === '"') {
-								str = str.slice(0, i) + "\\" + str.slice(i);
-								break;
-							}
-						}
-					} else if (response === "Add one to the end of the command") {
-						str += '"';
-					}
-				});
-		}
-		resolve(str);
-		return;
-	});
 }
 
 function parseErrorMessage(errorString: string): string {
