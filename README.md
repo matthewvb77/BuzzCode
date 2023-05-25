@@ -1,4 +1,5 @@
-# Intern AI: Jr Developer In Your IDE ![Logo](./resources/Jayde_Lounging.png)
+# Intern AI: Jr Developer In Your IDE
+<img src="./resources/Jayde_Lounging.png" width="100" height="100">
 
 **Your very own junior developer right in your IDE!** Powered by OpenAI's new, this extension is designed to assist you with your coding tasks, making your development process smoother and more efficient.
 
