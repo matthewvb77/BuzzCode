@@ -4,7 +4,7 @@
 
 ## Setup
 1. Get an OpenAI key from https://platform.openai.com/account/api-keys
-2. Save it in Testwise Settings by using the <span style="color:green">Testwise: Settings</span> command in the developer console (ctrl + shift + p)
+2. Save it in Testwise Settings by using the <span style="color:purple">Testwise: Settings</span> command in the developer console (ctrl + shift + p)
 3. Open the Testwise tab from the sidebar and start coding!
 
 ## Tips and Tricks
