@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { correctJson } from "../../helpers/jsonFixGeneral";
+import { describe, it } from "mocha";
 
 describe("JSON Correction", () => {
 	it("should not modify valid JSON", () => {
