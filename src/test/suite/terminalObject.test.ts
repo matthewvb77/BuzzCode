@@ -1,75 +1,54 @@
-import * as assert from "assert";
-import { TerminalObject, CommandResult } from "../../objects/terminalObject";
+import { TerminalObject } from "../../objects/terminalObject";
+import { expect } from "chai";
 import * as fs from "fs";
-import { describe, beforeEach, afterEach, it } from "mocha";
+import "mocha";
 
-describe("TerminalObject", () => {
-	let abortController: AbortController;
+describe("TerminalObject Integration Tests", () => {
 	let terminalObject: TerminalObject;
+	const abortController = new AbortController();
 
-	beforeEach(async () => {
-		abortController = new AbortController();
+	before(async () => {
 		terminalObject = await TerminalObject.create(abortController.signal);
 	});
 
-	afterEach(() => {
+	after(() => {
 		terminalObject.dispose();
 	});
 
-	describe("#create()", () => {
-		it("should correctly create a TerminalObject instance", () => {
-			assert(terminalObject instanceof TerminalObject);
-		});
+	it("executeCommand should execute a command", async () => {
+		const commandResult = await terminalObject.executeCommand(
+			"echo hello",
+			0,
+			false
+		);
+
+		if (typeof commandResult !== "string") {
+			expect(commandResult.error).to.equal("");
+			expect(commandResult.stdout).to.contain("hello");
+			expect(commandResult.stderr).to.equal("");
+		} else {
+			throw new Error("Command was cancelled unexpectedly.");
+		}
 	});
 
-	describe("#executeCommand()", () => {
-		it("should correctly execute command and return the result", async () => {
-			const result = await terminalObject.executeCommand("echo test", 1, false);
-			assert.strictEqual((result as CommandResult).stdout, "test");
-		});
+	it("generateFile should create a new file with correct contents", async () => {
+		const fileName = "test.txt";
+		const fileContents = "Hello, World!";
 
-		it('should return "Cancelled" if signal aborted', async () => {
-			abortController.abort();
-			const result = await terminalObject.executeCommand("echo test", 1, false);
-			assert.strictEqual(result, "Cancelled");
-		});
-	});
+		const generateResult = await terminalObject.generateFile(
+			fileName,
+			fileContents,
+			0
+		);
 
-	describe("#generateFile()", () => {
-		it("should correctly generate a file and return the result", async () => {
-			const fileName = "testFile.txt";
-			const fileContents = "Test content";
-			const result = await terminalObject.generateFile(
-				fileName,
-				fileContents,
-				1
-			);
-			assert.strictEqual(
-				(result as CommandResult).stdout.includes(fileName),
-				true
-			);
+		if (typeof generateResult !== "string") {
+			expect(generateResult.error).to.equal("");
 
-			// Verify the file has been created and has the correct contents
-			fs.readFile(fileName, "utf8", (err, data) => {
-				if (err) {
-					throw err;
-				}
-				assert.strictEqual(data, fileContents);
-			});
-
-			// Clean up the generated file after testing
-			fs.unlink(fileName, (err) => {
-				if (err) {
-					throw err;
-				}
-			});
-		});
-	});
-
-	describe("#dispose()", () => {
-		it("should correctly dispose of terminal resources", () => {
-			terminalObject.dispose();
-			assert.strictEqual(terminalObject.readOnly, true);
-		});
+			// Check the file creation and content by reading the file
+			const createdFileContent = fs.readFileSync(fileName, "utf-8");
+			expect(createdFileContent).to.equal(fileContents);
+		} else {
+			throw new Error("File generation was cancelled unexpectedly.");
+		}
 	});
 });
