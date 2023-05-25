@@ -10,8 +10,8 @@
 ## Tips and Tricks
 To achieve the best results, be as specific as possible.
 
-Please also be careful with what you run.
-  
+Please also be careful with what you run! This extension runs real code with real consequences.
+ 
 ## How it works
 
 The Testwise extension provides an AI-to-Computer interface to an OpenAI GPT model.
@@ -27,12 +27,12 @@ These functionalities allow you to automate simple tasks, save time and focus on
 
 ## Feedback & Suggestions
 
-If you have any issues, find a bug, or want to suggest a feature, please join our [Discord Server](https://discord.gg/your-invite-link-here). We have dedicated channels for reporting bugs, suggesting new features, and general discussions related to the extension.
+Feel free to join our [Discord Server](https://discord.gg/your-invite-link-here). We have dedicated channels for reporting bugs, suggesting new features, and general discussions related to the extension.
 
 We're looking forward to hearing from you and improving **Testwise** based on your feedback!
 
 ## Credits
 
-This extension is powered by [OpenAI's GPT Models](https://openai.com/research/) and uses some json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT). The logo was designed using an owl to symbolize the wisdom and learning aspect of AI.
+This extension is powered by [OpenAI's GPT Models](https://openai.com/research/) and uses json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT). The logo was designed using an owl to symbolize the wisdom and learning aspect of AI.
 
 Happy coding! 🦉
