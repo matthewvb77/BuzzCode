@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import { TerminalObject, CommandResult } from "../../objects/terminalObject";
 import * as fs from "fs";
+import { describe, beforeEach, afterEach, it } from "mocha";
 
 describe("TerminalObject", () => {
 	let abortController: AbortController;
