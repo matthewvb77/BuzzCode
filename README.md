@@ -1,11 +1,14 @@
-# Intern AI: Jr Developer In Your IDE
-<img src="./resources/Jayde_Lounging.png" width="100" height="100">
+# TestWise: Jr Developer In Your IDE
 
-**Your very own junior developer right in your IDE!** Powered by OpenAI's new, this extension is designed to assist you with your coding tasks, making your development process smoother and more efficient.
+**TestWise** Powered by OpenAI's new, this extension is designed to assist you with your coding tasks, making your development process smoother and more efficient.
+
+## Setup
+1. Get an OpenAI key from https://platform.openai.com/account/api-keys
+2. Save it in Testwise Settings by using the <span style="color:blue">Testwise: Settings</span> command in the developer console (ctrl + shift + p)
 
 ## Features
 
-**Jr Developer In Your IDE** leverages AI technology to perform a variety of tasks, which includes:
+**TestWise** leverages AI technology to perform a variety of tasks, which includes:
 
 - Executing terminal commands.
 - Generating files with predefined templates.
