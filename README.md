@@ -1,35 +1,38 @@
 # TestWise: Jr Developer In Your IDE
 
-**TestWise** Powered by OpenAI's new, this extension is designed to assist you with your coding tasks, making your development process smoother and more efficient.
+<TODO: INSERT VIDEO DEMO HERE>
 
 ## Setup
 1. Get an OpenAI key from https://platform.openai.com/account/api-keys
-2. Save it in Testwise Settings by using the <span style="color:blue">Testwise: Settings</span> command in the developer console (ctrl + shift + p)
+2. Save it in Testwise Settings by using the <span style="color:green">Testwise: Settings</span> command in the developer console (ctrl + shift + p)
+3. Open the Testwise tab from the sidebar and start coding!
 
-## Features
+## Tips and Tricks
+To achieve the best results, be as specific as possible.
 
-**TestWise** leverages AI technology to perform a variety of tasks, which includes:
+Please also be careful with what you run.
+  
+## How it works
 
-- Executing terminal commands.
-- Generating files with predefined templates.
-- Recursively performing tasks until a specified goal is achieved.
+The Testwise extension provides an AI-to-Computer interface to an OpenAI GPT model.
 
-These functionalities allow you to automate routine tasks, save time and focus on complex coding problems.
+When the user submits a task, one of OpenAI's GPT models generates a subtask list using these interface functions:
 
-## Usage
+- executeTerminalCommand(command)
+- generateFile(fileName, fileContents)
+- Recurse(newPrompt)
 
-After installing the extension -- enter your OpenAI key in the settings page and you're good to go!
+These functionalities allow you to automate simple tasks, save time and focus on complex coding problems.
 
-Navigate to the <extensionname> tab on your left-most sidebar, and ask <name> to do a coding task.
 
 ## Feedback & Suggestions
 
 If you have any issues, find a bug, or want to suggest a feature, please join our [Discord Server](https://discord.gg/your-invite-link-here). We have dedicated channels for reporting bugs, suggesting new features, and general discussions related to the extension.
 
-We're looking forward to hearing from you and improving **Jr Developer In Your IDE** based on your feedback!
+We're looking forward to hearing from you and improving **Testwise** based on your feedback!
 
 ## Credits
 
-This extension is powered by [OpenAI's GPT Models](https://openai.com/research/). The logo was designed using an owl to symbolize the wisdom and learning aspect of AI.
+This extension is powered by [OpenAI's GPT Models](https://openai.com/research/) and uses some json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT). The logo was designed using an owl to symbolize the wisdom and learning aspect of AI.
 
 Happy coding! 🦉
