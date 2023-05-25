@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { TerminalObject, CommandResult } from "../objects/terminalObject";
+import { TerminalObject, CommandResult } from "../../objects/terminalObject";
 import * as fs from "fs";
 
 describe("TerminalObject", () => {

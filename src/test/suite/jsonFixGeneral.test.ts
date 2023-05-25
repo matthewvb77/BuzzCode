@@ -1,4 +1,4 @@
-import { correctJson } from "../helpers/jsonFixGeneral"; // Replace with your actual module path.
+import { correctJson } from "../../helpers/jsonFixGeneral";
 
 describe("JSON Correction", () => {
 	it("should not modify valid JSON", () => {
