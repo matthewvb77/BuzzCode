@@ -2,6 +2,7 @@ import { TerminalObject } from "../../objects/terminalObject";
 import { expect } from "chai";
 import * as fs from "fs";
 import "mocha";
+import { describe, it, before, after } from "mocha";
 
 describe("TerminalObject Integration Tests", () => {
 	let terminalObject: TerminalObject;
