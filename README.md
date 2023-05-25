@@ -14,7 +14,7 @@ Please also be careful with what you run! This extension runs real code with rea
  
 ## How it works
 
-The Testwise extension provides an AI-to-Computer interface to an OpenAI GPT model.
+The Testwise extension provides an **AI-to-Computer interface** to an OpenAI GPT model.
 
 When the user submits a task, one of OpenAI's GPT models generates a subtask list using these interface functions:
 
