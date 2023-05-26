@@ -84,7 +84,10 @@ export class TerminalObject {
 
 					const result = {
 						error: "",
-						stdout: this.currentCommandResult,
+						stdout: this.currentCommandResult.replace(
+							endOfCommandDelimiter,
+							""
+						),
 						stderr: "",
 					};
 
