@@ -24,6 +24,7 @@ export class TerminalObject {
 	outputStream: merge2.Merge2Stream | null = null;
 	readOnly: boolean = false;
 	currentSubtaskIndex: number | null = null;
+	currentCommandResult: string = "";
 
 	promiseHandlers: Map<
 		number,
@@ -64,6 +65,8 @@ export class TerminalObject {
 			const dataString: string = data.toString().replace(/\n/g, "\n\r");
 
 			if (this.currentSubtaskIndex !== null) {
+				this.currentCommandResult += dataString;
+
 				const endOfCommandDelimiter =
 					"SUBTASK_" + this.currentSubtaskIndex + "_END";
 
@@ -81,9 +84,11 @@ export class TerminalObject {
 
 					const result = {
 						error: "",
-						stdout: dataString,
+						stdout: this.currentCommandResult,
 						stderr: "",
 					};
+
+					this.currentCommandResult = "";
 
 					const [resolve] =
 						this.promiseHandlers.get(this.currentSubtaskIndex) || [];
