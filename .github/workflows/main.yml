@@ -21,5 +21,8 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Setup XVFB
+        run: sudo apt-get install -y xvfb
+
       - name: Run Tests
-        run: npm test
+        run: xvfb-run --auto-servernum npm test
