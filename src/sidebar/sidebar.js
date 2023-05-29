@@ -74,9 +74,9 @@
 
 			case "recurse":
 				if (tense === "imperative") {
-					return `Recurse with new prompt`;
+					return `Recurse with new info`;
 				} else if (tense === "ongoing") {
-					return `Recursing with new prompt...`;
+					return `Recursing with new info...`;
 				}
 				break;
 
@@ -252,10 +252,7 @@
 					break;
 
 				case "recurse":
-					const newPromptTextArea = document.createElement("textarea");
-					newPromptTextArea.classList.add("subtask-details-textarea");
-					newPromptTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
-					subtaskDetails.appendChild(newPromptTextArea);
+					subtaskDetails.textContent = `Recurse with new information`;
 					break;
 
 				case "askUser":

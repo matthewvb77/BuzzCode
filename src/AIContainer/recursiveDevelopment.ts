@@ -7,10 +7,11 @@ import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
 import { correctJson } from "../helpers/jsonFixGeneral";
 
-var recursionLimit = 100; // Not important until continuous mode is implemented
+var recursionLimit = 100;
 var recursionCount = 0;
 var taskDescription = ``;
-var terminalOutput: Array<string> = [];
+var terminalOutput: string = "";
+var askUserResponse: string = "";
 var terminalObj: TerminalObject | null = null;
 
 export async function recursiveDevelopment(
@@ -26,7 +27,6 @@ export async function recursiveDevelopment(
 	return new Promise(async (resolve, reject) => {
 		taskDescription = input; // Saves original task description
 		recursionCount = 0;
-		terminalOutput = [];
 
 		if (terminalObj) {
 			terminalObj.dispose();
@@ -68,6 +68,9 @@ async function recursiveDevelopmentHelper(
 	) => Promise<string>,
 	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
+	terminalOutput = "";
+	askUserResponse = "";
+
 	return new Promise(async (resolve, reject) => {
 		recursionCount++;
 		if (recursionCount >= recursionLimit) {
@@ -176,20 +179,19 @@ async function recursiveDevelopmentHelper(
 							throw Error(commandResult.error);
 						}
 
-						terminalOutput.push(
+						terminalOutput +=
 							"Command: " +
-								command +
-								"\n" +
-								"stdout: " +
-								commandResult.stdout +
-								"\n" +
-								"stderr: " +
-								commandResult.stderr +
-								"\n" +
-								"error: " +
-								commandResult.error +
-								"\n"
-						);
+							command +
+							"\n" +
+							"stdout: " +
+							commandResult.stdout +
+							"\n" +
+							"stderr: " +
+							commandResult.stderr +
+							"\n" +
+							"error: " +
+							commandResult.error +
+							"\n";
 
 						break;
 
@@ -209,15 +211,23 @@ async function recursiveDevelopmentHelper(
 						break;
 
 					case "recurse":
-						const { newPrompt } = parameters;
+						let recurseInput: string =
+							`This is a recursive call with the original task: ` +
+							taskDescription;
+
+						if (terminalOutput) {
+							recurseInput +=
+								`\nHere is the output of executed terminal commands: \n` +
+								terminalOutput;
+						}
+						if (askUserResponse) {
+							recurseInput += `\nHere is the response`;
+						}
+
+						recurseInput += `\nGenerate a JSON list of next steps to take.\nJSON subtask list: `;
+
 						const result = await recursiveDevelopmentHelper(
-							`Here is the original task: ` +
-								taskDescription +
-								`\nThis is a recursive call with the following prompt: ` +
-								newPrompt +
-								`\nHere is the output of the past terminal commands: \n` +
-								terminalOutput +
-								`\nGenerate a JSON list of next steps to take.\nJSON subtask list: `,
+							recurseInput,
 							terminalObj,
 							signal,
 							onStartSubtask,
@@ -232,18 +242,19 @@ async function recursiveDevelopmentHelper(
 
 					case "askUser":
 						const { question } = parameters;
-						const userResponse = await askUser(question);
-						await recursiveDevelopmentHelper(
-							`Here is the original task: ` +
-								taskDescription +
-								`\n\nThis is a recursive call because askUser(${question}) was called. Here is the user's response: ` +
-								userResponse,
-							terminalObj,
-							signal,
-							onStartSubtask,
-							onSubtasksReady,
-							onSubtaskError
-						);
+						try {
+							askUserResponse +=
+								"Question: " +
+								question +
+								"\n" +
+								"Response: " +
+								(await askUser(question)) +
+								"\n";
+						} catch (error) {
+							throw error;
+						}
+
+						break;
 
 					default:
 						throw Error(`Error: Unknown subtask type "${type}"`);

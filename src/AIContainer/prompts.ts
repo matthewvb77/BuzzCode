@@ -3,8 +3,8 @@ import { shell } from "../settings/configuration";
 export const initializePrompt = `Your environment is ${process.platform} and you have access to these 3 functions: 
 - executeTerminalCommand(command: string) --> shell type is ${shell}.
 - generateFile(fileName: string, fileContents: string) --> always use this when creating files.
-- askUser(prompt: string) --> returns the user's response.
-- recurse(newPrompt: string) --> output from executed terminal commands is included.
+- askUser(question: string)
+- recurse() --> output from executeTerminalCommand and user's reponse to askUser will be included in recursive call.
 
 Always use terminal commands and recurse to gain information and context.
 
