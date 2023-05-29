@@ -347,7 +347,11 @@ export class TerminalObject {
 				.getConfiguration("testwise")
 				.get("continuousMode");
 
-			if (!continuousMode && warn) {
+			if (continuousMode) {
+				warn = false;
+			}
+
+			if (warn) {
 				const overwrite = await vscode.window.showWarningMessage(
 					`If '${fileName}' already exists, this action will overwrite it. Do you want to proceed?`,
 					{ modal: true },
