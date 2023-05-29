@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { queryChatGPT } from "./queryChatGPT";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
-import { TerminalObject } from "../objects/terminalObject";
+import { TerminalObject, CommandResult } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
 import { correctJson } from "../helpers/jsonFixGeneral";
@@ -166,19 +166,31 @@ async function recursiveDevelopmentHelper(
 				switch (type) {
 					case "executeTerminalCommand":
 						const { command } = parameters;
-						const commandResult = await terminalObj.executeCommand(
-							command,
-							subtask.index
-						);
-						terminalOutput.push(
-							"Command: " + command + "\n" + "Output: " + commandResult
-						);
+						const commandResult: CommandResult | string =
+							await terminalObj.executeCommand(command, subtask.index);
+
 						if (typeof commandResult === "string") {
 							resolve("Cancelled");
 							return;
 						} else if (commandResult.error) {
 							throw Error(commandResult.error);
 						}
+
+						terminalOutput.push(
+							"Command: " +
+								command +
+								"\n" +
+								"stdout: " +
+								commandResult.stdout +
+								"\n" +
+								"stderr: " +
+								commandResult.stderr +
+								"\n" +
+								"error: " +
+								commandResult.error +
+								"\n"
+						);
+
 						break;
 
 					case "generateFile":

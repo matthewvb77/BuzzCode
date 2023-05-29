@@ -3,7 +3,7 @@ import { shell } from "../settings/configuration";
 export const initializePrompt = `Your environment is ${process.platform} and you have access to these 3 functions: 
 - executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string) --> always use this when creating files
-- recurse(newPrompt: string) --> will happen automatically upon an error or failure.
+- recurse(newPrompt: string) --> will include terminalCommand output, use this to gain context on the current prompt
 
 Response example:
 {
