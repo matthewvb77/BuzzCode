@@ -24,6 +24,8 @@ describe("TerminalObject Integration Tests", () => {
 			vscode.Uri.file(testWorkspaceDir),
 			false
 		);
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		terminalObject = await TerminalObject.create(abortController.signal);
 	});
 
