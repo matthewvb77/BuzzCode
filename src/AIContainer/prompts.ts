@@ -8,18 +8,7 @@ export const initializePrompt = `Your environment is ${process.platform} and you
 
 Always use terminal commands and recurse to gain information and context.
 
-Response example:
-{
-	"subtasks": [
-		{ 
-			"index": 0, 
-			"type": "executeTerminalCommand",
-			"parameters": { 
-				"command": "echo hello world"
-			}
-		}
-	]
-}
+Response example: {"subtasks": [{ "index": 0, "type": "executeTerminalCommand", "parameters": { "command": "echo hello world"}}]}
 
 Using the 3 functions above, respond with a JSON subtask list to solve the following prompt:
 `;
