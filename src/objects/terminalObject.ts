@@ -176,7 +176,7 @@ export class TerminalObject {
 				onDidWrite: writeEmitter.event,
 				open: () => {
 					writeEmitter?.fire(
-						"------------------------Testwise: TASK STARTED------------------------\r\n\r\n"
+						"------------------------BuzzCode: TASK STARTED------------------------\r\n\r\n"
 					);
 					resolve();
 				},
@@ -184,7 +184,7 @@ export class TerminalObject {
 					terminalProcess?.kill();
 					readOnly = true;
 					writeEmitter?.fire(
-						"\r\n\r\n------------------------Testwise: TASK STOPPED------------------------"
+						"\r\n\r\n------------------------BuzzCode: TASK STOPPED------------------------"
 					);
 				},
 				handleInput: (data: string) => {
@@ -256,7 +256,7 @@ export class TerminalObject {
 			};
 
 			terminal = vscode.window.createTerminal({
-				name: "Testwise",
+				name: "BuzzCode",
 				pty: terminalPty,
 			});
 
@@ -286,7 +286,7 @@ export class TerminalObject {
 		warn = true
 	): Promise<CommandResult | "Cancelled"> {
 		const continuousMode: boolean | undefined = vscode.workspace
-			.getConfiguration("testwise")
+			.getConfiguration("buzzcode")
 			.get("continuousMode");
 
 		if (continuousMode) {
@@ -344,7 +344,7 @@ export class TerminalObject {
 			};
 
 			const continuousMode = vscode.workspace
-				.getConfiguration("testwise")
+				.getConfiguration("buzzcode")
 				.get("continuousMode");
 
 			if (continuousMode) {

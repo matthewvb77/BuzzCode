@@ -44,7 +44,7 @@ export function getSettingsHtml(
                 <div class="setting-container">
                     <div class="tooltip">
                         <span class="tooltip tooltip-info"></span>
-                        <span class="tooltiptext">Which OpenAI model TestWise uses</span>
+                        <span class="tooltiptext">Which OpenAI model BuzzCode uses</span>
                     </div>
                     <label for="model">Model:</label>
                     <select id="model" name="model">

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export function hasValidOpenaiApiKey() {
 	const openaiApiKey = vscode.workspace
-		.getConfiguration("testwise")
+		.getConfiguration("buzzcode")
 		.get("openaiApiKey");
 	return (
 		openaiApiKey !== undefined &&

@@ -8,19 +8,19 @@ export function activate(context: vscode.ExtensionContext) {
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
-			"testwise-sidebar",
+			"buzzcode-sidebar",
 			sidebarProvider
 		)
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("testwise.settings", () => {
+		vscode.commands.registerCommand("buzzcode.settings", () => {
 			if (settingsPanel) {
 				settingsPanel.reveal();
 				return;
 			}
 
-			const config = vscode.workspace.getConfiguration("testwise");
+			const config = vscode.workspace.getConfiguration("buzzcode");
 			const openaiApiKey = config.get<string>("openaiApiKey");
 			const temperature = config.get<number>("temperature");
 			const continuousMode = config.get<boolean>("continuousMode");
@@ -38,8 +38,8 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			settingsPanel = vscode.window.createWebviewPanel(
-				"testwiseSettings",
-				"TestWise Settings",
+				"buzzcodeSettings",
+				"BuzzCode Settings",
 				vscode.ViewColumn.One,
 				{
 					enableScripts: true,
@@ -108,28 +108,28 @@ export function activate(context: vscode.ExtensionContext) {
 								} else {
 									await Promise.all([
 										vscode.workspace
-											.getConfiguration("testwise")
+											.getConfiguration("buzzcode")
 											.update(
 												"openaiApiKey",
 												message.openaiApiKey,
 												vscode.ConfigurationTarget.Global
 											),
 										vscode.workspace
-											.getConfiguration("testwise")
+											.getConfiguration("buzzcode")
 											.update(
 												"model",
 												message.model,
 												vscode.ConfigurationTarget.Global
 											),
 										vscode.workspace
-											.getConfiguration("testwise")
+											.getConfiguration("buzzcode")
 											.update(
 												"temperature",
 												message.temperature,
 												vscode.ConfigurationTarget.Global
 											),
 										vscode.workspace
-											.getConfiguration("testwise")
+											.getConfiguration("buzzcode")
 											.update(
 												"continuousMode",
 												message.continuousMode,
@@ -137,12 +137,12 @@ export function activate(context: vscode.ExtensionContext) {
 											),
 									]);
 									vscode.window.showInformationMessage(
-										"TestWise settings saved."
+										"BuzzCode settings saved."
 									);
 								}
 							} catch (error) {
 								vscode.window.showErrorMessage(
-									"Error saving TestWise settings: " + (error as Error).message
+									"Error saving BuzzCode settings: " + (error as Error).message
 								);
 							}
 							break;

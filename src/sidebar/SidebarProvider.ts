@@ -61,7 +61,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			}
 			if (!hasValidOpenaiApiKey()) {
 				vscode.window.showErrorMessage(
-					"Please enter a valid API key in the TestWise settings."
+					"Please enter a valid API key in the BuzzCode settings."
 				);
 				return;
 			}

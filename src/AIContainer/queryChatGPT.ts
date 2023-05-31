@@ -12,12 +12,12 @@ export async function queryChatGPT(
 ): Promise<string> {
 	/* ----------------- Get Configuration --------------- */
 	const openaiApiKey = vscode.workspace
-		.getConfiguration("testwise")
+		.getConfiguration("buzzcode")
 		.get("openaiApiKey");
 
-	const model = vscode.workspace.getConfiguration("testwise").get("model");
+	const model = vscode.workspace.getConfiguration("buzzcode").get("model");
 	const temperature = vscode.workspace
-		.getConfiguration("testwise")
+		.getConfiguration("buzzcode")
 		.get("temperature");
 
 	let contextLength: number | undefined;
@@ -53,7 +53,7 @@ export async function queryChatGPT(
 
 	if (openaiApiKey === "") {
 		vscode.window.showErrorMessage(
-			"Please set the API key in TestWise settings."
+			"Please set the API key in BuzzCode settings."
 		);
 		return "Error: No API key";
 	}

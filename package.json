@@ -1,7 +1,7 @@
 {
-	"name": "testwise",
-	"displayName": "TestWise",
-	"description": "Enhances TDD with Copilot",
+	"name": "buzzcode",
+	"displayName": "BuzzCode",
+	"description": "Provides AI-assisted task automation",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.77.3"
@@ -14,8 +14,8 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "testwise.settings",
-				"category": "TestWise",
+				"command": "buzzcode.settings",
+				"category": "BuzzCode",
 				"title": "Settings",
 				"icon": "$(settings-gear)"
 			}
@@ -23,51 +23,51 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "testwise-sidebar-view",
-					"title": "TestWise",
+					"id": "buzzcode-sidebar-view",
+					"title": "BuzzCode",
 					"icon": "resources/sidebar-icon.svg"
 				}
 			]
 		},
 		"views": {
-			"testwise-sidebar-view": [
+			"buzzcode-sidebar-view": [
 				{
 					"type": "webview",
-					"id": "testwise-sidebar",
-					"name": "TestWise",
-					"icon": "resources/testwise_icon.png",
-					"contextualTitle": "TestWise"
+					"id": "buzzcode-sidebar",
+					"name": "BuzzCode",
+					"icon": "resources/buzzcode_icon.png",
+					"contextualTitle": "BuzzCode"
 				}
 			]
 		},
 		"menus": {
 			"view/title": [
 				{
-					"command": "testwise.settings",
-					"when": "view == testwise-sidebar",
+					"command": "buzzcode.settings",
+					"when": "view == buzzcode-sidebar",
 					"group": "navigation"
 				}
 			]
 		},
 		"configuration": {
-			"title": "TestWise",
+			"title": "BuzzCode",
 			"properties": {
-				"testwise.openaiApiKey": {
+				"buzzcode.openaiApiKey": {
 					"type": "string",
 					"default": "",
 					"description": "GitHub Copilot API key"
 				},
-				"testwise.model": {
+				"buzzcode.model": {
 					"type": "string",
 					"default": "gpt-3.5-turbo",
 					"description": "Name of the OpenAI Model to use"
 				},
-				"testwise.temperature": {
+				"buzzcode.temperature": {
 					"type": "number",
 					"default": 0.2,
 					"description": "Temperature value for the generated code"
 				},
-				"testwise.continuousMode": {
+				"buzzcode.continuousMode": {
 					"type": "boolean",
 					"default": false,
 					"description": "Whether to warn before executing terminal commands or generating files"
