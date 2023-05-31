@@ -211,17 +211,21 @@ async function recursiveDevelopmentHelper(
 						break;
 
 					case "recurse":
+						const { newPrompt } = parameters;
 						let recurseInput: string =
 							`This is a recursive call with the original task: ` +
-							taskDescription;
+							`${taskDescription}\n` +
+							`And the new prompt: ${newPrompt}\n`;
 
 						if (terminalOutput) {
 							recurseInput +=
-								`\nHere is the output of executed terminal commands: \n` +
+								`\nHere are the outputs of executed terminal commands: \n` +
 								terminalOutput;
 						}
 						if (askUserResponse) {
-							recurseInput += `\nHere is the response`;
+							recurseInput +=
+								`\nHere are the user's responses to questions: \n` +
+								askUserResponse;
 						}
 
 						recurseInput += `\nGenerate a JSON list of next steps to take.\nJSON subtask list: `;

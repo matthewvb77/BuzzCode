@@ -252,7 +252,10 @@
 					break;
 
 				case "recurse":
-					subtaskDetails.textContent = `Recurse with new information`;
+					const recurseTextArea = document.createElement("textarea");
+					recurseTextArea.classList.add("subtask-details-textarea");
+					recurseTextArea.textContent = `New prompt: ${subtask.parameters.newPrompt}`;
+					subtaskDetails.appendChild(recurseTextArea);
 					break;
 
 				case "askUser":
