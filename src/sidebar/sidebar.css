@@ -215,7 +215,7 @@ button:hover {
 
 #subtasks-container {
 	margin-top: 20px;
-	max-height: 65%;
+	max-height: 55%;
 	overflow-y: auto;
 }
 
