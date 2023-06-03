@@ -1,6 +1,6 @@
 # BuzzCode: Jr Developer In Your IDE
 
-<TODO: INSERT VIDEO DEMO HERE>
+**Demo video coming soon!**
 
 ## Setup
 
