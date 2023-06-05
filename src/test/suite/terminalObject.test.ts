@@ -1,4 +1,8 @@
-import { TerminalObject } from "../../objects/terminalObject";
+import {
+	TerminalObject,
+	parseErrorMessage,
+	containsError,
+} from "../../objects/terminalObject";
 import { expect } from "chai";
 import "mocha";
 import { describe, it, before, after } from "mocha";
@@ -81,5 +85,35 @@ describe("TerminalObject Integration Tests", () => {
 		} else {
 			throw new Error("File generation was cancelled unexpectedly.");
 		}
+	});
+
+	// Test helper functions: parseErrorMessage, containsError
+	describe("containsError", () => {
+		it("should return true when error messages are present", () => {
+			const testMessage = "A fatal error occurred: not found";
+			const result = containsError(testMessage);
+			expect(result).to.be.true;
+		});
+
+		it("should return false when no error messages are present", () => {
+			const testMessage = "Operation was successful";
+			const result = containsError(testMessage);
+			expect(result).to.be.false;
+		});
+	});
+
+	describe("parseErrorMessage", () => {
+		it("should extract the error message from the string", () => {
+			const testErrorString =
+				"Some text here\n\r\n\rError message\n\rSome other text";
+			const result = parseErrorMessage(testErrorString);
+			expect(result).to.equal("Error message");
+		});
+
+		it("should return the entire string if no error message is found", () => {
+			const testErrorString = "Some text here without error format";
+			const result = parseErrorMessage(testErrorString);
+			expect(result).to.equal(testErrorString);
+		});
 	});
 });

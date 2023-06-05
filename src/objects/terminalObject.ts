@@ -398,7 +398,7 @@ export class TerminalObject {
 	}
 }
 
-function containsError(message: string): boolean {
+export function containsError(message: string): boolean {
 	const errorMessages = [
 		"error",
 		"exception",
@@ -419,7 +419,7 @@ function containsError(message: string): boolean {
 	return false;
 }
 
-function parseErrorMessage(errorString: string): string {
+export function parseErrorMessage(errorString: string): string {
 	let start = errorString.indexOf("\n\r\n\r") + 4; // find the start of the error message
 	let end = errorString.indexOf("\n\r", start); // find the end of the error message
 	if (start < 0 || end < 0) {
