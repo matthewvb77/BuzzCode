@@ -39,7 +39,6 @@ export function getSettingsHtml(
                   <label for="openaiApiKey">OpenAI API Key:</label>
                   <input type="password" id="openaiApiKey" name="openaiApiKey" value="${openaiApiKey}" maxlength="75" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                 </div>
-                <br>
 
                 <div class="setting-container">
                     <div class="tooltip">
@@ -56,7 +55,6 @@ export function getSettingsHtml(
 												}>GPT 3.5 Turbo (Fast)</option>
                     </select>
                 </div>
-                <br>
 
                 <div class="setting-container">
                         <div class="tooltip">
@@ -74,7 +72,6 @@ export function getSettingsHtml(
                         <span class="range-max">${temperatureMax}</span>
                     </div>
                 </div>
-                <br>
 
                 <div class="setting-container">
                     <div class="inline-align">
@@ -91,7 +88,6 @@ export function getSettingsHtml(
                         </label>
                     </div>
                 </div>
-                <br>
                 
                 <div class="setting-container">
                     <button type="submit" id="saveSettings">Save</button>
