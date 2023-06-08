@@ -13,6 +13,9 @@ body {
 	background-color: #252526; /* Color of sidebar background */
 	border-radius: 6px;
 }
+#settingsForm > * {
+	margin-left: 15px;
+}
 label {
 	font-size: 18px;
 	font-weight: 700;

@@ -94,8 +94,10 @@ export function getSettingsHtml(
                     </div>
                 </div>
                 <br>
-
-                <button type="submit" id="saveSettings">Save</button>
+                
+                <div class="setting-container">
+                    <button type="submit" id="saveSettings">Save</button>
+                </div>
             </form>
             <script nonce="${nonce}">
                 var vscode = acquireVsCodeApi();
