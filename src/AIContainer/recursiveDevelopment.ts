@@ -180,18 +180,18 @@ async function recursiveDevelopmentHelper(
 						}
 
 						terminalOutput +=
-							"Command: " +
+							"Command: {" +
 							command +
-							"\n" +
-							"stdout: " +
+							"}\n" +
+							"stdout: {" +
 							commandResult.stdout +
-							"\n" +
-							"stderr: " +
+							"}\n" +
+							"stderr: {" +
 							commandResult.stderr +
-							"\n" +
-							"error: " +
+							"}\n" +
+							"error: {" +
 							commandResult.error +
-							"\n";
+							"}\n";
 
 						break;
 
@@ -277,8 +277,12 @@ async function recursiveDevelopmentHelper(
 				const result = await recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
-						`\nDuring the execution of this subtask list:\n` +
+						`\nHere is the past subtask list:\n` +
 						JSON.stringify(subtasks) +
+						`\nHere is the terminal output:\n` +
+						terminalOutput +
+						`\nHere are the user's responses to questions: \n` +
+						askUserResponse +
 						`\nThe following error occured:\n` +
 						error +
 						`\n\nGenerate a JSON list of subtasks to fix the issue.\nJSON subtask list: `,
