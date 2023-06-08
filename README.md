@@ -1,40 +1,24 @@
 # BuzzCode: Jr Developer In Your IDE
 
-**Demo video coming soon!**
+**Note:** BuzzCode is experimental and actively in development. Use caution when executing suggested commands or code.
 
 ## Setup
 
-1. Get an OpenAI key from https://platform.openai.com/account/api-keys
-2. Save it in BuzzCode Settings by using the <span style="color:#FEDD02">BuzzCode: Settings</span> command in the developer console (ctrl + shift + p)
-3. Open the BuzzCode tab from the sidebar and start coding!
+1. Get an OpenAI key at https://platform.openai.com/account/api-keys.
+2. Save it in `BuzzCode: Settings` (access via ctrl + shift + p).
+3. Open BuzzCode from the sidebar.
 
-## Tips and Tricks
+## Using BuzzCode
 
-To achieve the best results, be as specific as possible.
+Provide specific tasks for best results.
+Review all code before execution.
 
-<span style="color:orange">Please also be careful with what you run! This extension is far from perfect and runs real code and terminal commands.</span>
+## Feedback
 
-## How it works
-
-The BuzzCode extension provides an **AI-to-Computer interface** to an OpenAI GPT model.
-
-When the user submits a task, one of OpenAI's GPT models generates a subtask list using these interface functions:
-
-- executeTerminalCommand(command)
-- generateFile(fileName, fileContents)
-- askUser(question)
-- Recurse(newPrompt)
-
-The user then has 3 choices: confirm, cancel, and regenerate. Confirming will start the execution of the subtask list.
-
-## Feedback & Suggestions
-
-Feel free to join our [Discord Server](https://discord.gg/8UQTFvg8e7). We have dedicated channels for reporting bugs, suggesting new features, and general discussions related to the extension.
-
-We're looking forward to hearing from you and improving **BuzzCode** based on your feedback!
+Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7) for bug reports and feature suggestions.
 
 ## Credits
 
-This extension is powered by [OpenAI's GPT Models](https://openai.com/research/) and uses json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT).
+BuzzCode uses OpenAI's GPT Models and json-fixing functions from AutoGPT.
 
-Happy coding! 🐝
+Happy (careful) coding! 🐝
