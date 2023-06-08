@@ -104,6 +104,10 @@ export function correctJson(jsonToLoad: string): string {
 		console.error("JSON parse error", error);
 		const errorMessage = (error as Error).message;
 
+		if (jsonToLoad.startsWith("[") && jsonToLoad.endsWith("]")) {
+			jsonToLoad = `{"subtasks": ` + jsonToLoad + `}`;
+		}
+
 		if (errorMessage.startsWith("Bad escaped character")) {
 			jsonToLoad = fixInvalidEscape(jsonToLoad, errorMessage);
 		}
