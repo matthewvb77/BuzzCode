@@ -19,6 +19,6 @@ Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7) for bug r
 
 ## Credits
 
-BuzzCode uses OpenAI's GPT Models and json-fixing functions from AutoGPT.
+BuzzCode uses [OpenAI's GPT Models](https://openai.com/research/) and json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT).
 
 Happy (careful) coding! 🐝
