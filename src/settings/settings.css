@@ -8,6 +8,11 @@ body {
 	flex-direction: column;
 	height: calc(100vh - 40px);
 }
+
+#settingsForm {
+	background-color: #252526; /* Color of sidebar background */
+	border-radius: 6px;
+}
 label {
 	font-size: 18px;
 	font-weight: 700;
