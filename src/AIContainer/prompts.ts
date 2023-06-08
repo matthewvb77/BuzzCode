@@ -1,16 +1,14 @@
 import { shell } from "../settings/configuration";
 
-export const initializePrompt = `Your environment is ${process.platform} and you have access to these functions: 
-- executeTerminalCommand(command: string) --> shell type is ${shell}. output is saved and included in recurse() info.
+export const initializePrompt = `You have access to these 4 functions: 
+- executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
-- askUser(question: string) --> response is saved and included in recurse() info.
-- recurse(newPrompt: string)
-
-If more information is needed, use executeTerminalCommand and recurse.
+- askUser(question: string) --> response is saved and included in recurse() context.
+- recurse(newPrompt: string) --> Upon any error this will happen automatically.
 
 Response example: {"subtasks": [{ "index": 0, "type": "executeTerminalCommand", "parameters": { "command": "echo hello world"}}]}
 
-Using the functions above, respond with a JSON subtask list to solve the following prompt:
+Using the those 4 functions and following the response format above, respond with a JSON subtask list to solve the following prompt:
 `;
 
 /*

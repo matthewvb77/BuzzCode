@@ -223,13 +223,15 @@ async function recursiveDevelopmentHelper(
 
 						if (terminalOutput) {
 							recurseInput +=
-								`\nHere are the outputs of executed terminal commands: \n` +
-								terminalOutput;
+								`\nHere are the outputs of executed terminal commands: {\n` +
+								terminalOutput +
+								`}\n`;
 						}
 						if (askUserResponse) {
 							recurseInput +=
-								`\nHere are the user's responses to questions: \n` +
-								askUserResponse;
+								`\nHere are the user's responses to questions: {\n` +
+								askUserResponse +
+								`}\n`;
 						}
 
 						const result = await recursiveDevelopmentHelper(
@@ -281,10 +283,12 @@ async function recursiveDevelopmentHelper(
 						taskDescription +
 						`\nHere is the past subtask list:\n` +
 						JSON.stringify(subtasks) +
-						`\nHere is the terminal output:\n` +
+						`\nHere is the terminal output: {\n` +
 						terminalOutput +
-						`\nHere are the user's responses to questions: \n` +
+						`\n}` +
+						`\nHere are the user's responses to questions: {\n` +
 						askUserResponse +
+						`\n}` +
 						`\nThe following error occured:\n` +
 						error,
 					terminalObj,
