@@ -59,7 +59,6 @@ export function getSettingsHtml(
                 <br>
 
                 <div class="setting-container">
-                    <div class="value-container-parent">
                         <div class="tooltip">
                             <span class="tooltip-info"></span>
                             <span class="tooltiptext">Higher temperatures will result in more creative responses, but also more mistakes</span>
@@ -69,7 +68,6 @@ export function getSettingsHtml(
 													temperature
 												).toFixed(temperaturePrecision)}</span>
                         <span class="default">RECOMMENDED: 0.2</span>
-                    </div>
                     <div class="input-container">
                         <span class="range-min">${temperatureMin}</span>
                         <input type="range" id="temperature" name="temperature" min="${temperatureMin}" max="${temperatureMax}" step="${temperatureStep}" value="${temperature}">
