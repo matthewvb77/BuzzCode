@@ -1,4 +1,4 @@
-# BuzzCode: Jr Developer In Your IDE
+# BuzzCode: Jr Developer In Your IDE -- Open Beta
 
 **Note:** BuzzCode is experimental and actively in development. Use caution when executing suggested commands or code.
 
