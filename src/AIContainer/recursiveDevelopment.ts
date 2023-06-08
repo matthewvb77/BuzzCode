@@ -83,6 +83,10 @@ async function recursiveDevelopmentHelper(
 			signal
 		);
 
+		if (responseString.startsWith("[") && responseString.endsWith("]")) {
+			responseString = `{"subtasks": ` + responseString + `}`;
+		}
+
 		if (responseString === "Cancelled") {
 			resolve("Cancelled");
 			return;
