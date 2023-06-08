@@ -8,6 +8,15 @@ body {
 	flex-direction: column;
 	height: calc(100vh - 40px);
 }
+
+#settingsForm {
+	background-color: #252526; /* Color of sidebar background */
+	border-radius: 6px;
+}
+#settingsForm > * {
+	margin-left: 16px;
+	margin-right: 16px;
+}
 label {
 	font-size: 18px;
 	font-weight: 700;
@@ -24,7 +33,6 @@ select {
 	color: #c8c8c8;
 	font-size: 18px;
 	padding: 6px 12px;
-	margin: 8px 0;
 	border-radius: 4px;
 	outline: none;
 }
@@ -89,7 +97,10 @@ input[type="range"]::-moz-range-track {
 	padding: 6px;
 }
 .setting-container {
-	padding: 4px;
+	padding: 24px;
+}
+.setting-container:not(:last-child) {
+	border-bottom: 1.5px solid #5a5a5a;
 }
 .inline-align {
 	flex: 1;
@@ -161,7 +172,6 @@ button {
 	text-align: center;
 	text-decoration: none;
 	font-size: 18px;
-	margin: 12px 0px;
 	cursor: pointer;
 	border-radius: 4px;
 	align-self: flex-end;
@@ -232,4 +242,9 @@ input:checked + .slider:before {
 
 .slider.round:before {
 	border-radius: 50%;
+}
+
+.setting-divider {
+	font-weight: 700;
+	color: #1e1e1e;
 }
