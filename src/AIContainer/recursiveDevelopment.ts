@@ -228,8 +228,6 @@ async function recursiveDevelopmentHelper(
 								askUserResponse;
 						}
 
-						recurseInput += `\nGenerate a JSON list of next steps to take.\nJSON subtask list: `;
-
 						const result = await recursiveDevelopmentHelper(
 							recurseInput,
 							terminalObj,
@@ -284,8 +282,7 @@ async function recursiveDevelopmentHelper(
 						`\nHere are the user's responses to questions: \n` +
 						askUserResponse +
 						`\nThe following error occured:\n` +
-						error +
-						`\n\nGenerate a JSON list of subtasks to fix the issue.\nJSON subtask list: `,
+						error,
 					terminalObj,
 					signal,
 					onStartSubtask,
