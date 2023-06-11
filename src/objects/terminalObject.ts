@@ -408,6 +408,7 @@ export function containsError(message: string): boolean {
 		"invalid",
 		"fatal",
 		"errno",
+		"No such file or directory",
 	];
 
 	for (let i = 0; i < errorMessages.length; i++) {
