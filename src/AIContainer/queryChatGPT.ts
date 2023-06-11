@@ -92,10 +92,13 @@ export async function queryChatGPT(
 				// The error is an AxiosError
 				const axiosError = error as AxiosError;
 				const statusCode = axiosError.response?.status;
+				const statusText = axiosError.response?.statusText;
 				if (statusCode === 401) {
-					return "Error: Axios code 401 - Invalid API key";
+					return `Error: HTTP 401 - ${statusText} (Likely cause: Invalid API key)`;
 				} else if (statusCode === 429) {
-					return "Error: Axios code 429 - Rate limit exceeded";
+					return `Error: HTTP 429 - ${statusText} (Likely cause: OpenAI rate limit exceeded or no remaining funds)`;
+				} else if (statusCode === 404) {
+					return `Error: HTTP 404 - ${statusText} (Likely cause: You do not have access to GPT-4 api -- join the waitlist at https://openai.com/waitlist/gpt-4-api)`;
 				} else {
 					return "Error: " + error;
 				}
