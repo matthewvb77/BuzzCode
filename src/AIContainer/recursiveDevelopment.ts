@@ -282,7 +282,7 @@ async function recursiveDevelopmentHelper(
 					`Here is the original task: ` +
 						taskDescription +
 						`\nHere is the past subtask list:\n` +
-						JSON.stringify(subtasks) +
+						`{ "subtasks": ${JSON.stringify(subtasks)}}` +
 						`\nHere is the terminal output: {\n` +
 						terminalOutput +
 						`\n}` +
