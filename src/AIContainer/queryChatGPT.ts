@@ -98,6 +98,7 @@ export async function queryChatGPT(
 				} else if (statusCode === 429) {
 					return `Error: HTTP 429 - ${statusText} (Likely cause: OpenAI rate limit exceeded or no remaining funds)`;
 				} else if (statusCode === 404) {
+					//TODO: Replace this by disabling the gpt4 model when they dont have access
 					return `Error: HTTP 404 - ${statusText} (Likely cause: You do not have access to GPT-4 api -- join the waitlist at https://openai.com/waitlist/gpt-4-api)`;
 				} else {
 					return "Error: " + error;
