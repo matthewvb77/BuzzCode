@@ -184,7 +184,7 @@ async function recursiveDevelopmentHelper(
 						}
 
 						terminalOutput +=
-							"Command: {" +
+							"{ Command: {" +
 							command +
 							"}\n" +
 							"stdout: {" +
@@ -195,7 +195,7 @@ async function recursiveDevelopmentHelper(
 							"}\n" +
 							"error: {" +
 							commandResult.error +
-							"}\n";
+							"}\n },\n";
 
 						break;
 
@@ -217,21 +217,21 @@ async function recursiveDevelopmentHelper(
 					case "recurse":
 						const { newPrompt } = parameters;
 						let recurseInput: string =
-							`This is a recursive call with the original task: ` +
-							`${taskDescription}\n` +
-							`And the new prompt: ${newPrompt}\n`;
+							`This is a recursive call with the original task: {` +
+							`${taskDescription}}\n` +
+							`And the new prompt: {${newPrompt}}\n`;
 
 						if (terminalOutput) {
 							recurseInput +=
-								`\nHere are the outputs of executed terminal commands: {\n` +
+								`\nHere are the outputs of executed terminal commands: [\n` +
 								terminalOutput +
-								`}\n`;
+								`]\n`;
 						}
 						if (askUserResponse) {
 							recurseInput +=
-								`\nHere are the user's responses to questions: {\n` +
+								`\nHere are the user's responses to questions: [\n` +
 								askUserResponse +
-								`}\n`;
+								`]\n`;
 						}
 
 						const result = await recursiveDevelopmentHelper(
@@ -252,12 +252,12 @@ async function recursiveDevelopmentHelper(
 						const { question } = parameters;
 						try {
 							askUserResponse +=
-								"Question: " +
+								"{ Question: {" +
 								question +
-								"\n" +
-								"Response: " +
+								"}\n" +
+								"Response: {" +
 								(await askUser(question)) +
-								"\n";
+								"}\n }, \n";
 						} catch (error) {
 							throw error;
 						}
@@ -283,14 +283,13 @@ async function recursiveDevelopmentHelper(
 						taskDescription +
 						`\nHere is the past subtask list:\n` +
 						`{ "subtasks": ${JSON.stringify(subtasks)}}` +
-						`\nHere is the terminal output: {\n` +
+						`\nHere is the terminal output: \n` +
 						terminalOutput +
-						`\n}` +
-						`\nHere are the user's responses to questions: {\n` +
+						`\nHere are the user's responses to questions: \n` +
 						askUserResponse +
-						`\n}` +
-						`\nThe following error occured:\n` +
-						error,
+						`\nThe following error occured: {\n` +
+						error +
+						`\n}`,
 					terminalObj,
 					signal,
 					onStartSubtask,
