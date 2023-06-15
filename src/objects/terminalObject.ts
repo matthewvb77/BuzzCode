@@ -427,5 +427,6 @@ export function parseErrorMessage(errorString: string): string {
 		// if either index is not found
 		return errorString;
 	}
-	return errorString.substring(start, end); // return the error message
+	// TODO: Fix this
+	return errorString; // .substring(start, end); // return the error message
 }
