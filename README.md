@@ -2,6 +2,10 @@
 
 **Note:** BuzzCode is experimental and actively in development. Use caution when executing suggested commands or code.
 
+
+https://github.com/matthewvb77/BuzzCode/assets/41040035/bf293469-b857-447e-9fac-777e51e912b2
+
+
 ## Setup
 
 1. Get an OpenAI key at https://platform.openai.com/account/api-keys.
