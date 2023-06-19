@@ -101,19 +101,19 @@ describe("TerminalObject Integration Tests", () => {
 			expect(result).to.be.false;
 		});
 	});
+	// TODO: parseErrorMessage was ineffective and has been removed, replace once function is fixed
+	// describe("parseErrorMessage", () => {
+	// 	it("should extract the error message from the string", () => {
+	// 		const testErrorString =
+	// 			"Some text here\n\r\n\rError message\n\rSome other text";
+	// 		const result = parseErrorMessage(testErrorString);
+	// 		expect(result).to.equal("Error message");
+	// 	});
 
-	describe("parseErrorMessage", () => {
-		it("should extract the error message from the string", () => {
-			const testErrorString =
-				"Some text here\n\r\n\rError message\n\rSome other text";
-			const result = parseErrorMessage(testErrorString);
-			expect(result).to.equal("Error message");
-		});
-
-		it("should return the entire string if no error message is found", () => {
-			const testErrorString = "Some text here without error format";
-			const result = parseErrorMessage(testErrorString);
-			expect(result).to.equal(testErrorString);
-		});
-	});
+	// 	it("should return the entire string if no error message is found", () => {
+	// 		const testErrorString = "Some text here without error format";
+	// 		const result = parseErrorMessage(testErrorString);
+	// 		expect(result).to.equal(testErrorString);
+	// 	});
+	// });
 });
