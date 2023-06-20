@@ -3,7 +3,7 @@
 	"displayName": "BuzzCode",
 	"description": "Provides AI-assisted task automation",
 	"version": "0.0.1",
-	"icon": "https://github.com/matthewvb77/BuzzCode_resources/blob/main/BuzzCode_logo.png",
+	"icon": "https://github.com/matthewvb77/BuzzCode/src/resources/BuzzCode_logo.png",
 	"engines": {
 		"vscode": "^1.77.3"
 	},
