@@ -2,6 +2,7 @@
 	"name": "buzzcode",
 	"displayName": "BuzzCode",
 	"description": "Provides AI-assisted task automation",
+	"publisher": "BuzzCode",
 	"version": "0.0.1",
 	"icon": "resources/BuzzCode_logo.png",
 	"engines": {
