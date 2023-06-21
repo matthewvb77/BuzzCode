@@ -3,7 +3,7 @@
 **Note:** BuzzCode is experimental and actively in development. Use caution when executing suggested commands or code.
 
 
-[![Alternate Text](http://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
+[![Alternate Text](https://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
 
 
 ## Setup
