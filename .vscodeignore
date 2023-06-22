@@ -7,7 +7,7 @@ src/**/*
 !src/settings/settings.js
 !src/sidebar/sidebar.css
 !src/sidebar/sidebar.js
-!node_modules/vscode-codicons/dist/codicon.css
+!node_modules/vscode-codicons/dist/codicon.*
 .gitignore
 .yarnrc
 webpack.config.js
