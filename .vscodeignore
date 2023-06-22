@@ -8,6 +8,7 @@ src/**/*
 !src/sidebar/sidebar.css
 !src/sidebar/sidebar.js
 !node_modules/vscode-codicons/dist/codicon.ttf
+!node_modules/vscode-codicons/dist/codicon.css
 .gitignore
 .yarnrc
 webpack.config.js
