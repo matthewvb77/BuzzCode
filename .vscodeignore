@@ -2,7 +2,12 @@
 .vscode-test/**
 out/**
 node_modules/**
-src/**
+src/**/*
+!src/settings/settings.css
+!src/settings/settings.js
+!src/sidebar/sidebar.css
+!src/sidebar/sidebar.js
+!node_modules/vscode-codicons/dist/codicon.css
 .gitignore
 .yarnrc
 webpack.config.js
