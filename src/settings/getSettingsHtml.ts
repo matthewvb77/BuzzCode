@@ -5,7 +5,7 @@ import {
 	temperaturePrecision,
 	temperatureStep,
 } from "./configuration";
-import { getNonce } from "../helpers/getNonce";
+import { getNonce } from "../utils/getNonce";
 
 export function getSettingsHtml(
 	openaiApiKey: string,
