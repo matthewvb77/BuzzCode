@@ -1,4 +1,4 @@
-import { shell } from "../settings/configuration";
+import { shell } from "../settingsPage/configuration";
 
 export const initializePrompt = `You have access to these 4 functions: 
 - executeTerminalCommand(command: string) --> shell type is ${shell}

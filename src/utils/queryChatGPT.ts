@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 import {
 	contextLengthGpt3Point5,
 	contextLengthGpt4,
-} from "../settings/configuration";
+} from "../settingsPage/configuration";
 
 export async function queryChatGPT(
 	prompt: string,

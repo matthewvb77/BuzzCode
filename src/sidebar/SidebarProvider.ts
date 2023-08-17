@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { getNonce } from "../utils/getNonce";
-import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
+import { recursiveDevelopment } from "../agents/recursiveDevelopment";
 import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
-import { Subtask, acceptableStates } from "../objects/subtask";
+import { Subtask, acceptableStates } from "../agents/subtask";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;

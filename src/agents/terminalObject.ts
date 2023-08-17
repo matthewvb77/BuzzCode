@@ -3,7 +3,7 @@ import * as cp from "child_process";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import * as merge2 from "merge2";
-import { shell, shellArgs, delay } from "../settings/configuration";
+import { shell, shellArgs, delay } from "../settingsPage/configuration";
 
 export type CommandResult = {
 	error: string;

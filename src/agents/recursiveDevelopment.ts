@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
-import { queryChatGPT } from "./queryChatGPT";
-import { askUser } from "./askUser";
+import { queryChatGPT } from "../utils/queryChatGPT";
+import { askUser } from "../skillLibrary/controlPrimitiveAPI/askUser";
 import { initializePrompt } from "./prompts";
-import { TerminalObject, CommandResult } from "../objects/terminalObject";
-import { Subtask } from "../objects/subtask";
-import { delay, shell } from "../settings/configuration";
-import { correctJson } from "../helpers/jsonFixGeneral";
+import { TerminalObject, CommandResult } from "./terminalObject";
+import { Subtask } from "./subtask";
+import { delay, shell } from "../settingsPage/configuration";
 
 var recursionLimit = 100;
 var recursionCount = 0;

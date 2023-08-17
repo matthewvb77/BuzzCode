@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getSettingsHtml } from "./settings/getSettingsHtml";
+import { getSettingsHtml } from "./settingsPage/getSettingsHtml";
 import { SidebarProvider } from "./sidebar/SidebarProvider";
 
 let settingsPanel: vscode.WebviewPanel | undefined;

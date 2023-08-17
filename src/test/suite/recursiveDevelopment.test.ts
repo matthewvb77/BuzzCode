@@ -3,8 +3,8 @@ import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import * as nock from "nock";
-import { recursiveDevelopment } from "../../AIContainer/recursiveDevelopment";
-import { TerminalObject } from "../../objects/terminalObject";
+import { recursiveDevelopment } from "../../agents/recursiveDevelopment";
+import { TerminalObject } from "../../agents/terminalObject";
 
 // chai.use(chaiAsPromised);
 // const expect = chai.expect;
