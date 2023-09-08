@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { queryGPTFunctionCalling } from "./queryGPTFunctionCalling";
 import { askUser } from "./askUser";
-import { initializePrompt } from "./prompts";
+import { functions } from "./controlPrimitives";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
@@ -78,7 +78,8 @@ async function recursiveDevelopmentHelper(
 		}
 
 		var responseString: string = await queryGPTFunctionCalling(
-			initializePrompt + input + "\n\nJSON subtask list:",
+			functions,
+			input,
 			signal
 		);
 

@@ -7,6 +7,7 @@ import {
 } from "../settings/configuration";
 
 export async function queryGPTFunctionCalling(
+	functions: Array<any>,
 	prompt: string,
 	signal: AbortSignal
 ): Promise<string> {
