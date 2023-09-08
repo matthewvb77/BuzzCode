@@ -66,6 +66,7 @@ export async function queryGPTFunctionCalling(
 			{
 				model: model,
 				messages: [{ role: "user", content: prompt }],
+				functions: functions,
 				temperature: temperature,
 				max_tokens: maxTokens,
 			},
