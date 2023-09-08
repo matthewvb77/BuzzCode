@@ -63,7 +63,7 @@ export async function queryGPTFunctionCalling(
 		const response = await axios.post(
 			"https://api.openai.com/v1/chat/completions",
 			{
-				model: model + "-0613", // -0613 is the function calling version
+				model: model,
 				messages: [{ role: "user", content: prompt }],
 				temperature: temperature,
 				max_tokens: maxTokens,
