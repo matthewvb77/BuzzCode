@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { queryChatGPT } from "./queryChatGPT";
+import { queryGPTFunctionCalling } from "./queryGPTFunctionCalling";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
@@ -77,7 +77,7 @@ async function recursiveDevelopmentHelper(
 			return;
 		}
 
-		var responseString: string = await queryChatGPT(
+		var responseString: string = await queryGPTFunctionCalling(
 			initializePrompt + input + "\n\nJSON subtask list:",
 			signal
 		);
