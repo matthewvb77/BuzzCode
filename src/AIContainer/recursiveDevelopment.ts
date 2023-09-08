@@ -5,7 +5,6 @@ import { initializePrompt } from "./prompts";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
-import { correctJson } from "../helpers/jsonFixGeneral";
 
 var recursionLimit = 100;
 var recursionCount = 0;
@@ -96,38 +95,12 @@ async function recursiveDevelopmentHelper(
 		}
 
 		try {
-			// Regular expression to match JSON
-			const jsonRegex = /{[\s\S]*}/;
+			var subtasks: Array<Subtask> = JSON.parse(responseString).subtasks;
 
-			// Extract JSON and reasoning strings
-			var jsonStringArray: Array<string> | null = null;
-			try {
-				jsonStringArray = responseString.match(jsonRegex);
-			} catch (error) {
-				jsonStringArray = correctJson(responseString).match(jsonRegex);
-			}
-			if (!jsonStringArray) {
-				throw Error("No JSON found.");
-			}
-			let jsonString = jsonStringArray[0];
-			let reasoning = responseString
-				.replace(jsonRegex, "")
-				.trim()
-				.split("Response: ")[0];
-
-			jsonString = correctJson(jsonString);
-
-			var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
-
+			// Set state of all subtasks to "initial"
 			subtasks.forEach((subtask) => {
 				subtask.state = "initial";
 			});
-			if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
-				throw Error("Invalid subtask indices.");
-			}
-			if (reasoning) {
-				vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
-			}
 		} catch (error) {
 			resolve("Error: Invalid JSON. \n" + (error as Error).message);
 			return;
