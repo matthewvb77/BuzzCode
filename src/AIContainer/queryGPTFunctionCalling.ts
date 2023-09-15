@@ -65,7 +65,14 @@ export async function queryGPTFunctionCalling(
 			"https://api.openai.com/v1/chat/completions",
 			{
 				model: model,
-				messages: [{ role: "user", content: prompt }],
+				messages: [
+					{
+						role: "system",
+						content:
+							"You're a software programmer that completes tasks by executing functions.",
+					},
+					{ role: "user", content: prompt },
+				],
 				functions: functions,
 				temperature: temperature,
 				max_tokens: maxTokens,

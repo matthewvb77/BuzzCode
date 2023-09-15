@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { queryGPTFunctionCalling } from "./queryGPTFunctionCalling";
 import { askUser } from "./askUser";
-import { functions } from "./controlPrimitives";
+import { functionCaller } from "./controlPrimitives";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
 import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
@@ -77,22 +77,22 @@ async function recursiveDevelopmentHelper(
 			return;
 		}
 
-		var responseString: string = await queryGPTFunctionCalling(
-			functions,
+		var response: string = await queryGPTFunctionCalling(
+			functionCaller,
 			input,
 			signal
 		);
 
-		if (responseString === "Cancelled") {
+		if (response === "Cancelled") {
 			resolve("Cancelled");
 			return;
-		} else if (responseString.startsWith("Error")) {
-			resolve(responseString);
+		} else if (response.startsWith("Error")) {
+			resolve(response);
 			return;
 		}
 
 		try {
-			var subtasks: Array<Subtask> = JSON.parse(responseString).subtasks;
+			var subtasks: Array<Subtask> = JSON.parse(response).subtasks;
 
 			// Set state of all subtasks to "initial"
 			subtasks.forEach((subtask) => {
