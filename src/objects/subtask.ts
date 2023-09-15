@@ -2,7 +2,7 @@ export interface Subtask {
 	index: number;
 	type: string;
 	parameters: any;
-	state?: string;
+	state: string;
 }
 
 export const acceptableStates: Array<string> = [
