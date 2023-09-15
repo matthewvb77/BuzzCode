@@ -11,6 +11,7 @@ export const functionCaller = [
 		parameters: {
 			type: "object",
 			properties: {
+				/* --------------- Control Primitives START --------------- */
 				executeTerminalCommand: {
 					name: "executeTerminalCommand",
 					description: `Execute a terminal command in the ${shell} shell`,
@@ -74,6 +75,8 @@ export const functionCaller = [
 						required: ["newPrompt"],
 					},
 				},
+
+				/* --------------- Control Primitives END --------------- */
 			},
 			required: [],
 		},
