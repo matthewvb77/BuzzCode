@@ -77,11 +77,7 @@ async function recursiveDevelopmentHelper(
 			return;
 		}
 
-		var response: string = await queryGPTFunctionCalling(
-			functionCaller,
-			input,
-			signal
-		);
+		var response = await queryGPTFunctionCalling(functionCaller, input, signal);
 
 		if (response === "Cancelled") {
 			resolve("Cancelled");
