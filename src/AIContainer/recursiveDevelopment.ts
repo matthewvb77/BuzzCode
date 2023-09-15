@@ -3,7 +3,7 @@ import { queryGPTFunctionCalling } from "./queryGPTFunctionCalling";
 import { askUser } from "./askUser";
 import { functionCaller } from "./controlPrimitives";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
-import { Subtask } from "../objects/subtask";
+import { Subtask, jsonToSubtasks } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
 
 var recursionLimit = 100;
@@ -92,7 +92,9 @@ async function recursiveDevelopmentHelper(
 		}
 
 		try {
-			var subtasks: Array<Subtask> = JSON.parse(responseString).subtasks;
+			var jsonResponse = JSON.parse(responseString);
+
+			var subtasks: Array<Subtask> = jsonToSubtasks(jsonResponse);
 
 			// Set state of all subtasks to "initial"
 			subtasks.forEach((subtask) => {
