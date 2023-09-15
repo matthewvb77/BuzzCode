@@ -31,6 +31,7 @@ export function jsonToSubtasks(input: any): Subtask[] {
 					index: index++,
 					type: functionType,
 					parameters: param,
+					state: "initial",
 				});
 			}
 		}

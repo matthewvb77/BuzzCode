@@ -95,11 +95,6 @@ async function recursiveDevelopmentHelper(
 			var jsonResponse = JSON.parse(responseString);
 
 			var subtasks: Array<Subtask> = jsonToSubtasks(jsonResponse);
-
-			// Set state of all subtasks to "initial"
-			subtasks.forEach((subtask) => {
-				subtask.state = "initial";
-			});
 		} catch (error) {
 			resolve("Error: Invalid JSON. \n" + (error as Error).message);
 			return;
