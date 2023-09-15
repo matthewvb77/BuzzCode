@@ -69,7 +69,7 @@ export async function queryGPTFunctionCalling(
 					{
 						role: "system",
 						content:
-							"You're a software programmer that completes tasks by executing functions.",
+							"You're a software programmer that completes tasks by executing functions. ONLY USE FUNCTION CALLING. NEVER SEND A USER-FACING MESSAGE.",
 					},
 					{ role: "user", content: prompt },
 				],
