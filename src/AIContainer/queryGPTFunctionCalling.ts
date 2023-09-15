@@ -88,8 +88,11 @@ export async function queryGPTFunctionCalling(
 			}
 		);
 
-		if (response.status === 200 && response.data.choices[0].message) {
-			return response.data.choices[0].message.content;
+		if (
+			response.status === 200 &&
+			response.data.choices[0].message.function_call
+		) {
+			return response.data.choices[0].message.function_call.arguments;
 		} else {
 			return "Error: " + response.statusText;
 		}

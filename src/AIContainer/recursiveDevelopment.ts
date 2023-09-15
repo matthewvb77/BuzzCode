@@ -77,18 +77,22 @@ async function recursiveDevelopmentHelper(
 			return;
 		}
 
-		var response = await queryGPTFunctionCalling(functionCaller, input, signal);
+		var responseString: string = await queryGPTFunctionCalling(
+			functionCaller,
+			input,
+			signal
+		);
 
-		if (response === "Cancelled") {
+		if (responseString === "Cancelled") {
 			resolve("Cancelled");
 			return;
-		} else if (response.startsWith("Error")) {
-			resolve(response);
+		} else if (responseString.startsWith("Error")) {
+			resolve(responseString);
 			return;
 		}
 
 		try {
-			var subtasks: Array<Subtask> = JSON.parse(response).subtasks;
+			var subtasks: Array<Subtask> = JSON.parse(responseString).subtasks;
 
 			// Set state of all subtasks to "initial"
 			subtasks.forEach((subtask) => {
