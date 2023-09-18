@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { queryChatGPT } from "./queryChatGPT";
+import { queryChatGPT } from "../helpers/queryChatGPT";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
