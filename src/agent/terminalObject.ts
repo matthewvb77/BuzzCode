@@ -144,7 +144,7 @@ export class TerminalObject {
 	/*
 		Since the PseudoTerminal creation is asynchronous, this factory method is necessary
 	 */
-	static async create(signal: AbortSignal) {
+	static async create(signal: AbortSignal): Promise<TerminalObject> {
 		var terminalProcess: cp.ChildProcess | undefined;
 		var terminalPty: vscode.Pseudoterminal | undefined;
 		var terminal: vscode.Terminal | undefined;
@@ -189,7 +189,7 @@ export class TerminalObject {
 						return;
 					}
 
-					if (terminalProcess === undefined) {
+					if (!terminalProcess) {
 						throw Error("Terminal process is undefined.");
 					}
 
@@ -263,9 +263,9 @@ export class TerminalObject {
 
 		/* -----------------------CONSTRUCTOR ----------------------*/
 		if (!terminalProcess || !terminalPty || !terminal || !writeEmitter) {
-			throw new Error("Terminal creation failed. Critical components missing.");
+			throw new Error("Terminal creation failed. Some components are missing.");
 		}
-		const terminalObject = new TerminalObject(
+		return new TerminalObject(
 			terminalProcess,
 			terminalPty,
 			terminal,
@@ -273,7 +273,6 @@ export class TerminalObject {
 			signal,
 			readOnly
 		);
-		return terminalObject;
 	}
 
 	async executeCommand(
@@ -291,7 +290,7 @@ export class TerminalObject {
 
 		return new Promise(async (resolve, reject) => {
 			this.signal.onabort = () => {
-				resolve("Cancelled");
+				resolve(RETURN_CANCELLED);
 				return;
 			};
 			if (warn) {
@@ -302,8 +301,8 @@ export class TerminalObject {
 					"No"
 				);
 
-				if (userResponse === "No" || userResponse === undefined) {
-					resolve("Cancelled");
+				if (!userResponse || userResponse === "No") {
+					resolve(RETURN_CANCELLED);
 					return;
 				}
 			}
@@ -335,7 +334,7 @@ export class TerminalObject {
 	): Promise<CommandResult | "Cancelled"> {
 		return new Promise(async (resolve, reject) => {
 			this.signal.onabort = () => {
-				resolve("Cancelled");
+				resolve(RETURN_CANCELLED);
 				return;
 			};
 
@@ -354,7 +353,7 @@ export class TerminalObject {
 					"Yes"
 				);
 				if (overwrite !== "Yes") {
-					resolve("Cancelled");
+					resolve(RETURN_CANCELLED);
 					return;
 				}
 			}
