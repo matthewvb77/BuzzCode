@@ -74,7 +74,6 @@ async function recursiveDevelopmentHelper(
 	recursionCount++;
 	if (recursionCount >= RECURSION_LIMIT) {
 		return ERROR_PREFIX + "Recursion limit reached";
-		return;
 	}
 
 	var responseString: string = await queryChatGPT(
@@ -83,7 +82,7 @@ async function recursiveDevelopmentHelper(
 	);
 
 	if (responseString.startsWith("[") && responseString.endsWith("]")) {
-		responseString = `{"subtasks": ` + responseString + `}`;
+		responseString = `{"subtasks": ${responseString}}`;
 	}
 
 	if (responseString === CANCELLED) {
@@ -188,6 +187,12 @@ async function recursiveDevelopmentHelper(
 						commandResult.error +
 						"}\n },\n";
 
+					terminalOutput +=
+						`{\nCommand: { ${command} }\n` +
+						`stdout: { ${commandResult.stdout} }\n` +
+						`stderr: { ${commandResult.stderr} }\n` +
+						`error: { ${commandResult.error} }\n},\n`;
+
 					break;
 
 				case "generateFile":
@@ -206,22 +211,13 @@ async function recursiveDevelopmentHelper(
 
 				case "recurse":
 					const { newPrompt } = parameters;
-					let recurseInput: string =
-						`This is a recursive call with the original task: {` +
-						`${taskDescription}}\n` +
-						`And the new prompt: {${newPrompt}}\n`;
+					let recurseInput: string = `This is a recursive call with the original task: { ${taskDescription} }\n And the new prompt: { ${newPrompt} }\n`;
 
 					if (terminalOutput) {
-						recurseInput +=
-							`\nHere are the outputs of executed terminal commands: [\n` +
-							terminalOutput +
-							`]\n`;
+						recurseInput += `\nHere are the outputs of executed terminal commands: [ ${terminalOutput} ]\n`;
 					}
 					if (askUserResponse) {
-						recurseInput +=
-							`\nHere are the user's responses to questions: [\n` +
-							askUserResponse +
-							`]\n`;
+						recurseInput += `\nHere are the user's responses to questions: [ ${askUserResponse} ]\n`;
 					}
 
 					const result = await recursiveDevelopmentHelper(
@@ -241,12 +237,8 @@ async function recursiveDevelopmentHelper(
 					const { question } = parameters;
 					try {
 						askUserResponse +=
-							"{ Question: {" +
-							question +
-							"}\n" +
-							"Response: {" +
-							(await askUser(question)) +
-							"}\n }, \n";
+							`{ Question: { ${question} }\n` +
+							`Response: { ${await askUser(question)} }\n }, \n`;
 					} catch (error) {
 						throw error;
 					}
@@ -259,26 +251,30 @@ async function recursiveDevelopmentHelper(
 		} catch (error) {
 			// If an error occurs, ask chatGPT for new subtasks
 			vscode.window.showErrorMessage(
-				"Error occured while executing subtask " +
-					subtask.index +
-					".\n" +
+				`Error occured while executing subtask ${subtask.index}.\n` +
 					(error as Error).message
 			);
 
 			onSubtaskError(subtask.index);
 
+			let input =
+				`Here is the original task: ${taskDescription}\n\n` +
+				`Here is the past subtask list: { "subtasks": ${JSON.stringify(
+					subtasks
+				)}}\n\n`;
+
+			if (terminalOutput) {
+				input += `Here is the terminal output: ${terminalOutput}\n\n`;
+			}
+			if (askUserResponse) {
+				input += `Here are the user's responses to questions: ${askUserResponse}\n\n`;
+			}
+			if (error) {
+				input += `The following error occured: { ${error} \n}`;
+			}
+
 			const result = await recursiveDevelopmentHelper(
-				`Here is the original task: ` +
-					taskDescription +
-					`\nHere is the past subtask list:\n` +
-					`{ "subtasks": ${JSON.stringify(subtasks)}}` +
-					`\nHere is the terminal output: \n` +
-					terminalOutput +
-					`\nHere are the user's responses to questions: \n` +
-					askUserResponse +
-					`\nThe following error occured: {\n` +
-					error +
-					`\n}`,
+				input,
 				terminalObj,
 				signal,
 				onStartSubtask,
