@@ -7,7 +7,10 @@ import { Subtask } from "../objects/subtask";
 import { delay, shell } from "../settings/configuration";
 import { correctJson } from "../helpers/jsonFixGeneral";
 
-var recursionLimit = 100;
+const CANCELLED = "Cancelled";
+const ERROR_PREFIX = "Error: ";
+const RECURSION_LIMIT = 100;
+
 var recursionCount = 0;
 var taskDescription = ``;
 var terminalOutput: string = "";
@@ -34,7 +37,7 @@ export async function recursiveDevelopment(
 		try {
 			terminalObj = await TerminalObject.create(signal);
 		} catch (error) {
-			resolve("Error: " + (error as Error).message);
+			resolve(ERROR_PREFIX + (error as Error).message);
 			return;
 		}
 
@@ -73,8 +76,8 @@ async function recursiveDevelopmentHelper(
 
 	return new Promise(async (resolve, reject) => {
 		recursionCount++;
-		if (recursionCount >= recursionLimit) {
-			resolve("Error: Recursion limit reached");
+		if (recursionCount >= RECURSION_LIMIT) {
+			resolve(ERROR_PREFIX + "Recursion limit reached");
 			return;
 		}
 
@@ -87,8 +90,8 @@ async function recursiveDevelopmentHelper(
 			responseString = `{"subtasks": ` + responseString + `}`;
 		}
 
-		if (responseString === "Cancelled") {
-			resolve("Cancelled");
+		if (responseString === CANCELLED) {
+			resolve(CANCELLED);
 			return;
 		} else if (responseString.startsWith("Error")) {
 			resolve(responseString);
@@ -129,7 +132,7 @@ async function recursiveDevelopmentHelper(
 				vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
 			}
 		} catch (error) {
-			resolve("Error: Invalid JSON. \n" + (error as Error).message);
+			resolve(ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message);
 			return;
 		}
 
@@ -157,11 +160,11 @@ async function recursiveDevelopmentHelper(
 				return;
 
 			case "cancel":
-				resolve("Cancelled");
+				resolve(CANCELLED);
 				return;
 
 			default:
-				resolve("Error: Invalid user action.");
+				resolve(ERROR_PREFIX + "Invalid user action.");
 				return;
 		}
 
@@ -177,7 +180,7 @@ async function recursiveDevelopmentHelper(
 							await terminalObj.executeCommand(command, subtask.index);
 
 						if (typeof commandResult === "string") {
-							resolve("Cancelled");
+							resolve(CANCELLED);
 							return;
 						} else if (commandResult.error) {
 							throw Error(commandResult.error);
@@ -207,7 +210,7 @@ async function recursiveDevelopmentHelper(
 							subtask.index
 						);
 						if (typeof fileCreationResult === "string") {
-							resolve("Cancelled");
+							resolve(CANCELLED);
 							return;
 						} else if (fileCreationResult.error) {
 							throw fileCreationResult.error;
@@ -265,7 +268,7 @@ async function recursiveDevelopmentHelper(
 						break;
 
 					default:
-						throw Error(`Error: Unknown subtask type "${type}"`);
+						throw Error(ERROR_PREFIX + `Unknown subtask type "${type}"`);
 				}
 			} catch (error) {
 				// If an error occurs, ask chatGPT for new subtasks
