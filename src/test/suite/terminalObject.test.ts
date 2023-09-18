@@ -38,7 +38,7 @@ describe("TerminalObject Integration Tests", () => {
 		terminalObject = await TerminalObject.create(abortController.signal);
 	});
 
-	after(() => {
+	after(async () => {
 		// Delete test.txt file if it exists
 		const fileName = path.join(process.cwd(), "test.txt");
 		if (fs.existsSync(fileName)) {
@@ -47,6 +47,7 @@ describe("TerminalObject Integration Tests", () => {
 
 		// Clean up other resources
 		terminalObject.dispose();
+		await new Promise((resolve) => setTimeout(resolve, 100));
 		fs.rmSync(testWorkspaceDir, { recursive: true });
 	});
 
