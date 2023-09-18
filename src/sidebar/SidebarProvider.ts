@@ -2,7 +2,14 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../agent/recursiveDevelopment";
 import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
-import { Subtask, acceptableStates } from "../objects/subtask";
+import { Subtask, SubtaskState } from "../objects/subtask";
+import { ERROR_PREFIX, RETURN_CANCELLED } from "../settings/configuration";
+
+// Commands
+const SUBMIT = "submit";
+const CANCEL_TASK = "cancel-task";
+
+enum TaskState {}
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -67,7 +74,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			}
 
 			switch (message.command) {
-				case "submit":
+				case SUBMIT:
 					if (this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
 							"A task is already in progress."
@@ -81,7 +88,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					this._state.userInput = message.input;
 					this._state.subtasks = [];
 					this._state.previousSubtaskCount = 0;
-					this.updateTaskState("started");
+					this.updateTaskState(SubtaskState.started);
 
 					try {
 						const result = await recursiveDevelopment(
@@ -91,10 +98,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							this.onSubtasksReady.bind(this),
 							this.onSubtaskError.bind(this)
 						);
-						if (result === "Cancelled") {
-							this.updateTaskState("cancelled");
+						if (result === RETURN_CANCELLED) {
+							this.updateTaskState(SubtaskState.cancelled);
 						} else if (result && result.startsWith("Error")) {
-							this.updateTaskState("error");
+							this.updateTaskState(SubtaskState.error);
 							if (result === "Error: Axios code 429 - Rate limit exceeded") {
 								vscode.window.showInformationMessage(
 									"OpenAI API rate limit exceeded. Please wait a few secondes and try again.\n" +
@@ -103,19 +110,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 							}
 							vscode.window.showErrorMessage(result);
 						} else {
-							this.updateTaskState("completed");
+							this.updateTaskState(SubtaskState.completed);
 						}
 						this._state.taskInProgress = false;
 					} catch (error) {
 						vscode.window.showErrorMessage(
-							"Error occurred while running task: " + (error as Error).message
+							`Error occurred while running task: ${(error as Error).message}`
 						);
-						this.updateTaskState("error");
+						this.updateTaskState(SubtaskState.error);
 						this._state.taskInProgress = false;
 					}
 					break;
 
-				case "cancel-task":
+				case CANCEL_TASK:
 					if (!this._state.taskInProgress) {
 						vscode.window.showInformationMessage(
 							"No task is currently in progress, this should not happen."
@@ -131,7 +138,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					break;
 
 				default:
-					throw Error("Invalid command: " + message.command);
+					throw Error(`Invalid command: ${message.command}`);
 			}
 		});
 	}
@@ -143,11 +150,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	private onStartSubtask(subtask: Subtask) {
 		if (
 			subtask.index > 0 &&
-			this._state.subtasks[subtask.index - 1].state === "active"
+			this._state.subtasks[subtask.index - 1].state === SubtaskState.active
 		) {
-			this._state.subtasks[subtask.index - 1].state = "completed";
+			this._state.subtasks[subtask.index - 1].state = SubtaskState.completed;
 		}
-		this._state.subtasks[subtask.index].state = "active";
+		this._state.subtasks[subtask.index].state = SubtaskState.active;
 		if (this._view) {
 			this._view.webview.postMessage({
 				command: "onStartSubtask",
@@ -163,12 +170,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		return new Promise((resolve) => {
 			const onAbort = () => {
 				signal.onabort = null;
-				resolve("Cancelled");
+				resolve(RETURN_CANCELLED);
 				return;
 			};
 			signal.onabort = onAbort;
 
-			this.updateTaskState("waiting");
+			this.updateTaskState(SubtaskState.waiting);
 
 			// If subtasks were made by recurse, set recurse subtask to waiting
 			if (this._state.subtasks) {
@@ -199,7 +206,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					if (message.command === "userAction") {
 						switch (message.action) {
 							case "confirm":
-								this.updateTaskState("active");
+								this.updateTaskState(SubtaskState.active);
 								// update state for recursion subtask
 								if (this._state.previousSubtaskCount !== 0) {
 									this._state.subtasks[
@@ -211,7 +218,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								break;
 
 							case "cancel":
-								this.updateTaskState("cancelled");
+								this.updateTaskState(SubtaskState.cancelled);
 								// update state for recursion subtask
 								if (this._state.previousSubtaskCount !== 0) {
 									this._state.subtasks[
@@ -221,7 +228,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 								break;
 
 							case "regenerate":
-								this.updateTaskState("active");
+								this.updateTaskState(SubtaskState.active);
 								// update state for recursion subtask
 								if (this._state.previousSubtaskCount !== 0) {
 									this._state.subtasks[
@@ -250,10 +257,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 	/*
 		Acceptable states: completed, cancelled, error, waiting, active, started
 	*/
-	private updateTaskState(state: string) {
-		if (!acceptableStates.includes(state)) {
-			throw Error("Invalid state: " + state);
-		}
+	private updateTaskState(state: SubtaskState) {
 		this._state.taskState = state;
 
 		if (state === "completed" || state === "cancelled" || state === "error") {

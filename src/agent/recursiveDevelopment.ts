@@ -3,13 +3,15 @@ import { queryChatGPT } from "../helpers/queryChatGPT";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
 import { TerminalObject, CommandResult } from "../objects/terminalObject";
-import { Subtask } from "../objects/subtask";
-import { delay, shell } from "../settings/configuration";
+import { Subtask, SubtaskState } from "../objects/subtask";
+import {
+	delay,
+	shell,
+	RETURN_CANCELLED,
+	ERROR_PREFIX,
+	RECURSION_LIMIT,
+} from "../settings/configuration";
 import { correctJson } from "../helpers/jsonFixGeneral";
-
-const CANCELLED = "Cancelled";
-const ERROR_PREFIX = "Error: ";
-const RECURSION_LIMIT = 100;
 
 var recursionCount = 0;
 var taskDescription = ``;
@@ -85,8 +87,8 @@ async function recursiveDevelopmentHelper(
 		responseString = `{"subtasks": ${responseString}}`;
 	}
 
-	if (responseString === CANCELLED) {
-		return CANCELLED;
+	if (responseString === RETURN_CANCELLED) {
+		return RETURN_CANCELLED;
 	} else if (responseString.startsWith("Error")) {
 		return responseString;
 	}
@@ -116,7 +118,7 @@ async function recursiveDevelopmentHelper(
 		var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
 
 		subtasks.forEach((subtask) => {
-			subtask.state = "initial";
+			subtask.state = SubtaskState.initial;
 		});
 		if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
 			throw Error("Invalid subtask indices.");
@@ -150,7 +152,7 @@ async function recursiveDevelopmentHelper(
 			return result;
 
 		case "cancel":
-			return CANCELLED;
+			return RETURN_CANCELLED;
 
 		default:
 			return ERROR_PREFIX + "Invalid user action.";
@@ -168,7 +170,7 @@ async function recursiveDevelopmentHelper(
 						await terminalObj.executeCommand(command, subtask.index);
 
 					if (typeof commandResult === "string") {
-						return CANCELLED;
+						return RETURN_CANCELLED;
 					} else if (commandResult.error) {
 						throw Error(commandResult.error);
 					}
@@ -203,7 +205,7 @@ async function recursiveDevelopmentHelper(
 						subtask.index
 					);
 					if (typeof fileCreationResult === "string") {
-						return CANCELLED;
+						return RETURN_CANCELLED;
 					} else if (fileCreationResult.error) {
 						throw fileCreationResult.error;
 					}

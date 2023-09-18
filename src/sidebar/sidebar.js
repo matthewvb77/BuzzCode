@@ -144,7 +144,7 @@
 		loader.classList.remove("loader-initial");
 		loader.classList.remove("loader-active");
 		loader.classList.remove("loader-blocked");
-		loader.classList.remove("loader-errror");
+		loader.classList.remove("loader-error");
 
 		loader.classList.add("loader-" + state);
 	}
