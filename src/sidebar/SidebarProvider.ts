@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
-import { recursiveDevelopment } from "../AIContainer/recursiveDevelopment";
+import { recursiveDevelopment } from "../agent/recursiveDevelopment";
 import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
 import { Subtask, acceptableStates } from "../objects/subtask";
 
