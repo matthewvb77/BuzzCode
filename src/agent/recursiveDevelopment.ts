@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import { queryChatGPT } from "../helpers/queryChatGPT";
 import { askUser } from "./askUser";
 import { initializePrompt } from "./prompts";
-import { TerminalObject, CommandResult } from "../objects/terminalObject";
-import { Subtask, SubtaskState } from "../objects/subtask";
+import { TerminalObject, CommandResult } from "./terminalObject";
+import { Subtask, SubtaskState } from "./subtask";
 import {
 	delay,
 	shell,

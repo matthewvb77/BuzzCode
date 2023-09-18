@@ -4,7 +4,7 @@ import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import * as nock from "nock";
 import { recursiveDevelopment } from "../../agent/recursiveDevelopment";
-import { TerminalObject } from "../../objects/terminalObject";
+import { TerminalObject } from "../../agent/terminalObject";
 
 // chai.use(chaiAsPromised);
 // const expect = chai.expect;

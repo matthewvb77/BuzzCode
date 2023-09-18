@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { getNonce } from "../helpers/getNonce";
 import { recursiveDevelopment } from "../agent/recursiveDevelopment";
 import { hasValidOpenaiApiKey } from "../helpers/hasValidOpenaiApiKey";
-import { Subtask, SubtaskState } from "../objects/subtask";
+import { Subtask, SubtaskState } from "../agent/subtask";
 import { ERROR_PREFIX, RETURN_CANCELLED } from "../settings/configuration";
 
 // Commands

@@ -2,7 +2,7 @@ import {
 	TerminalObject,
 	parseErrorMessage,
 	containsError,
-} from "../../objects/terminalObject";
+} from "../../agent/terminalObject";
 import { expect } from "chai";
 import "mocha";
 import { describe, it, before, after } from "mocha";
