@@ -13,7 +13,6 @@ export async function plan(
 	task: string,
 	signal: AbortSignal
 ): Promise<string | Subtask[]> {
-	// TODO: Add planning here
 	var responseString: string = await queryChatGPT(
 		initializePrompt + task + "\n\nJSON subtask list:",
 		signal
@@ -65,5 +64,5 @@ export async function plan(
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
-	return [];
+	return subtasks;
 }
