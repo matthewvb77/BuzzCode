@@ -76,7 +76,7 @@ async function recursiveDevelopmentHelper(
 		return ERROR_PREFIX + "Recursion limit reached";
 	}
 
-	var subtasks: string | Array<Subtask> = await plan(input);
+	var subtasks: string | Array<Subtask> = await plan(input, signal);
 	if (typeof subtasks === "string") {
 		return subtasks;
 	}
