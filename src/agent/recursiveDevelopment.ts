@@ -78,6 +78,7 @@ async function recursiveDevelopmentHelper(
 		return ERROR_PREFIX + "Recursion limit reached";
 	}
 
+	// TODO: Add planning here
 	var responseString: string = await queryChatGPT(
 		initializePrompt + input + "\n\nJSON subtask list:",
 		signal

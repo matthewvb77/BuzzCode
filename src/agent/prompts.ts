@@ -11,6 +11,13 @@ Response example: {"subtasks": [{ "index": 0, "type": "executeTerminalCommand", 
 Using the those 4 functions and following the response format above, respond with a JSON subtask list to solve the following prompt:
 `;
 
+export const planningPrompt = `You are the planning phase of an AI software engineer agent. 
+Actions: execute terminal command, generate file, ask user question, recurse with new prompt. Please break the following
+task into steps that can each be accomplished by 5 or less of these actions.
+
+Response example: {"steps": [{"step": "generate files needed a unique portfolio website"}, {"step": "initialize git repository,
+ add, commit, and push changes"}, {"step": "create and run tests for all files in the working directory"}]}`;
+
 /*
 {
 	"subtasks": [
