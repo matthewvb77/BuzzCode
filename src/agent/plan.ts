@@ -13,6 +13,7 @@ export async function plan(
 	task: string,
 	signal: AbortSignal
 ): Promise<string | Subtask[]> {
+	/* ---------------------- Ask User Questions ---------------------- */
 	var responseString: string = await queryChatGPT(
 		initializePrompt + task + "\n\nJSON subtask list:",
 		signal
