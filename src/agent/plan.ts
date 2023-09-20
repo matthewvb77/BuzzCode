@@ -40,7 +40,7 @@ export async function plan(
 			jsonStringArray = correctJson(responseString).match(jsonRegex);
 		}
 		if (!jsonStringArray) {
-			return ERROR_PREFIX + "No JSON found.";
+			throw new Error("No JSON found.");
 		}
 		let jsonString = jsonStringArray[0];
 		let reasoning = responseString
@@ -56,7 +56,7 @@ export async function plan(
 			subtask.state = SubtaskState.initial;
 		});
 		if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
-			return ERROR_PREFIX + "Invalid subtask indices.";
+			throw new Error("Invalid subtask indices.");
 		}
 		if (reasoning) {
 			vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
