@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Subtask, SubtaskState } from "./subtask";
-import { initializePrompt, planningPrompt } from "./prompts";
+import { initializePrompt } from "./prompts";
 import { queryChatGPT } from "../helpers/queryChatGPT";
 import { correctJson } from "../helpers/jsonFixGeneral";
 import { RETURN_CANCELLED, ERROR_PREFIX } from "../settings/configuration";
