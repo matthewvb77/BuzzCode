@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Subtask, SubtaskState } from "./subtask";
-import { initializePrompt } from "./prompts";
+import { initializePrompt, highLevelPlanningPrompt } from "./prompts";
 import { queryChatGPT } from "../helpers/queryChatGPT";
 import { correctJson } from "../helpers/jsonFixGeneral";
 import { RETURN_CANCELLED, ERROR_PREFIX } from "../settings/configuration";
@@ -14,6 +14,12 @@ export async function plan(
 	signal: AbortSignal
 ): Promise<string | Subtask[]> {
 	/* ---------------------- Ask User Questions ---------------------- */
+
+	var responseQuestions: string = await queryChatGPT(
+		highLevelPlanningPrompt + task + "\n\nJSON question list:",
+		signal
+	);
+
 	var responseString: string = await queryChatGPT(
 		initializePrompt + task + "\n\nJSON subtask list:",
 		signal
