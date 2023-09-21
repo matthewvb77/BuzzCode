@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export function askUser(question: string) {
+export async function askUser(question: string) {
 	return new Promise(async (resolve, reject) => {
 		const userResponse = await vscode.window.showInputBox({
 			placeHolder: "Answer here...",

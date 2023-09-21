@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { TerminalObject, CommandResult } from "./terminalObject";
 import { Subtask } from "./subtask";
+import { askUser } from "./askUser";
 import {
 	delay,
 	shell,
@@ -13,7 +14,7 @@ import { plan } from "./plan";
 var recursionCount = 0;
 var taskDescription = ``;
 var terminalOutput: string = "";
-// var askUserResponse: string = "";  TEMPORARILY REMOVED
+var askUserResponse: string = "";
 var terminalObj: TerminalObject | null = null;
 
 export async function recursiveDevelopment(
@@ -68,7 +69,7 @@ async function recursiveDevelopmentHelper(
 	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
 	terminalOutput = "";
-	// askUserResponse = ""; TEMPORARILY REMOVED
+	askUserResponse = "";
 
 	recursionCount++;
 	if (recursionCount >= RECURSION_LIMIT) {
@@ -161,42 +162,41 @@ async function recursiveDevelopmentHelper(
 					}
 					break;
 
-				/* RECURSE AND ASKUSER ARE BEING TEMPORARILY REMOVED */
-				// case "recurse":
-				// 	const { newPrompt } = parameters;
-				// 	let recurseInput: string = `This is a recursive call with the original task: { ${taskDescription} }\n And the new prompt: { ${newPrompt} }\n`;
+				case "recurse":
+					const { newPrompt } = parameters;
+					let recurseInput: string = `This is a recursive call with the original task: { ${taskDescription} }\n And the new prompt: { ${newPrompt} }\n`;
 
-				// 	if (terminalOutput) {
-				// 		recurseInput += `\nHere are the outputs of executed terminal commands: [ ${terminalOutput} ]\n`;
-				// 	}
-				// 	if (askUserResponse) {
-				// 		recurseInput += `\nHere are the user's responses to questions: [ ${askUserResponse} ]\n`;
-				// 	}
+					if (terminalOutput) {
+						recurseInput += `\nHere are the outputs of executed terminal commands: [ ${terminalOutput} ]\n`;
+					}
+					if (askUserResponse) {
+						recurseInput += `\nHere are the user's responses to questions: [ ${askUserResponse} ]\n`;
+					}
 
-				// 	const result = await recursiveDevelopmentHelper(
-				// 		recurseInput,
-				// 		terminalObj,
-				// 		signal,
-				// 		onStartSubtask,
-				// 		onSubtasksReady,
-				// 		onSubtaskError
-				// 	);
+					const result = await recursiveDevelopmentHelper(
+						recurseInput,
+						terminalObj,
+						signal,
+						onStartSubtask,
+						onSubtasksReady,
+						onSubtaskError
+					);
 
-				// 	if (typeof result === "string") {
-				// 		return result;
-				// 	}
+					if (typeof result === "string") {
+						return result;
+					}
 
-				// case "askUser":
-				// 	const { question } = parameters;
-				// 	try {
-				// 		askUserResponse +=
-				// 			`{ Question: { ${question} }\n` +
-				// 			`Response: { ${await askUser(question)} }\n }, \n`;
-				// 	} catch (error) {
-				// 		throw error;
-				// 	}
+				case "askUser":
+					const { question } = parameters;
+					try {
+						askUserResponse +=
+							`{ Question: { ${question} }\n` +
+							`Response: { ${await askUser(question)} }\n }, \n`;
+					} catch (error) {
+						throw error;
+					}
 
-				// 	break;
+					break;
 
 				default:
 					throw Error(ERROR_PREFIX + `Unknown subtask type "${type}"`);
@@ -219,10 +219,9 @@ async function recursiveDevelopmentHelper(
 			if (terminalOutput) {
 				input += `Here is the terminal output: ${terminalOutput}\n\n`;
 			}
-			// TEMPORARILY REMOVED
-			// if (askUserResponse) {
-			// 	input += `Here are the user's responses to questions: ${askUserResponse}\n\n`;
-			// }
+			if (askUserResponse) {
+				input += `Here are the user's responses to questions: ${askUserResponse}\n\n`;
+			}
 			if (error) {
 				input += `The following error occured: { ${error} \n}`;
 			}
