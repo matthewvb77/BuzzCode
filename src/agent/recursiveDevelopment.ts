@@ -124,7 +124,7 @@ async function recursiveDevelopmentHelper(
 	// PLACEHOLDER --> NEED TO EXECUTE ASKUSER SUBTASKS HERE
 
 	var responseString: string = await queryChatGPT(
-		initializePrompt + holduptemp + "\n\nJSON subtask list:",
+		initializePrompt + input + "\n\nJSON subtask list:",
 		signal
 	);
 
@@ -208,10 +208,32 @@ async function recursiveDevelopmentHelper(
 			return ERROR_PREFIX + "Invalid user action.";
 	}
 
-	for (const subtask of subtasks) {
-		const { type, parameters } = subtask;
-		onStartSubtask(subtask);
+	executeSubtasks(
+		subtasks,
+		terminalObj,
+		signal,
+		onStartSubtask,
+		onSubtasksReady,
+		onSubtaskError
+	);
 
+	return;
+}
+
+async function executeSubtasks(
+	subtasks: Array<Subtask>,
+	terminalObj: TerminalObject,
+	signal: AbortSignal,
+	onStartSubtask: (subtask: Subtask) => void,
+	onSubtasksReady: (
+		subtasks: Array<Subtask>,
+		signal: AbortSignal
+	) => Promise<string>,
+	onSubtaskError: (index: number) => void
+) {
+	for (const subtask of subtasks) {
+		onStartSubtask(subtask);
+		const { type, parameters } = subtask;
 		try {
 			switch (type) {
 				case "executeTerminalCommand":
@@ -339,5 +361,4 @@ async function recursiveDevelopmentHelper(
 			}
 		}
 	}
-	return;
 }
