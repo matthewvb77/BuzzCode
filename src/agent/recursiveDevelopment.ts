@@ -10,7 +10,7 @@ import {
 } from "../settings/configuration";
 import { Subtask, SubtaskState } from "./subtask";
 import { queryChatGPT } from "../helpers/queryChatGPT";
-import { correctJson } from "../helpers/correctJson";
+import { correctJson } from "../helpers/jsonFixGeneral";
 import { highLevelPlanningPrompt, initializePrompt } from "./prompts";
 
 var recursionCount = 0;
