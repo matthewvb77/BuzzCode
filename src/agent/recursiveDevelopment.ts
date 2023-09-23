@@ -84,45 +84,7 @@ async function recursiveDevelopmentHelper(
 
 	/* ----------------------- Planning Phase ----------------------- */
 
-	var responseQuestions: string = await queryChatGPT(
-		questionPrompt + input + "\n\nJSON question list:",
-		signal
-	);
-
-	// Check for common formatting errors
-	if (responseQuestions.startsWith("[") && responseQuestions.endsWith("]")) {
-		responseString = `{"questions": ${responseQuestions}}`;
-	}
-
-	if (responseQuestions === RETURN_CANCELLED) {
-		return RETURN_CANCELLED;
-	} else if (responseQuestions.startsWith("Error")) {
-		return responseQuestions;
-	}
-
-	try {
-		// Regular expression to match JSON
-		const jsonRegex = /{[\s\S]*}/;
-
-		// Extract JSON and reasoning strings
-		var jsonQuestionsStringArray: Array<string> | null = null;
-		try {
-			jsonQuestionsStringArray = responseQuestions.match(jsonRegex);
-		} catch (error) {
-			jsonQuestionsStringArray =
-				correctJson(responseQuestions).match(jsonRegex);
-		}
-		if (!jsonQuestionsStringArray) {
-			throw new Error("No JSON found.");
-		}
-		let questionsString = jsonQuestionsStringArray[0];
-
-		questionsString = correctJson(questionsString);
-
-		var questions: Array<string> = JSON.parse(questionsString).questions;
-	} catch (error) {
-		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
-	}
+	blahblahblah(input, signal);
 
 	var questionsSubtasks: Array<Subtask> = questions.map((question, index) => {
 		return {
@@ -222,6 +184,63 @@ async function recursiveDevelopmentHelper(
 	);
 }
 
+enum AgentPhase {
+	questions = "questions",
+	highLevelPlanning = "step",
+	planning = "subtask",
+}
+
+/*
+TODO: What does this function do?
+*/
+async function blahblahblah(
+	task: string,
+	phase: AgentPhase,
+	signal: AbortSignal
+) {
+	var response: string = await queryChatGPT(
+		questionPrompt + task + `\n\nJSON ${phase} list:`,
+		signal
+	);
+
+	// Check for common formatting errors
+	if (response.startsWith("[") && response.endsWith("]")) {
+		response = `{"${phase}": ${response}}`;
+	}
+
+	if (response === RETURN_CANCELLED) {
+		return RETURN_CANCELLED;
+	} else if (response.startsWith("Error")) {
+		return response;
+	}
+
+	try {
+		// Regular expression to match JSON
+		const jsonRegex = /{[\s\S]*}/;
+
+		// Extract JSON and reasoning strings
+		var jsonQuestionsStringArray: Array<string> | null = null;
+		try {
+			jsonQuestionsStringArray = response.match(jsonRegex);
+		} catch (error) {
+			jsonQuestionsStringArray = correctJson(response).match(jsonRegex);
+		}
+		if (!jsonQuestionsStringArray) {
+			throw new Error("No JSON found.");
+		}
+		let questionsString = jsonQuestionsStringArray[0];
+
+		questionsString = correctJson(questionsString);
+
+		var questions: Array<string> = JSON.parse(questionsString).questions;
+	} catch (error) {
+		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
+	}
+}
+
+/*
+Returns void if successful, or a string if an error or cancellation occurs
+*/
 async function executeSubtasks(
 	subtasks: Array<Subtask>,
 	terminalObj: TerminalObject,
