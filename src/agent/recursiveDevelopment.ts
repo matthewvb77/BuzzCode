@@ -116,18 +116,12 @@ async function recursiveDevelopmentHelper(
 
 		var questions: Array<string> = JSON.parse(questionsString).questions;
 		var askUserResponse: string = "";
-
-		// NOTE FOR TOMORROW: THIS WHOLE FILE MIGHT HAVE TO GO BACK INTO RECURSIVE DEVELOPMENT. OR WE COULD PASS THE SUBTASKUPDATE FUNCTIONS AS CALLBACKS INTO THIS FUNCTION
-		questions.forEach(async (question) => {
-			askUserResponse +=
-				`{ Question: { ${question} }\n` +
-				`Response: { ${await askUser(question)} }\n }, \n`;
-		});
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
 
 	/* ---------------------- Subtask Planning ---------------------- */
+	// PLACEHOLDER --> NEED TO EXECUTE ASKUSER SUBTASKS HERE
 
 	var responseString: string = await queryChatGPT(
 		initializePrompt + holduptemp + "\n\nJSON subtask list:",
@@ -180,10 +174,8 @@ async function recursiveDevelopmentHelper(
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
-	return subtasks;
 	/* ---------------- Execution Phase ---------------- */
 
-	var subtasks: string | Array<Subtask> = await plan(input, signal);
 	if (typeof subtasks === "string") {
 		return subtasks;
 	}
