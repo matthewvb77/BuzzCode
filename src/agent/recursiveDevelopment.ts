@@ -185,15 +185,12 @@ async function recursiveDevelopmentHelper(
 }
 
 enum AgentPhase {
-	questions = "questions",
+	questions = "question",
 	highLevelPlanning = "step",
 	planning = "subtask",
 }
 
-/*
-TODO: What does this function do?
-*/
-async function blahblahblah(
+async function validateJSON(
 	task: string,
 	phase: AgentPhase,
 	signal: AbortSignal
@@ -205,7 +202,7 @@ async function blahblahblah(
 
 	// Check for common formatting errors
 	if (response.startsWith("[") && response.endsWith("]")) {
-		response = `{"${phase}": ${response}}`;
+		response = `{"${phase}s": ${response}}`;
 	}
 
 	if (response === RETURN_CANCELLED) {
@@ -219,20 +216,21 @@ async function blahblahblah(
 		const jsonRegex = /{[\s\S]*}/;
 
 		// Extract JSON and reasoning strings
-		var jsonQuestionsStringArray: Array<string> | null = null;
+		var jsonStringArray: Array<string> | null = null;
 		try {
-			jsonQuestionsStringArray = response.match(jsonRegex);
+			jsonStringArray = response.match(jsonRegex);
 		} catch (error) {
-			jsonQuestionsStringArray = correctJson(response).match(jsonRegex);
+			// I don't remember why, but executing correctJSON twice is intentional
+			jsonStringArray = correctJson(response).match(jsonRegex);
 		}
-		if (!jsonQuestionsStringArray) {
+		if (!jsonStringArray) {
 			throw new Error("No JSON found.");
 		}
-		let questionsString = jsonQuestionsStringArray[0];
+		let jsonString = jsonStringArray[0];
 
-		questionsString = correctJson(questionsString);
+		jsonString = correctJson(jsonString);
 
-		var questions: Array<string> = JSON.parse(questionsString).questions;
+		JSON.parse(jsonString);
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
