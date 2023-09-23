@@ -14,6 +14,7 @@ export const highLevelPlanningPrompt = `You're a software engineering agent with
 - generateFile(fileName: string, fileContents: string)
 
 Response example: {"questions": [{"question": "What language should the website be programmed in?"}, {"question": "Do you want tests written?"}]}
+Response example: {"questions": []}
 
 Using the response format above, respond with a parsable JSON list of questions to ask the user before solving the task:`;
 /*
