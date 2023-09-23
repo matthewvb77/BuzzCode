@@ -11,7 +11,11 @@ import {
 import { Subtask, SubtaskState } from "./subtask";
 import { queryChatGPT } from "../helpers/queryChatGPT";
 import { correctJson } from "../helpers/jsonFixGeneral";
-import { highLevelPlanningPrompt, initializePrompt } from "./prompts";
+import {
+	questionPrompt,
+	highLevelPlanningPrompt,
+	planningPrompt,
+} from "./prompts";
 
 var recursionCount = 0;
 var taskDescription = ``;
@@ -81,10 +85,11 @@ async function recursiveDevelopmentHelper(
 	/* ----------------------- Planning Phase ----------------------- */
 
 	var responseQuestions: string = await queryChatGPT(
-		highLevelPlanningPrompt + input + "\n\nJSON question list:",
+		questionPrompt + input + "\n\nJSON question list:",
 		signal
 	);
 
+	// Check for common formatting errors
 	if (responseQuestions.startsWith("[") && responseQuestions.endsWith("]")) {
 		responseString = `{"questions": ${responseQuestions}}`;
 	}
@@ -115,16 +120,42 @@ async function recursiveDevelopmentHelper(
 		questionsString = correctJson(questionsString);
 
 		var questions: Array<string> = JSON.parse(questionsString).questions;
-		var askUserResponse: string = "";
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
 
+	var questionsSubtasks: Array<Subtask> = questions.map((question, index) => {
+		return {
+			index,
+			type: "askUser",
+			parameters: {
+				question,
+			},
+			state: SubtaskState.initial,
+		};
+	});
+
+	// Ask initial questions
+	var response = executeSubtasks(
+		questionsSubtasks,
+		terminalObj,
+		input,
+		signal,
+		onStartSubtask,
+		onSubtasksReady,
+		onSubtaskError
+	);
+
+	if (typeof response === "string") {
+		return response;
+	}
+
+	/* ---------------------- High Level Planning ---------------------- */
+
 	/* ---------------------- Subtask Planning ---------------------- */
-	// PLACEHOLDER --> NEED TO EXECUTE ASKUSER SUBTASKS HERE
 
 	var responseString: string = await queryChatGPT(
-		initializePrompt + input + "\n\nJSON subtask list:",
+		planningPrompt + input + "\n\nJSON subtask list:",
 		signal
 	);
 
@@ -180,6 +211,29 @@ async function recursiveDevelopmentHelper(
 		return subtasks;
 	}
 
+	return executeSubtasks(
+		subtasks,
+		terminalObj,
+		input,
+		signal,
+		onStartSubtask,
+		onSubtasksReady,
+		onSubtaskError
+	);
+}
+
+async function executeSubtasks(
+	subtasks: Array<Subtask>,
+	terminalObj: TerminalObject,
+	input: string,
+	signal: AbortSignal,
+	onStartSubtask: (subtask: Subtask) => void,
+	onSubtasksReady: (
+		subtasks: Array<Subtask>,
+		signal: AbortSignal
+	) => Promise<string>,
+	onSubtaskError: (index: number) => void
+): Promise<void | string> {
 	var userAction = await onSubtasksReady(subtasks, signal);
 
 	switch (userAction) {
@@ -208,29 +262,6 @@ async function recursiveDevelopmentHelper(
 			return ERROR_PREFIX + "Invalid user action.";
 	}
 
-	executeSubtasks(
-		subtasks,
-		terminalObj,
-		signal,
-		onStartSubtask,
-		onSubtasksReady,
-		onSubtaskError
-	);
-
-	return;
-}
-
-async function executeSubtasks(
-	subtasks: Array<Subtask>,
-	terminalObj: TerminalObject,
-	signal: AbortSignal,
-	onStartSubtask: (subtask: Subtask) => void,
-	onSubtasksReady: (
-		subtasks: Array<Subtask>,
-		signal: AbortSignal
-	) => Promise<string>,
-	onSubtaskError: (index: number) => void
-) {
 	for (const subtask of subtasks) {
 		onStartSubtask(subtask);
 		const { type, parameters } = subtask;
