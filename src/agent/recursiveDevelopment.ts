@@ -84,6 +84,11 @@ async function recursiveDevelopmentHelper(
 
 	/* ----------------------- Initial Questions Phase ----------------------- */
 
+	var questionsResponse: string = await queryChatGPT(
+		prompt + input + `\n\nJSON questions list:`,
+		signal
+	);
+
 	var questions = await validateJSON(input, AgentPhase.questions, signal);
 
 	if (typeof questions === "string") {
@@ -103,7 +108,6 @@ async function recursiveDevelopmentHelper(
 		}
 	);
 
-	// Ask initial questions
 	var response = executeSubtasks(
 		questionsSubtasks,
 		terminalObj,
@@ -120,8 +124,14 @@ async function recursiveDevelopmentHelper(
 
 	/* ---------------------- High Level Planning ---------------------- */
 
-	/* ---------------------- Subtask Planning ---------------------- */
+	var steps = await validateJSON(input, AgentPhase.questions, signal);
 
+	if (typeof steps === "string") {
+		return steps;
+	}
+
+	/* ---------------------- Subtask Planning ---------------------- */
+	steps.forEach((step: string, index: number) => {});
 	var responseString: string = await queryChatGPT(
 		planningPrompt + input + "\n\nJSON subtask list:",
 		signal
@@ -201,8 +211,23 @@ async function validateJSON(
 	phase: AgentPhase,
 	signal: AbortSignal
 ): Promise<any | string> {
+	var prompt: string = "";
+	switch (phase) {
+		case AgentPhase.questions:
+			prompt = questionPrompt;
+			break;
+		case AgentPhase.highLevelPlanning:
+			prompt = highLevelPlanningPrompt;
+			break;
+		case AgentPhase.planning:
+			prompt = planningPrompt;
+			break;
+		default:
+			return ERROR_PREFIX + "Invalid phase.";
+	}
+
 	var response: string = await queryChatGPT(
-		questionPrompt + task + `\n\nJSON ${phase} list:`,
+		prompt + task + `\n\nJSON ${phase} list:`,
 		signal
 	);
 
