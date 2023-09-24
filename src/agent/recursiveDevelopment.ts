@@ -82,20 +82,26 @@ async function recursiveDevelopmentHelper(
 		return ERROR_PREFIX + "Recursion limit reached";
 	}
 
-	/* ----------------------- Planning Phase ----------------------- */
+	/* ----------------------- Initial Questions Phase ----------------------- */
 
-	blahblahblah(input, signal);
+	var questions = await validateJSON(input, AgentPhase.questions, signal);
 
-	var questionsSubtasks: Array<Subtask> = questions.map((question, index) => {
-		return {
-			index,
-			type: "askUser",
-			parameters: {
-				question,
-			},
-			state: SubtaskState.initial,
-		};
-	});
+	if (typeof questions === "string") {
+		return questions;
+	}
+
+	var questionsSubtasks: Array<Subtask> = questions.map(
+		(question: string, index: number) => {
+			return {
+				index,
+				type: "askUser",
+				parameters: {
+					question,
+				},
+				state: SubtaskState.initial,
+			};
+		}
+	);
 
 	// Ask initial questions
 	var response = executeSubtasks(
@@ -194,7 +200,7 @@ async function validateJSON(
 	task: string,
 	phase: AgentPhase,
 	signal: AbortSignal
-) {
+): Promise<any | string> {
 	var response: string = await queryChatGPT(
 		questionPrompt + task + `\n\nJSON ${phase} list:`,
 		signal
@@ -230,7 +236,7 @@ async function validateJSON(
 
 		jsonString = correctJson(jsonString);
 
-		JSON.parse(jsonString);
+		return JSON.parse(jsonString);
 	} catch (error) {
 		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
 	}
