@@ -134,67 +134,35 @@ async function recursiveDevelopmentHelper(
 		signal
 	);
 
-	var steps = await validateJSON(planningResponse, AgentPhase.questions);
+	var steps = validateJSON(planningResponse, AgentPhase.questions);
 
 	if (typeof steps === "string") {
 		return steps;
 	}
 
 	/* ---------------------- Subtask Planning ---------------------- */
-	steps.forEach((step: string, index: number) => {
-		// Low-level subtask planning
-	});
+	steps.forEach((step: string, index: number) => {});
 	var responseString: string = await queryChatGPT(
 		planningPrompt + input + "\n\nJSON subtask list:",
 		signal
 	);
 
-	if (responseString.startsWith("[") && responseString.endsWith("]")) {
-		responseString = `{"subtasks": ${responseString}}`;
+	var subtasks: Array<Subtask> = validateJSON(
+		responseString,
+		AgentPhase.planning
+	);
+
+	if (typeof subtasks === "string") {
+		return subtasks;
 	}
 
-	if (responseString === RETURN_CANCELLED) {
-		return RETURN_CANCELLED;
-	} else if (responseString.startsWith("Error")) {
-		return responseString;
+	subtasks.forEach((subtask) => {
+		subtask.state = SubtaskState.initial;
+	});
+	if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
+		throw new Error("Invalid subtask indices.");
 	}
 
-	try {
-		// Regular expression to match JSON
-		const jsonRegex = /{[\s\S]*}/;
-
-		// Extract JSON and reasoning strings
-		var jsonQuestionsStringArray: Array<string> | null = null;
-		try {
-			jsonQuestionsStringArray = responseString.match(jsonRegex);
-		} catch (error) {
-			jsonQuestionsStringArray = correctJson(responseString).match(jsonRegex);
-		}
-		if (!jsonQuestionsStringArray) {
-			throw new Error("No JSON found.");
-		}
-		let jsonString = jsonQuestionsStringArray[0];
-		let reasoning = responseString
-			.replace(jsonRegex, "")
-			.trim()
-			.split("Response: ")[0];
-
-		jsonString = correctJson(jsonString);
-
-		var subtasks: Array<Subtask> = JSON.parse(jsonString).subtasks;
-
-		subtasks.forEach((subtask) => {
-			subtask.state = SubtaskState.initial;
-		});
-		if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
-			throw new Error("Invalid subtask indices.");
-		}
-		if (reasoning) {
-			vscode.window.showInformationMessage("Reasoning:\n" + reasoning);
-		}
-	} catch (error) {
-		return ERROR_PREFIX + "Invalid JSON. \n" + (error as Error).message;
-	}
 	/* ---------------- Execution Phase ---------------- */
 
 	if (typeof subtasks === "string") {
