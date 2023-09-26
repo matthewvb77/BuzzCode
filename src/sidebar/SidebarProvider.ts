@@ -98,9 +98,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 						);
 						if (result === RETURN_CANCELLED) {
 							this.updateTaskState(SubtaskState.cancelled);
-						} else if (result && result.startsWith("Error")) {
+						} else if (result && result.startsWith(ERROR_PREFIX)) {
 							this.updateTaskState(SubtaskState.error);
-							if (result === "Error: Axios code 429 - Rate limit exceeded") {
+							if (
+								result ===
+								ERROR_PREFIX + "Axios code 429 - Rate limit exceeded"
+							) {
 								vscode.window.showInformationMessage(
 									"OpenAI API rate limit exceeded. Please wait a few secondes and try again.\n" +
 										"NOTE: OpenAI free tier is limited to 3 RPM (requests per minute)."
@@ -129,7 +132,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					}
 					if (!abortController) {
 						throw Error(
-							"abortController is undefined, this should not happen."
+							"AbortController is undefined, this should not happen."
 						);
 					}
 					abortController.abort();
