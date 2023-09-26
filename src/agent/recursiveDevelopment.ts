@@ -141,27 +141,28 @@ async function recursiveDevelopmentHelper(
 	}
 
 	/* ---------------------- Subtask Planning ---------------------- */
-	steps.forEach((step: string, index: number) => {});
-	var responseString: string = await queryChatGPT(
-		planningPrompt + input + "\n\nJSON subtask list:",
-		signal
-	);
 
-	var subtasks: Array<Subtask> = validateJSON(
-		responseString,
-		AgentPhase.planning
-	);
+	var subtasks: Array<Subtask> = [];
+	await steps.forEach(async (step: string) => {
+		var responseString: string = await queryChatGPT(
+			planningPrompt + step + "\n\nJSON subtask list:",
+			signal
+		);
 
-	if (typeof subtasks === "string") {
-		return subtasks;
-	}
+		var currSubtasks: any = validateJSON(responseString, AgentPhase.planning);
+		if (typeof currSubtasks === "string") {
+			return currSubtasks;
+		}
+
+		currSubtasks.forEach((subtask: Subtask) => {
+			subtasks.push(subtask);
+		});
+	});
 
 	subtasks.forEach((subtask) => {
 		subtask.state = SubtaskState.initial;
+		subtask.index = subtasks.indexOf(subtask);
 	});
-	if (subtasks.length - 1 !== subtasks[subtasks.length - 1].index) {
-		throw new Error("Invalid subtask indices.");
-	}
 
 	/* ---------------- Execution Phase ---------------- */
 
@@ -184,19 +185,14 @@ enum AgentPhase {
 
 function validateJSON(response: string, phase: AgentPhase) {
 	// Check for common formatting errors
-	if (response.startsWith("[") && response.endsWith("]")) {
-		response = `{"${phase}s": ${response}}`;
-	}
 
-	if (response === RETURN_CANCELLED) {
-		return RETURN_CANCELLED;
-	} else if (response.startsWith("Error")) {
+	if (response === RETURN_CANCELLED || response.startsWith(ERROR_PREFIX)) {
 		return response;
 	}
 
 	try {
 		// Regular expression to match JSON
-		const jsonRegex = /{[\s\S]*}/;
+		const jsonRegex = /(\[.*?\])/s;
 
 		// Extract JSON and reasoning strings
 		var jsonStringArray: Array<string> | null = null;
