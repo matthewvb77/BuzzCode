@@ -165,11 +165,7 @@ async function recursiveDevelopmentHelper(
 
 	/* ---------------- Execution Phase ---------------- */
 
-	if (typeof subtasks === "string") {
-		return subtasks;
-	}
-
-	return executeSubtasks(
+	return await executeSubtasks(
 		subtasks,
 		terminalObj,
 		input,
