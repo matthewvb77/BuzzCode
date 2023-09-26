@@ -14,8 +14,8 @@ export const highLevelPlanningPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
-Please respond with a parsable JSON list of steps. Each step should be accomplishable with no more than 5 function calls from the 2 functions above. Use the following format:
-Example response: ["Create a new directory, initialize a git repository, and create a README.md file.", "Generate website code according to user specifications."]
+Please respond with a concise adn parsable JSON list of steps. Each step should be accomplishable with no more than 5 function calls from the 2 functions above. Use the following format:
+Example response: ["Create a new directory and initialize a git repo", "Generate website code according to user specifications"]
 
 Your task: `;
 
