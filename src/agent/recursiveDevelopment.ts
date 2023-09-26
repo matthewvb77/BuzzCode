@@ -230,6 +230,10 @@ async function executeSubtasks(
 	) => Promise<string>,
 	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
+	if (subtasks.length === 0) {
+		return;
+	}
+
 	var userAction = await onSubtasksReady(subtasks, signal);
 
 	switch (userAction) {
