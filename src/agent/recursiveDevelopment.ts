@@ -178,13 +178,13 @@ async function recursiveDevelopmentHelper(
 	);
 }
 
-enum AgentPhase {
+export enum AgentPhase {
 	questions = "question",
 	highLevelPlanning = "step",
 	planning = "subtask",
 }
 
-function validateJSON(response: string, phase: AgentPhase) {
+export function validateJSON(response: string, phase: AgentPhase) {
 	// Check for common formatting errors
 
 	if (response === RETURN_CANCELLED || response.startsWith(ERROR_PREFIX)) {

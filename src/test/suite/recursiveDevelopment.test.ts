@@ -1,39 +1,34 @@
-import * as vscode from "vscode";
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as sinon from "sinon";
-import * as nock from "nock";
-import { recursiveDevelopment } from "../../agent/recursiveDevelopment";
-import { TerminalObject } from "../../agent/terminalObject";
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { validateJSON, AgentPhase } from "../../agent/recursiveDevelopment";
+import { RETURN_CANCELLED, ERROR_PREFIX } from "../../settings/configuration";
 
-// chai.use(chaiAsPromised);
-// const expect = chai.expect;
+// Mocking correctJson just for the sake of testing
+function correctJson(json: string): string {
+	return json; // A simple mock that returns the input as it is
+}
 
-// describe("recursiveDevelopment function", function () {
-// 	let sandbox: sinon.SinonSandbox;
+describe("validateJSON function", () => {
+	it("should return the response directly if it equals RETURN_CANCELLED", () => {
+		const result = validateJSON(RETURN_CANCELLED, AgentPhase.planning);
+		expect(result).to.equal(RETURN_CANCELLED);
+	});
 
-// 	beforeEach(function () {
-// 		sandbox = sinon.createSandbox();
-// 	});
+	it("should return parsed JSON if the response contains valid JSON", () => {
+		const json = '["valid", "json", "array"]';
+		const result = validateJSON(json, AgentPhase.planning);
+		expect(result).to.deep.equal(["valid", "json", "array"]);
+	});
 
-// 	afterEach(function () {
-// 		sandbox.restore();
-// 	});
+	it("should return error if no JSON is found", () => {
+		const response = "This is a plain string without JSON";
+		const result = validateJSON(response, AgentPhase.planning);
+		expect(result).to.equal(ERROR_PREFIX + "Invalid JSON. \nNo JSON found.");
+	});
 
-// 	it("should resolve with a string if there is an error during terminal creation", async function () {
-// 		const signal: AbortSignal = new AbortController().signal;
-// 		sandbox.stub(TerminalObject, "create").throws(new Error("Test error"));
-
-// 		const result = await recursiveDevelopment(
-// 			"",
-// 			signal,
-// 			sinon.fake(),
-// 			sinon.fake(),
-// 			sinon.fake()
-// 		);
-
-// 		expect(result).to.equal("Error: Test error");
-// 	});
-
-// 	// Add more tests for the different branches of your code here...
-// });
+	it("should return error if the JSON is invalid", () => {
+		const json = "[invalid, json, array]";
+		const result = validateJSON(json, AgentPhase.planning);
+		expect(result.startsWith(ERROR_PREFIX)).to.be.true;
+	});
+});
