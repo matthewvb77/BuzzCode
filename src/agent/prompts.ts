@@ -4,28 +4,29 @@ export const questionPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string)
 - generateFile(fileName: string, fileContents: string)
 
-Response example: {"questions": [{"question": "What language should the website be programmed in?"}, {"question": "Do you want tests written?"}]}
-Response example: {"questions": []}
+Please respond with a parsable JSON list of questions, using the following format:
+Example 1: ["What language should the website be programmed in?", "Do you want tests written?"]
+Example 2: []
 
-Using the response format above, respond with a parsable JSON list of questions to ask the user before solving the task. Here is the task: `;
+Your task: `;
 
 export const highLevelPlanningPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string)
 - generateFile(fileName: string, fileContents: string)
 
-Response example: {"steps": [{"step": "Create a new directory, initialize a git repository, and create a README.md file."}, {"step": "Generate website code according to user specifications."}]}
+Please respond with a parsable JSON list of steps. Each step should be accomplishable with no more than 5 function calls from the 2 functions above. Use the following format:
+Example response: ["Create a new directory, initialize a git repository, and create a README.md file.", "Generate website code according to user specifications."]
 
-Using the response format above, respond with a parsable JSON list of steps where each step is achievable by at most 5 function calls. Here is the overall task:
-`;
+Your task: `;
 
 export const planningPrompt = `You have access to 2 functions: 
 - executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
+Please respond with a parsable JSON list of subtasks, using the following format:
 Response example: {"subtasks": [{ "index": 0, "type": "executeTerminalCommand", "parameters": { "command": "echo hello world"}}]}
 
-Using those 2 functions and following the response format above, respond with a JSON subtask list to solve the following prompt:
-`;
+Your task: `;
 /*
 {
 	"subtasks": [
