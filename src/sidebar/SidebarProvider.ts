@@ -9,8 +9,6 @@ import { ERROR_PREFIX, RETURN_CANCELLED } from "../settings/configuration";
 const SUBMIT = "submit";
 const CANCEL_TASK = "cancel-task";
 
-enum TaskState {}
-
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
 	_doc?: vscode.TextDocument;
