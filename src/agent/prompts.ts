@@ -4,8 +4,8 @@ export const questionPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
-Please respond with a parsable JSON list of questions you need answered before you can complete the task, using the following format:
-Example 1: ["What language should the website be programmed in?", "Do you want tests written?"]
+Please respond with a parsable JSON list of questions to be answered before you complete the task. Ask as few questions as possible and use the following format:
+Example 1: ["What is the website for?", "Do you want tests written?"]
 Example 2: []
 
 Your task: `;
