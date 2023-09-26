@@ -1,7 +1,7 @@
 import { shell } from "../settings/configuration";
 
 export const questionPrompt = `You have access to 2 functions:
-- executeTerminalCommand(command: string)
+- executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
 Please respond with a parsable JSON list of questions you need answered before you can complete the task, using the following format:
@@ -11,7 +11,7 @@ Example 2: []
 Your task: `;
 
 export const highLevelPlanningPrompt = `You have access to 2 functions:
-- executeTerminalCommand(command: string)
+- executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
 Please respond with a parsable JSON list of steps. Each step should be accomplishable with no more than 5 function calls from the 2 functions above. Use the following format:
