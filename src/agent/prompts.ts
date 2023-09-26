@@ -23,8 +23,8 @@ export const planningPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string) --> shell type is ${shell}
 - generateFile(fileName: string, fileContents: string)
 
-Please respond with a parsable JSON list of subtasks, using the following format:
-Response example: {"subtasks": [{ "index": 0, "type": "executeTerminalCommand", "parameters": { "command": "echo hello world"}}]}
+Please respond with a parsable JSON list of function calls, using the following format:
+Response example: [{"type": "executeTerminalCommand", "parameters": {"command": "echo hello world"}}]
 
 Your task: `;
 /*
