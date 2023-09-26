@@ -68,7 +68,7 @@ async function recursiveDevelopmentHelper(
 	input: string,
 	terminalObj: TerminalObject,
 	signal: AbortSignal,
-	question: boolean,
+	doQuestionPhase: boolean,
 	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (
 		subtasks: Array<Subtask>,
@@ -86,7 +86,7 @@ async function recursiveDevelopmentHelper(
 	}
 
 	/* ----------------------- Initial Questions Phase ----------------------- */
-	if (question) {
+	if (doQuestionPhase) {
 		var questionsResponse: string = await queryChatGPT(
 			questionPrompt + input + `\n\nJSON questions list:`,
 			signal
