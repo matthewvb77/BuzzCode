@@ -49,6 +49,7 @@ export async function recursiveDevelopment(
 		taskDescription,
 		terminalObj,
 		signal,
+		true,
 		onStartSubtask,
 		onSubtasksReady,
 		onSubtaskError
@@ -67,6 +68,7 @@ async function recursiveDevelopmentHelper(
 	input: string,
 	terminalObj: TerminalObject,
 	signal: AbortSignal,
+	question: boolean,
 	onStartSubtask: (subtask: Subtask) => void,
 	onSubtasksReady: (
 		subtasks: Array<Subtask>,
@@ -84,43 +86,44 @@ async function recursiveDevelopmentHelper(
 	}
 
 	/* ----------------------- Initial Questions Phase ----------------------- */
+	if (question) {
+		var questionsResponse: string = await queryChatGPT(
+			questionPrompt + input + `\n\nJSON questions list:`,
+			signal
+		);
 
-	var questionsResponse: string = await queryChatGPT(
-		questionPrompt + input + `\n\nJSON questions list:`,
-		signal
-	);
+		var questions = validateJSON(questionsResponse, AgentPhase.questions);
 
-	var questions = validateJSON(questionsResponse, AgentPhase.questions);
-
-	if (typeof questions === "string") {
-		return questions;
-	}
-
-	var questionsSubtasks: Array<Subtask> = questions.map(
-		(question: string, index: number) => {
-			return {
-				index,
-				type: "askUser",
-				parameters: {
-					question,
-				},
-				state: SubtaskState.initial,
-			};
+		if (typeof questions === "string") {
+			return questions;
 		}
-	);
 
-	var responseStatus: void | string = await executeSubtasks(
-		questionsSubtasks,
-		terminalObj,
-		input,
-		signal,
-		onStartSubtask,
-		onSubtasksReady,
-		onSubtaskError
-	);
+		var questionsSubtasks: Array<Subtask> = questions.map(
+			(question: string, index: number) => {
+				return {
+					index,
+					type: "askUser",
+					parameters: {
+						question,
+					},
+					state: SubtaskState.initial,
+				};
+			}
+		);
 
-	if (typeof responseStatus === "string") {
-		return responseStatus;
+		var responseStatus: void | string = await executeSubtasks(
+			questionsSubtasks,
+			terminalObj,
+			input,
+			signal,
+			onStartSubtask,
+			onSubtasksReady,
+			onSubtaskError
+		);
+
+		if (typeof responseStatus === "string") {
+			return responseStatus;
+		}
 	}
 
 	/* ---------------------- High Level Planning ---------------------- */
@@ -246,6 +249,7 @@ async function executeSubtasks(
 				input,
 				terminalObj,
 				signal,
+				false,
 				onStartSubtask,
 				onSubtasksReady,
 				onSubtaskError
@@ -316,6 +320,7 @@ async function executeSubtasks(
 						recurseInput,
 						terminalObj,
 						signal,
+						true,
 						onStartSubtask,
 						onSubtasksReady,
 						onSubtaskError
@@ -369,6 +374,7 @@ async function executeSubtasks(
 				input,
 				terminalObj,
 				signal,
+				false,
 				onStartSubtask,
 				onSubtasksReady,
 				onSubtaskError
