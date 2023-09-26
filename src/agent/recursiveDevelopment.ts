@@ -74,6 +74,7 @@ async function recursiveDevelopmentHelper(
 	) => Promise<string>,
 	onSubtaskError: (index: number) => void
 ): Promise<void | string> {
+	/* These global variables will be added to during execution */
 	terminalOutput = "";
 	askUserResponse = "";
 
@@ -85,11 +86,11 @@ async function recursiveDevelopmentHelper(
 	/* ----------------------- Initial Questions Phase ----------------------- */
 
 	var questionsResponse: string = await queryChatGPT(
-		prompt + input + `\n\nJSON questions list:`,
+		questionPrompt + input + `\n\nJSON questions list:`,
 		signal
 	);
 
-	var questions = await validateJSON(questionsResponse, AgentPhase.questions);
+	var questions = validateJSON(questionsResponse, AgentPhase.questions);
 
 	if (typeof questions === "string") {
 		return questions;
@@ -108,7 +109,7 @@ async function recursiveDevelopmentHelper(
 		}
 	);
 
-	var response = executeSubtasks(
+	var responseStatus: void | string = await executeSubtasks(
 		questionsSubtasks,
 		terminalObj,
 		input,
@@ -118,8 +119,8 @@ async function recursiveDevelopmentHelper(
 		onSubtaskError
 	);
 
-	if (typeof response === "string") {
-		return response;
+	if (typeof responseStatus === "string") {
+		return responseStatus;
 	}
 
 	/* ---------------------- High Level Planning ---------------------- */
@@ -217,10 +218,7 @@ enum AgentPhase {
 	planning = "subtask",
 }
 
-async function validateJSON(
-	response: string,
-	phase: AgentPhase
-): Promise<any | string> {
+function validateJSON(response: string, phase: AgentPhase) {
 	// Check for common formatting errors
 	if (response.startsWith("[") && response.endsWith("]")) {
 		response = `{"${phase}s": ${response}}`;
