@@ -4,7 +4,7 @@ export const questionPrompt = `You have access to 2 functions:
 - executeTerminalCommand(command: string)
 - generateFile(fileName: string, fileContents: string)
 
-Please respond with a parsable JSON list of questions, using the following format:
+Please respond with a parsable JSON list of questions you need answered before you can complete the task, using the following format:
 Example 1: ["What language should the website be programmed in?", "Do you want tests written?"]
 Example 2: []
 

@@ -143,7 +143,8 @@ async function recursiveDevelopmentHelper(
 	/* ---------------------- Subtask Planning ---------------------- */
 
 	var subtasks: Array<Subtask> = [];
-	await steps.forEach(async (step: string) => {
+
+	for (const step of steps) {
 		var responseString: string = await queryChatGPT(
 			planningPrompt + step + "\n\nJSON subtask list:",
 			signal
@@ -157,7 +158,7 @@ async function recursiveDevelopmentHelper(
 		currSubtasks.forEach((subtask: Subtask) => {
 			subtasks.push(subtask);
 		});
-	});
+	}
 
 	subtasks.forEach((subtask) => {
 		subtask.state = SubtaskState.initial;
