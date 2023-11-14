@@ -1,4 +1,4 @@
-# BuzzCode: An AI Developer Agent in Your IDE
+# BuzzCode: AI Developer in Your IDE
 
 [![Discord](https://discordapp.com/api/guilds/1111329465973342328/widget.png?style=shield)](https://discord.gg/8UQTFvg8e7)
 [![Twitter Follow](https://img.shields.io/twitter/follow/thebuzzcode?style=social)](https://twitter.com/thebuzzcode)
@@ -22,9 +22,9 @@ Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7)!
 
 ## Contribution
 
-BuzzCode is 100% open source under an MIT license!
+[Github Repo](https://github.com/matthewvb77/buzzcode)
 
-Check it out on Github: [BuzzCode](https://github.com/matthewvb77/buzzcode)
+[Contributing Guide](https://github.com/matthewvb77/buzzcode/contributing.md)
 
 ### Contributors
 
