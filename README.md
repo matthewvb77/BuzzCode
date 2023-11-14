@@ -1,19 +1,8 @@
-# BuzzCode: Jr Developer In Your IDE -- Open Beta
+# BuzzCode: An AI Developer in Your IDE
 
 **Note:** BuzzCode is experimental. Use caution when executing commands or code.
 
 [![Alternate Text](https://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
-
-## Setup
-
-1. Get an OpenAI key at https://platform.openai.com/account/api-keys.
-2. Save it in `BuzzCode: Settings` (access via ctrl + shift + p).
-3. Open BuzzCode from the sidebar.
-
-## Using BuzzCode
-
-Provide specific tasks for best results.
-Review all code before execution.
 
 ## How it works
 
@@ -21,10 +10,4 @@ BuzzCode acts as an AI-to-Computer interface to an OpenAI GPT model. Upon task s
 
 ## Feedback
 
-Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7) for bug reports and feature suggestions.
-
-## Credits
-
-BuzzCode uses [OpenAI's GPT Models](https://openai.com/research/) and json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT).
-
-Happy (careful) coding! 🐝
+Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7)!
