@@ -1,8 +1,14 @@
 # Change Log
 
+## [Version 0.0.5]
+
+- Added CONTRIBUTING.md
+- Added CODE_OF_CONDUCT.md
+- Updated README.md to make it open-source friendly
+
 ## [Version 0.0.4]
 
-- Added changelog
+- Added CHANGELOG.md
 
 ## [Version 0.0.3]
 

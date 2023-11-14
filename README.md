@@ -1,30 +1,38 @@
-# BuzzCode: Jr Developer In Your IDE -- Open Beta
+# BuzzCode: AI Developer in Your IDE
+
+[![Discord](https://discordapp.com/api/guilds/1111329465973342328/widget.png?style=shield)](https://discord.gg/8UQTFvg8e7)
+[![Twitter Follow](https://img.shields.io/twitter/follow/thebuzzcode?style=social)](https://twitter.com/thebuzzcode)
+[![All Contributors](https://img.shields.io/github/all-contributors/matthewvb77/buzzcode?color=ee8449&style=flat-square)](#contributors)
+![License: MIT](https://img.shields.io/github/license/matthewvb77/buzzcode)
+
 
 **Note:** BuzzCode is experimental. Use caution when executing commands or code.
 
+## Quick Start and Demo
+
 [![Alternate Text](https://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
-
-## Setup
-
-1. Get an OpenAI key at https://platform.openai.com/account/api-keys.
-2. Save it in `BuzzCode: Settings` (access via ctrl + shift + p).
-3. Open BuzzCode from the sidebar.
-
-## Using BuzzCode
-
-Provide specific tasks for best results.
-Review all code before execution.
 
 ## How it works
 
-BuzzCode acts as an AI-to-Computer interface to an OpenAI GPT model. Upon task submission, the GPT model generates a subtask list, which the user can then confirm, cancel, or regenerate. Please note that this process is experimental and may not always produce the expected results.
+BuzzCode acts as an AI-to-IDE interface to an OpenAI GPT model. Upon task submission, the GPT model generates a subtask list, which the user can then confirm, cancel, or regenerate.
 
-## Feedback
+## Questions? Comments? Concerns?
 
-Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7) for bug reports and feature suggestions.
+Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7)!
 
-## Credits
+## Contribution
 
-BuzzCode uses [OpenAI's GPT Models](https://openai.com/research/) and json-fixing functions from [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT).
+[Github Repo](https://github.com/matthewvb77/buzzcode)
 
-Happy (careful) coding! 🐝
+[Contributing Guide](https://github.com/matthewvb77/buzzcode/contributing.md)
+
+### Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->

@@ -1,7 +1,6 @@
 import { Subtask, SubtaskState } from "./subtask";
 import { initializePrompt } from "./prompts";
 import { queryChatGPT } from "../helpers/queryChatGPT";
-import { correctJson } from "../helpers/jsonFixGeneral";
 import { RETURN_CANCELLED, ERROR_PREFIX } from "../settings/configuration";
 
 /*
@@ -28,8 +27,6 @@ export async function plan(
 	}
 
 	try {
-		responseString = correctJson(responseString);
-
 		var subtasks: Array<Subtask> = JSON.parse(responseString).subtasks;
 
 		subtasks.forEach((subtask) => {
