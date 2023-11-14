@@ -1,8 +1,10 @@
 # BuzzCode: An AI Developer Agent in Your IDE
 
-![Discord](https://img.shields.io/discord/1111329465973342328)
-![X](https://img.shields.io/twitter/BuzzCode)
-![License](https://img.shields.io/github/license/matthewvb77/buzzcode)
+[![Discord](https://discordapp.com/api/guilds/1111329465973342328/widget.png?style=shield)](https://discord.gg/8UQTFvg8e7)
+[![Twitter Follow](https://img.shields.io/twitter/follow/thebuzzcode?style=social)](https://twitter.com/thebuzzcode)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-blue.svg?style=flat-square)](#contributors)
+![License: MIT](https://img.shields.io/github/license/matthewvb77/buzzcode)
+
 
 **Note:** BuzzCode is experimental. Use caution when executing commands or code.
 
