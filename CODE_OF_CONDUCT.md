@@ -24,7 +24,7 @@ This Code of Conduct applies within all project and community spaces.
 
 ### Enforcement
 
-If you witness or experience harrassment or otherwise unacceptable behavior, please report them to therealbuzzcode@gmail.com. The project and community maintainers will investigate and take appropriate action.
+If you witness or experience harrassment or otherwise unacceptable behavior, please report them to therealbuzzcode@gmail.com. The project and community maintainers will investigate and take appropriate action. The actions may include: corrections, warnings, temporary bans, and permanent bans. The order and details of these actions is left up to project and community maintainers based on the severity of the incident.
 
 All project and community maintainers are obligated to respect the privacy and security of the reporter of any incident.
 
