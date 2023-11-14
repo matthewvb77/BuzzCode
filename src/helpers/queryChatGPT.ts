@@ -20,33 +20,10 @@ export async function queryChatGPT(
 		.getConfiguration("buzzcode")
 		.get("temperature");
 
-	let contextLength: number | undefined;
-
-	// "The token count of your prompt plus max_tokens cannot exceed the model’s context length."
-	switch (model) {
-		case "gpt-3.5-turbo":
-			contextLength = contextLengthGpt3Point5;
-			break;
-
-		case "gpt-4":
-			contextLength = contextLengthGpt4;
-			break;
-
-		default:
-			throw Error("Invalid model: " + model);
-	}
-
-	const charsPerToken = 4;
-	const marginOfError = 0.2;
-	const maxTokens = Math.round(
-		(contextLength - prompt.length / charsPerToken) * (1 - marginOfError)
-	);
-
 	if (
 		openaiApiKey === undefined ||
 		model === undefined ||
-		temperature === undefined ||
-		maxTokens === undefined
+		temperature === undefined
 	) {
 		return "Error: Undefined configuration value";
 	}
@@ -58,15 +35,22 @@ export async function queryChatGPT(
 		return "Error: No API key";
 	}
 
+	if (model !== "gpt-4" && model !== "gpt-3.5-turbo") {
+		throw new Error("Invalid model");
+	}
+
+	const modelName =
+		model === "gpt-4" ? "gpt-4-1106-preview" : "gpt-3.5-turbo-1106";
+
 	/* -------------- Query OpenAI using Axios ------------------ */
 	try {
 		const response = await axios.post(
 			"https://api.openai.com/v1/chat/completions",
 			{
-				model: model,
+				model: modelName,
 				messages: [{ role: "user", content: prompt }],
 				temperature: temperature,
-				max_tokens: maxTokens,
+				response_format: { type: "json_object" },
 			},
 			{
 				headers: {

@@ -127,20 +127,6 @@ async function recursiveDevelopmentHelper(
 					}
 
 					terminalOutput +=
-						"{ Command: {" +
-						command +
-						"}\n" +
-						"stdout: {" +
-						commandResult.stdout +
-						"}\n" +
-						"stderr: {" +
-						commandResult.stderr +
-						"}\n" +
-						"error: {" +
-						commandResult.error +
-						"}\n },\n";
-
-					terminalOutput +=
 						`{\nCommand: { ${command} }\n` +
 						`stdout: { ${commandResult.stdout} }\n` +
 						`stderr: { ${commandResult.stderr} }\n` +
