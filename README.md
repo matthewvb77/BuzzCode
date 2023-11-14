@@ -1,10 +1,8 @@
 # BuzzCode: Jr Developer In Your IDE -- Open Beta
 
-**Note:** BuzzCode is experimental and actively in development. Use caution when executing suggested commands or code.
-
+**Note:** BuzzCode is experimental. Use caution when executing commands or code.
 
 [![Alternate Text](https://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
-
 
 ## Setup
 
