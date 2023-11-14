@@ -6,8 +6,14 @@
 
 ## How it works
 
-BuzzCode acts as an AI-to-Computer interface to an OpenAI GPT model. Upon task submission, the GPT model generates a subtask list, which the user can then confirm, cancel, or regenerate. Please note that this process is experimental and may not always produce the expected results.
+BuzzCode acts as an AI-to-IDE interface to an OpenAI GPT model. Upon task submission, the GPT model generates a subtask list, which the user can then confirm, cancel, or regenerate.
 
-## Feedback
+## Questions? Comments? Concerns?
 
 Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7)!
+
+## Contribution
+
+BuzzCode is 100% open source under an MIT license!
+
+[Github Repository](https://github.com/matthewvb77/buzzcode)
