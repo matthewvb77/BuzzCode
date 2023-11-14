@@ -2,7 +2,7 @@
 
 [![Discord](https://discordapp.com/api/guilds/1111329465973342328/widget.png?style=shield)](https://discord.gg/8UQTFvg8e7)
 [![Twitter Follow](https://img.shields.io/twitter/follow/thebuzzcode?style=social)](https://twitter.com/thebuzzcode)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-blue.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/github/all-contributors/matthewvb77/buzzcode?color=ee8449&style=flat-square)](#contributors)
 ![License: MIT](https://img.shields.io/github/license/matthewvb77/buzzcode)
 
 
@@ -27,3 +27,12 @@ BuzzCode is 100% open source under an MIT license!
 Check it out on Github: [BuzzCode](https://github.com/matthewvb77/buzzcode)
 
 ### Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
