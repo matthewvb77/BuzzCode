@@ -1,9 +1,15 @@
 # Change Log
 
-All notable changes to the "buzzcode" extension will be documented in this file.
+## [Version 0.0.4]
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Added changelog
 
-## [Unreleased]
+## [Version 0.0.3]
+
+- Added support for new 1106 OpenAI API version
+- Fixed JSON-format reliability issues
+- Security patched dependencies
+
+## [Version 0.0.1]
 
 - Initial release
