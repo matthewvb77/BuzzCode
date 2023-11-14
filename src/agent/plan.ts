@@ -6,7 +6,7 @@ import { RETURN_CANCELLED, ERROR_PREFIX } from "../settings/configuration";
 
 /*
     INPUT: The user's task.
-    OUTPUT: A list of subtasks that can be executed by the agent.
+    OUTPUT: A json list of subtasks that can be executed by the agent.
 */
 export async function plan(
 	task: string,
