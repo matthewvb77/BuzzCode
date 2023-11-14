@@ -2,6 +2,8 @@
 
 **Note:** BuzzCode is experimental. Use caution when executing commands or code.
 
+## Quick Start and Demo
+
 [![Alternate Text](https://img.youtube.com/vi/P_7XcMeB-jw/0.jpg)](https://www.youtube.com/watch?v=P_7XcMeB-jw)
 
 ## How it works
