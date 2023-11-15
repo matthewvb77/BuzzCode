@@ -31,6 +31,13 @@ Join us on our [Discord Server](https://discord.com/invite/8UQTFvg8e7)!
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/matthewvb77"><img src="https://avatars.githubusercontent.com/u/41040035?v=4?s=100" width="100px;" alt="Matthew Van Brummelen"/><br /><sub><b>Matthew Van Brummelen</b></sub></a><br /><a href="#bug-matthewvb77" title="Bug reports">🐛</a> <a href="#code-matthewvb77" title="Code">💻</a> <a href="#doc-matthewvb77" title="Documentation">📖</a> <a href="#design-matthewvb77" title="Design">🎨</a> <a href="#ideas-matthewvb77" title="Ideas, Planning, & Feedback">🤔</a> <a href="#review-matthewvb77" title="Reviewed Pull Requests">👀</a> <a href="#test-matthewvb77" title="Tests">⚠️</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->

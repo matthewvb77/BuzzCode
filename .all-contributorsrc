@@ -1,4 +1,27 @@
 {
-	"projectName": "BuzzCode",
-	"projectOwner": "matthewvb77"
+  "projectName": "BuzzCode",
+  "projectOwner": "matthewvb77",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "matthewvb77",
+      "name": "Matthew Van Brummelen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41040035?v=4",
+      "profile": "https://github.com/matthewvb77",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "design",
+        "ideas",
+        "review",
+        "test"
+      ]
+    }
+  ]
 }
