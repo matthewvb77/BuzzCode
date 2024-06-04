@@ -57,7 +57,7 @@ export async function queryChatGPT(
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${openaiApiKey}`,
 				},
-				cancelToken: new axios.CancelToken((c) =>
+				cancelToken: new axios.CancelToken((c: any) =>
 					signal.addEventListener("abort", () => c("Request cancelled"))
 				),
 			}

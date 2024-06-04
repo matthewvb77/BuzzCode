@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
-import * as cp from "child_process";
-import * as fs from "fs";
-import * as tmp from "tmp";
-import * as merge2 from "merge2";
+import vscode from "vscode";
+import cp from "child_process";
+import fs from "fs";
+import tmp from "tmp";
+import merge2 from "merge2";
 import { shell, shellArgs, delay } from "../settings/configuration";
 import { RETURN_CANCELLED } from "../settings/configuration";
 
