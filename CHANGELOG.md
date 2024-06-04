@@ -1,5 +1,9 @@
 # Change Log
 
+## [Version 0.0.6]
+
+- Updated dependencies to fix security vulnerabilities
+
 ## [Version 0.0.5]
 
 - Added CONTRIBUTING.md
